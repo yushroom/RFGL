@@ -186,7 +186,11 @@ int main()
     glViewport(0, 0, width, height);
 
     //Camera camera(glm::vec3(0, 0, 3));
+#if defined(_WIN32)
+	const std::string root_dir = "../";
+#else
     const std::string root_dir = "/Users/yushroom/program/graphics/RFGL/";
+#endif
     //const std::string root_dir = "/Users/yushroom/Downloads/head2";
     const std::string models_dir = root_dir + "models/";
     const std::string textures_dir = root_dir + "textures/";

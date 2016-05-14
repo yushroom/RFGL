@@ -172,12 +172,20 @@ Model& Model::GetQuad()
 
 Model& Model::GetBox()
 {
-    static Model box("/Users/yushroom/program/graphics/PRT/cube.obj");
+#if defined(_WIN32)
+	static Model box("D:/program/RFGL/models/cube.obj");
+#else
+	static Model box("/Users/yushroom/program/graphics/PRT/cube.obj");
+#endif
     return box;
 }
 
 Model& Model::GetSphere()
 {
+#if defined(_WIN32)
+	static Model sphere("D:/program/RFGL/models/Sphere.obj");
+#else
     static Model sphere("/Users/yushroom/program/github/SeparableSSS/SeparableSSS/Models/Sphere.obj");
+#endif
     return sphere;
 }
