@@ -56,6 +56,7 @@ Model::Model(const std::string& objModelPath)
     | aiProcess_OptimizeGraph
     | aiProcess_OptimizeMeshes
     | aiProcess_FlipUVs
+    | aiProcess_CalcTangentSpace
     ;
     const aiScene* scene = importer.ReadFile(path, load_potion);
     if (!scene) {
@@ -75,6 +76,7 @@ Model::Model(const std::string& objModelPath)
     m_normalBuffer.reserve(n_vertices * 3);
     m_uvBuffer.reserve(n_vertices * 2);
     m_indexBuffer.reserve(n_triangles * 3);
+    m_tangentBuffer.reserve(n_triangles * 3);
     int idx = 0;
     for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
         aiMesh* mesh = scene->mMeshes[i];
@@ -95,6 +97,11 @@ Model::Model(const std::string& objModelPath)
             auto& uv = mesh->mTextureCoords[0][j];
             m_uvBuffer.push_back(uv.x);
             m_uvBuffer.push_back(uv.y);
+            
+            auto& t = mesh->mTangents[j];
+            m_tangentBuffer.push_back(t.x);
+            m_tangentBuffer.push_back(t.y);
+            m_tangentBuffer.push_back(t.z);
         }
         for (unsigned int j = 0; j < mesh->mNumFaces; j++) {
             auto& face = mesh->mFaces[j];
@@ -114,6 +121,7 @@ Model::~Model() {
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_positionVBO);
     glDeleteBuffers(1, &m_normalVBO);
+    glDeleteBuffers(1, &m_tangentVBO);
     glDeleteBuffers(1, &m_indexVBO);
 }
 
@@ -130,22 +138,25 @@ void Model::BindBuffer(int vertexUsage/* = VertexUsagePN*/) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexVBO);
     
     glBindBuffer(GL_ARRAY_BUFFER, m_positionVBO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(PositionIndex, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(PositionIndex);
     
-    int vertext_idx = 1;
     if (vertexUsage & VertexUsageNormal) {
         glBindBuffer(GL_ARRAY_BUFFER, m_normalVBO);
-        glVertexAttribPointer(vertext_idx, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-        glEnableVertexAttribArray(vertext_idx);
-        vertext_idx ++;
+        glVertexAttribPointer(NormalIndex, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+        glEnableVertexAttribArray(NormalIndex);
     }
     
     if (vertexUsage & VertexUsageUV) {
         glBindBuffer(GL_ARRAY_BUFFER, m_uvVBO);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
-        glEnableVertexAttribArray(2);
-        vertext_idx++;
+        glVertexAttribPointer(UVIndex, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+        glEnableVertexAttribArray(UVIndex);
+    }
+    
+    if (vertexUsage & VertexUsageTangent) {
+        glBindBuffer(GL_ARRAY_BUFFER, m_tangentVBO);
+        glVertexAttribPointer(TangentIndex, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+        glEnableVertexAttribArray(TangentIndex);
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind

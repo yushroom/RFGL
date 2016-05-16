@@ -19,7 +19,8 @@ enum VertexUsage {
     VertexUsageUV       = 1<<2,
     VertexUsageTangent  = 1<<3,
     VertexUsagePN       = VertexUsagePosition | VertexUsageNormal,
-    VertexUsagePNU      = VertexUsagePosition | VertexUsageNormal | VertexUsageUV,
+    VertexUsagePNU      = VertexUsagePN | VertexUsageUV,
+    VertexUsagePNUT     = VertexUsagePNU | VertexUsageTangent
 };
 
 class Model
@@ -49,12 +50,14 @@ private:
     std::vector<float>      m_positionBuffer;
     std::vector<float>      m_normalBuffer;
     std::vector<float>      m_uvBuffer;
+    std::vector<float>      m_tangentBuffer;
     std::vector<uint32_t>   m_indexBuffer;
     GLuint m_VAO;
     GLuint m_indexVBO;
     GLuint m_positionVBO;
     GLuint m_normalVBO;
     GLuint m_uvVBO;
+    GLuint m_tangentVBO;
     
     void GenerateBuffer() {
         // VAO
@@ -76,6 +79,10 @@ private:
         glGenBuffers(1, &m_uvVBO);
         glBindBuffer(GL_ARRAY_BUFFER, m_uvVBO);
         glBufferData(GL_ARRAY_BUFFER, m_uvBuffer.size()*4, m_uvBuffer.data(), GL_STATIC_DRAW);
+        
+        glGenBuffers(1, &m_tangentVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, m_tangentVBO);
+        glBufferData(GL_ARRAY_BUFFER, m_tangentBuffer.size()*4, m_tangentBuffer.data(), GL_STATIC_DRAW);
     }
     void BindBuffer(int vertexUsage = VertexUsagePosition);
 };

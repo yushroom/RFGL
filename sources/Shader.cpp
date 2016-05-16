@@ -48,12 +48,12 @@ void Shader::FromString(const std::string& vs_string, const std::string& ps_stri
         }
     };
     
-    compileShader(vs, GL_VERTEX_SHADER, vs_string);
-    compileShader(ps, GL_FRAGMENT_SHADER, ps_string);
+    compileShader(vs, GL_VERTEX_SHADER, ShaderMacro + vs_string);
+    compileShader(ps, GL_FRAGMENT_SHADER, ShaderMacro + ps_string);
     
     // gs
     if (use_gs) {
-        compileShader(gs, GL_GEOMETRY_SHADER, gs_string);
+        compileShader(gs, GL_GEOMETRY_SHADER, ShaderMacro + gs_string);
     }
     
     m_program = glCreateProgram();

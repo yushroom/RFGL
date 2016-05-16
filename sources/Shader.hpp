@@ -14,6 +14,20 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#define STRING_MACRO(x) x
+
+#define PositionIndex 0
+#define NormalIndex 1
+#define UVIndex 2
+#define TangentIndex 3
+
+const static std::string ShaderMacro = R"(#version 410 core
+#define PositionIndex 0
+#define NormalIndex 1
+#define UVIndex 2
+#define TangentIndex 3
+)";
+
 class Shader
 {
 public:

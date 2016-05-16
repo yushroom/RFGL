@@ -26,41 +26,60 @@ void Do_Movement();
 const GLuint WIDTH = 800, HEIGHT = 600;
 
 // Shaders
-const std::string vertexShaderSource = R"(#version 410 core
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec3 normal;
-layout (location = 2) in vec2 uv;
+const std::string vertexShaderSource = R"(//#version 410 core
+layout (location = PositionIndex) in vec3 position;
+layout (location = NormalIndex) in vec3 normal;
+layout (location = TangentIndex) in vec3 tangent;
+layout (location = UVIndex) in vec2 uv;
 //uniform sampler2D bumpTex;
 uniform mat4 mvp;
 uniform mat4 model;
-out vec3 fragNormal;
-out vec2 fragUV;
+out VS_OUT {
+    vec3 normal;
+    vec3 tangent;
+    vec2 uv;
+} vs_out;
+
 void main()
 {
-    fragNormal = mat3(model) * normal;
-    fragUV = uv;
+    vs_out.normal = mat3(model) * normal;
+    vs_out.tangent = mat3(model) * tangent;
+    vs_out.uv = uv;
     gl_Position = mvp * vec4(position, 1.0);
-    //gl_Position.xyz += fragNormal * texture(bumpTex, uv).r * 0.002;
 }
 )";
-const std::string fragmentShaderSource = R"(#version 410 core
+const std::string fragmentShaderSource = R"(//#version 410 core
 const vec3 lightDir = normalize(vec3(1, 1, 1));
+const float bumpiness = 0.2;
 uniform sampler2D diffuseMap;
-in vec3 fragNormal;
-in vec2 fragUV;
+uniform sampler2D normalMap;
+in VS_OUT {
+    vec3 normal;
+    vec3 tangent;
+    vec2 uv;
+} vs_out;
 out vec4 color;
 void main()
 {
-    vec3 N = normalize(fragNormal);
-    float c = clamp(dot(N, lightDir), 0.0, 1.0);
-    color.rgb = c * texture(diffuseMap, fragUV).rgb;
-    //color.rgb = vec3(c, c, c);
+    vec3 N = normalize(vs_out.normal);
+    vec3 T = normalize(vs_out.tangent);
+    vec3 B = normalize(cross(T, N));
+    mat3 TBN = mat3(T, B, N);
+    vec3 bump_normal;
+    bump_normal.xy = 2.0 * texture(normalMap, vs_out.uv).gr - 1.0;
+    bump_normal.z = sqrt(1.0 - dot(bump_normal.xy, bump_normal.xy));
+    vec3 tangent_normal = mix(vec3(0, 0, 1), bump_normal, bumpiness);
+    vec3 normal = TBN * tangent_normal;
+    
+    float c = clamp(dot(normal, lightDir), 0.0, 1.0);
+    
+    color.rgb = c * texture(diffuseMap, vs_out.uv).rgb;
+    //color.rgb = vec3(c,c,c);
     color.a = 1.0f;
-    //color = vec4(1, 0, 0, 1.0f);
 }
 )";
 
-const std::string skyBoxVert = R"(#version 410 core
+const std::string skyBoxVert = R"(//#version 410 core
 layout(location = 0) in vec3 position;
 out vec3 uv;
 uniform mat4 mvp;
@@ -72,9 +91,9 @@ void main()
 }
 )";
 
-const std::string skyBoxFrag = R"(#version 410 core
+const std::string skyBoxFrag = R"(//#version 410 core
 in vec3 uv;
-layout(location = 0) out vec4 color;
+layout(location = PositionIndex) out vec4 color;
 uniform float intensity;
 uniform samplerCube skyTex;
 void main()
@@ -85,9 +104,9 @@ void main()
 }
 )";
 
-const std::string visualizeNormalVert = R"(#version 410 core
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec3 normal;
+const std::string visualizeNormalVert = R"(//#version 410 core
+layout (location = PositionIndex) in vec3 position;
+layout (location = NormalIndex) in vec3 normal;
 out VS_OUT {
     vec3 normal;
 } vs_out;
@@ -102,7 +121,7 @@ void main() {
 }
 )";
 
-const std::string visualizeNormalGS = R"(#version 410 core
+const std::string visualizeNormalGS = R"(//#version 410 core
 layout (triangles) in;
 layout (line_strip, max_vertices = 6) out;
 in VS_OUT {
@@ -127,7 +146,7 @@ void main()
 }
 )";
 
-const std::string visualizeNormalFrag = R"(#version 330 core
+const std::string visualizeNormalFrag = R"(//#version 330 core
 out vec4 color;
 void main()
 {
@@ -206,14 +225,15 @@ int main()
     //Model head("/Users/yushroom/program/graphics/SoftRenderer/Model/head/head.OBJ");
     //Model head(models_dir+"head/head_optimized.obj");
     Model head(models_dir+"/head/head.obj");
-    head.SetVertexUsage(VertexUsagePNU);
+    head.SetVertexUsage(VertexUsagePNUT);
     glCheckError();
     
     Texture skyTex(textures_dir+"StPeters/DiffuseMap.dds");
     //auto& skyTex = Texture::GetSimpleTexutreCubeMap();
     //Texture diffuse(models_dir+"head/DiffuseMap_R8G8B8A8_1024_mipmaps.dds");
     Texture diffuse(models_dir+"/head/lambertian.jpg");
-    Texture bumpTexture(models_dir + "/head/bump-lowRes.png");
+    //Texture bumpTexture(models_dir + "/head/bump-lowRes.png");
+    Texture normalMap(models_dir + "/head/NormalMap_RG16f_1024_mipmaps.dds");
     //Texture diffuse("/Users/yushroom/program/github/SeparableSSS/SeparableSSS/head/head_optimized.png");
     
     // Uncommenting this call will result in wireframe polygons.
@@ -237,7 +257,7 @@ int main()
 
         static float angle = 0;
         glm::mat4 model = glm::rotate(glm::scale(glm::mat4(), glm::vec3(10, 10, 10)), angle, glm::vec3(0, 1, 0));
-        angle += 0.01f;
+        angle += 0.005f;
         if (angle > M_PI * 2.0f) angle -= M_PI * 2.0f;
         auto view = camera.GetViewMatrix();
         auto proj = glm::perspective(camera.Zoom, float(width)/height, 0.1f, 100.f);
@@ -256,6 +276,7 @@ int main()
         shader.BindUniformMat4("model", model);
         //shader.BindUniformTexture("bumpTex", bumpTexture.GetGLTexuture(), 0);
         shader.BindUniformTexture("diffuseMap", diffuse.GetGLTexuture(), 0);
+        shader.BindUniformTexture("normalMap", normalMap.GetGLTexuture(), 1);
         head.Render(shader);
         
 //        visualizeNormalShader.Use();
