@@ -116,12 +116,14 @@ public:
     // Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void ProcessMouseScroll(GLfloat yoffset)
     {
-        if (this->Zoom >= 1.0f && this->Zoom <= 45.0f)
+        const float MAX_FOV = 90.f;
+        if (this->Zoom >= 1.0f && this->Zoom <= MAX_FOV)
             this->Zoom -= yoffset;
         if (this->Zoom <= 1.0f)
             this->Zoom = 1.0f;
-        if (this->Zoom >= 45.0f)
-            this->Zoom = 45.0f;
+        else if (this->Zoom >= MAX_FOV)
+            this->Zoom = MAX_FOV;
+        printf("%lf\n", this->Zoom);
     }
     
 private:

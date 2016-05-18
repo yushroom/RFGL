@@ -36,6 +36,11 @@ public:
     Shader& operator=(const Shader&) = delete;
     void FromString(const std::string& vs_str, const std::string& fs_str);
     void FromString(const std::string& vs_str, const std::string& fs_str, const std::string& gs_str);
+    void FromString(const std::string& vs_str,
+                    const std::string& tcs_str,
+                    const std::string& tes_str,
+                    const std::string& gs_str,
+                    const std::string& fs_str);
     void FromFile(const std::string& vs_path, const std::string ps_path);
 	//Shader(const std::string& vs_path, const std::string ps_path);
     ~Shader();
@@ -48,7 +53,11 @@ public:
     
     GLuint GetAttribLocation(const char* name) const;
     
-    void BindUniformMat4(const char* name, const glm::mat4 value) const;
+    void BindUniformFloat(const char* name, const float value) const;
+    void BindUniformVec3(const char* name, const glm::vec3& value) const;
+    void BindUniformMat3(const char* name, const glm::mat3& value) const;
+    void BindUniformMat4(const char* name, const glm::mat4& value) const;
+    
     
     void BindUniformTexture(const char* name, const GLuint texture, const GLuint id, GLenum textureType = GL_TEXTURE_2D);
 

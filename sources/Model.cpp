@@ -131,6 +131,12 @@ void Model::Render(const Shader& shader) {
     glBindVertexArray(0);
 }
 
+void Model::RenderPatch(const Shader &shader) {
+    glBindVertexArray(m_VAO);
+    glDrawElements(GL_PATCHES, (GLsizei)m_indexBuffer.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}
+
 void Model::BindBuffer(int vertexUsage/* = VertexUsagePN*/) {
     //glGenVertexArrays(1, &m_VAO);
     glBindVertexArray(m_VAO);
@@ -166,18 +172,7 @@ void Model::BindBuffer(int vertexUsage/* = VertexUsagePN*/) {
 
 Model& Model::GetQuad()
 {
-    float vertices[] = {
-        0.5f,  0.5f, 0.0f,  // Top Right
-        0.5f, -0.5f, 0.0f,  // Bottom Right
-        -0.5f, -0.5f, 0.0f,  // Bottom Left
-        -0.5f,  0.5f, 0.0f   // Top Left
-    };
-    
-    uint32_t indices[] = {  // Note that we start from 0!
-        0, 1, 3,  // First Triangle
-        1, 2, 3   // Second Triangle
-    };
-    static Model quad(sizeof(vertices)/12, sizeof(indices)/12, vertices, indices);
+    static Model quad("/Users/yushroom/program/graphics/RFGL/models/Quad.obj");
     return quad;
 }
 
@@ -186,7 +181,7 @@ Model& Model::GetBox()
 #if defined(_WIN32)
 	static Model box("D:/program/RFGL/models/cube.obj");
 #else
-	static Model box("/Users/yushroom/program/graphics/PRT/cube.obj");
+	static Model box("/Users/yushroom/program/graphics/RFGL/models/box.obj");
 #endif
     return box;
 }
@@ -199,4 +194,49 @@ Model& Model::GetSphere()
     static Model sphere("/Users/yushroom/program/github/SeparableSSS/SeparableSSS/Models/Sphere.obj");
 #endif
     return sphere;
+}
+
+Model& Model::GetIcosahedron()
+{
+    uint32_t indices[] = {
+        2, 1, 0,
+        3, 2, 0,
+        4, 3, 0,
+        5, 4, 0,
+        1, 5, 0,
+        
+        11, 6,  7,
+        11, 7,  8,
+        11, 8,  9,
+        11, 9,  10,
+        11, 10, 6,
+        
+        1, 2, 6,
+        2, 3, 7,
+        3, 4, 8,
+        4, 5, 9,
+        5, 1, 10,
+        
+        2,  7, 6,
+        3,  8, 7,
+        4,  9, 8,
+        5, 10, 9,
+        1, 6, 10 };
+    
+    float vertices[] = {
+        0.000f,  0.000f,  1.000f,
+        0.894f,  0.000f,  0.447f,
+        0.276f,  0.851f,  0.447f,
+        -0.724f,  0.526f,  0.447f,
+        -0.724f, -0.526f,  0.447f,
+        0.276f, -0.851f,  0.447f,
+        0.724f,  0.526f, -0.447f,
+        -0.276f,  0.851f, -0.447f,
+        -0.894f,  0.000f, -0.447f,
+        -0.276f, -0.851f, -0.447f,
+        0.724f, -0.526f, -0.447f,
+        0.000f,  0.000f, -1.000f };
+    static Model m(sizeof(vertices)/12, sizeof(indices)/12, vertices, indices);
+    return m;
+
 }

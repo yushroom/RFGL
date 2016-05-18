@@ -7,15 +7,32 @@ using namespace std;
 
 void Shader::FromString(const std::string &vs_string, const std::string &ps_string)
 {
-    FromString(vs_string, ps_string, "");
+    FromString(vs_string, "", "", "", ps_string);
 }
 
 void Shader::FromString(const std::string& vs_string, const std::string& ps_string, const std::string& gs_string)
 {
+    FromString(vs_string, "", "", gs_string, ps_string);
+}
+
+void Shader::FromString(const std::string& vs_string,
+                        const std::string& tcs_string,
+                        const std::string& tes_string,
+                        const std::string& gs_string,
+                        const std::string& ps_string)
+{
     assert(m_program == 0);
+    assert(!vs_string.empty() && !ps_string.empty());
+    //assert(tcs_string.empty() || (!tcs_string.empty() && !tes_string.empty()));
+    assert(!(!tcs_string.empty() && tes_string.empty()));
     
     bool use_gs = !gs_string.empty();
-    GLuint vs, ps, gs = 0;
+    bool use_ts = !tes_string.empty();
+    GLuint vs = 0;
+    GLuint ps = 0;
+    GLuint gs = 0;
+    GLuint tcs = 0;
+    GLuint tes = 0;
     
     auto add_line_number = [](const string& str) -> std::string {
         stringstream ss;
@@ -55,12 +72,21 @@ void Shader::FromString(const std::string& vs_string, const std::string& ps_stri
     if (use_gs) {
         compileShader(gs, GL_GEOMETRY_SHADER, ShaderMacro + gs_string);
     }
+    if (use_ts) {
+        if (!tcs_string.empty())
+            compileShader(tcs, GL_TESS_CONTROL_SHADER, ShaderMacro + tcs_string);
+        compileShader(tes, GL_TESS_EVALUATION_SHADER, ShaderMacro + tes_string);
+    }
     
     m_program = glCreateProgram();
     glAttachShader(m_program, vs);
     glAttachShader(m_program, ps);
     if (use_gs)
         glAttachShader(m_program, gs);
+    if (use_ts) {
+        if (tcs != 0) glAttachShader(m_program, tcs);
+        glAttachShader(m_program, tes);
+    }
     glLinkProgram(m_program);
     GLint success;
     GLchar infoLog[1024];
@@ -107,9 +133,24 @@ GLuint Shader::GetAttribLocation(const char* name) const {
     return glGetAttribLocation(m_program, name);
 }
 
-void Shader::BindUniformMat4(const char* name, const glm::mat4 value) const {
+void Shader::BindUniformFloat(const char* name, const float value) const {
+    GLint loc = GetUniformLocation(name);
+    glUniform1f(loc, value);
+}
+
+void Shader::BindUniformVec3(const char* name, const glm::vec3& value) const {
+    GLint loc = GetUniformLocation(name);
+    glUniform3fv(loc, 1, glm::value_ptr(value));
+}
+
+void Shader::BindUniformMat4(const char* name, const glm::mat4& value) const {
     GLint loc = GetUniformLocation(name);
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value));
+}
+
+void Shader::BindUniformMat3(const char* name, const glm::mat3& value) const {
+    GLint loc = GetUniformLocation(name);
+    glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(value));
 }
 
 void Shader::BindUniformTexture(const char* name, const GLuint texture, const GLuint id, GLenum textureType /*= GL_TEXTURE_2D*/) {

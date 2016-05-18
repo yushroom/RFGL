@@ -41,10 +41,12 @@ public:
     }
     
     void Render(const Shader& shader);
+    void RenderPatch(const Shader& shader);
     
     static Model& GetQuad();
     static Model& GetBox();
     static Model& GetSphere();
+    static Model& GetIcosahedron();
     
 private:
     std::vector<float>      m_positionBuffer;
