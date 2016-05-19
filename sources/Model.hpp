@@ -86,7 +86,7 @@ private:
         glBindBuffer(GL_ARRAY_BUFFER, m_tangentVBO);
         glBufferData(GL_ARRAY_BUFFER, m_tangentBuffer.size()*4, m_tangentBuffer.data(), GL_STATIC_DRAW);
     }
-    void BindBuffer(int vertexUsage = VertexUsagePosition);
+    void BindBuffer(int vertexUsage = VertexUsagePNUT);
 };
 
 #endif /* Model_hpp */
