@@ -442,8 +442,8 @@ int main()
     tessShader.FromString(tessVS, tessTCS, tessTES, "", tessFS);
     //Model head("/Users/yushroom/program/graphics/SoftRenderer/Model/head/head.OBJ");
     //Model head(models_dir+"head/head_optimized.obj");
-    Model head(models_dir+"/head/head.obj");
-    head.SetVertexUsage(VertexUsagePNUT);
+    Model head(models_dir+"/head/head.obj", VertexUsagePNUT);
+    //head.SetVertexUsage(VertexUsagePNUT);
     glCheckError();
     
     Model& quad = Model::GetQuad();

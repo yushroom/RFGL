@@ -31,7 +31,7 @@ const GLfloat YAW        = -90.0f;
 const GLfloat PITCH      =  0.0f;
 const GLfloat SPEED      =  3.0f;
 const GLfloat SENSITIVTY =  0.25f;
-const GLfloat ZOOM       =  45.0f;
+const GLfloat ZOOM       =  60.0f;
 
 
 // An abstract camera class that processes input and calculates the corresponding Eular Angles, Vectors and Matrices for use in OpenGL
@@ -141,5 +141,39 @@ private:
         this->Up    = glm::normalize(glm::cross(this->Right, this->Front));
     }
 };
+
+//class LookAtCamera
+//{
+//public:
+//	LookAtCamera(const glm::vec3& at, const glm::vec3& eye)
+//		: m_at(at)
+//	{
+//		m_eyeDirection = m_at - eye;
+//		m_distance = m_eyeDirection.length();
+//		m_eyeDirection /= m_distance;
+//	}
+//
+//	glm::mat4 GetViewMatrix()
+//	{
+//		return glm::lookAt(m_at - m_eyeDirection*m_distance, m_at, glm::vec3(0, 1, 0));
+//	}
+//
+//	void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true)
+//	{
+//
+//	}
+//
+//	void ProcessMouseScroll(float deltaDistance) {
+//		m_distance += deltaDistance;
+//		m_distance = glm::clamp(m_distance, m_minDistance, m_maxDistance);
+//	}
+//
+//private:
+//	float m_maxDistance = 1;
+//	float m_minDistance = 10;
+//	glm::vec3 m_at;
+//	glm::vec3 m_eyeDirection;
+//	float m_distance;
+//};
 
 #endif /* Camera_hpp */

@@ -22,15 +22,15 @@ Model::Model(const int n_vertex, const int n_face, float* positions, uint32_t* i
     :   m_positionBuffer(positions, positions+n_vertex*3),
         m_indexBuffer(indices, indices+n_face*3)
 {
-    GenerateBuffer();
-    BindBuffer();
+    GenerateBuffer(VertexUsagePosition);
+    BindBuffer(VertexUsagePosition);
 }
 
 Model::Model(std::vector<float> position_buffer, std::vector<uint32_t> index_buffer)
 : m_positionBuffer(position_buffer), m_indexBuffer(index_buffer)
 {
-    GenerateBuffer();
-    BindBuffer();
+    GenerateBuffer(VertexUsagePosition);
+    BindBuffer(VertexUsagePosition);
 }
 
 Model::Model(const int n_vertex, const int n_face, float* positions, float* normals, uint32_t* indices)
@@ -38,27 +38,30 @@ Model::Model(const int n_vertex, const int n_face, float* positions, float* norm
         m_normalBuffer(normals, normals+n_vertex*3),
         m_indexBuffer(indices, indices+n_face*3)
 {
-    GenerateBuffer();
-    BindBuffer();
+    GenerateBuffer(VertexUsagePN);
+    BindBuffer(VertexUsagePN);
 }
 
-Model::Model(const std::string& objModelPath)
+Model::Model(const std::string& objModelPath, int vertexUsage)
 {
     Assimp::Importer importer;
     const char* path = objModelPath.c_str();
-    unsigned int load_potion =
+    unsigned int load_option =
     aiProcess_Triangulate
-    | aiProcess_SortByPType
-    | aiProcess_GenSmoothNormals
-    | aiProcess_CalcTangentSpace
-    | aiProcess_JoinIdenticalVertices
-    | aiProcess_FixInfacingNormals
-    | aiProcess_OptimizeGraph
-    | aiProcess_OptimizeMeshes
-    | aiProcess_FlipUVs
-    | aiProcess_CalcTangentSpace
+	| aiProcess_RemoveComponent
+    //| aiProcess_SortByPType
+    | aiProcess_GenNormals
+    //| aiProcess_CalcTangentSpace
+    //| aiProcess_JoinIdenticalVertices
+    //| aiProcess_FixInfacingNormals
+    //| aiProcess_OptimizeGraph
+    //| aiProcess_OptimizeMeshes
+    //| aiProcess_FlipUVs
     ;
-    const aiScene* scene = importer.ReadFile(path, load_potion);
+	bool load_tangent = vertexUsage & VertexUsageTangent;
+	if (load_tangent)
+		load_option |= aiProcess_CalcTangentSpace;
+    const aiScene* scene = importer.ReadFile(path, load_option);
     if (!scene) {
         abort();
     }
@@ -83,6 +86,9 @@ Model::Model(const std::string& objModelPath)
         bool has_uv = mesh->HasTextureCoords(0);
         if (!has_uv)
             printf("mesh[%d] do not have uv!\n", i);
+		assert(!((!has_uv) && (vertexUsage & VertexUsageUV)));
+		bool load_uv = vertexUsage & VertexUsageUV;
+		
         for (unsigned int j = 0; j < mesh->mNumVertices; ++j) {
             auto& v = mesh->mVertices[j];
             m_positionBuffer.push_back(v.x);
@@ -94,14 +100,18 @@ Model::Model(const std::string& objModelPath)
             m_normalBuffer.push_back(n.y);
             m_normalBuffer.push_back(n.z);
             
-            auto& uv = mesh->mTextureCoords[0][j];
-            m_uvBuffer.push_back(uv.x);
-            m_uvBuffer.push_back(uv.y);
+			if (has_uv) {
+				auto& uv = mesh->mTextureCoords[0][j];
+				m_uvBuffer.push_back(uv.x);
+				m_uvBuffer.push_back(uv.y);
+			}
             
-            auto& t = mesh->mTangents[j];
-            m_tangentBuffer.push_back(t.x);
-            m_tangentBuffer.push_back(t.y);
-            m_tangentBuffer.push_back(t.z);
+			if (load_tangent) {
+				auto& t = mesh->mTangents[j];
+				m_tangentBuffer.push_back(t.x);
+				m_tangentBuffer.push_back(t.y);
+				m_tangentBuffer.push_back(t.z);
+			}
         }
         for (unsigned int j = 0; j < mesh->mNumFaces; j++) {
             auto& face = mesh->mFaces[j];
@@ -112,8 +122,8 @@ Model::Model(const std::string& objModelPath)
         idx += mesh->mNumFaces;
     }
     
-    GenerateBuffer();
-    BindBuffer();
+    GenerateBuffer(vertexUsage);
+    BindBuffer(vertexUsage);
 }
 
 Model::~Model() {
@@ -135,6 +145,38 @@ void Model::RenderPatch(const Shader &shader) {
     glBindVertexArray(m_VAO);
     glDrawElements(GL_PATCHES, (GLsizei)m_indexBuffer.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+}
+
+void Model::GenerateBuffer(int vertexUsage) {
+	// VAO
+	glGenVertexArrays(1, &m_VAO);
+
+	// index vbo
+	glGenBuffers(1, &m_indexVBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexVBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer.size() * 4, m_indexBuffer.data(), GL_STATIC_DRAW);
+
+	glGenBuffers(1, &m_positionVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_positionVBO);
+	glBufferData(GL_ARRAY_BUFFER, m_positionBuffer.size() * 4, m_positionBuffer.data(), GL_STATIC_DRAW);
+
+	if (vertexUsage & VertexUsageNormal) {
+		glGenBuffers(1, &m_normalVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, m_normalVBO);
+		glBufferData(GL_ARRAY_BUFFER, m_normalBuffer.size() * 4, m_normalBuffer.data(), GL_STATIC_DRAW);
+	}
+
+	if (vertexUsage & VertexUsageUV) {
+		glGenBuffers(1, &m_uvVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, m_uvVBO);
+		glBufferData(GL_ARRAY_BUFFER, m_uvBuffer.size() * 4, m_uvBuffer.data(), GL_STATIC_DRAW);
+	}
+
+	if (vertexUsage & VertexUsageTangent) {
+		glGenBuffers(1, &m_tangentVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, m_tangentVBO);
+		glBufferData(GL_ARRAY_BUFFER, m_tangentBuffer.size() * 4, m_tangentBuffer.data(), GL_STATIC_DRAW);
+	}
 }
 
 void Model::BindBuffer(int vertexUsage/* = VertexUsagePN*/) {
@@ -172,14 +214,18 @@ void Model::BindBuffer(int vertexUsage/* = VertexUsagePN*/) {
 
 Model& Model::GetQuad()
 {
+#if defined(_WIN32)
+	static Model quad("D:/program/RFGL/models/Quad.obj", VertexUsagePNUT);
+#else
     static Model quad("/Users/yushroom/program/graphics/RFGL/models/Quad.obj");
+#endif
     return quad;
 }
 
 Model& Model::GetBox()
 {
 #if defined(_WIN32)
-	static Model box("D:/program/RFGL/models/cube.obj");
+	static Model box("D:/program/RFGL/models/cube.obj", VertexUsagePNUT);
 #else
 	static Model box("/Users/yushroom/program/graphics/RFGL/models/box.obj");
 #endif
@@ -189,7 +235,7 @@ Model& Model::GetBox()
 Model& Model::GetSphere()
 {
 #if defined(_WIN32)
-	static Model sphere("D:/program/RFGL/models/Sphere.obj");
+	static Model sphere("D:/program/RFGL/models/Sphere.obj", VertexUsagePNUT);
 #else
     static Model sphere("/Users/yushroom/program/github/SeparableSSS/SeparableSSS/Models/Sphere.obj");
 #endif
