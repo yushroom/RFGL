@@ -129,6 +129,8 @@ const std::string tessVS = R"(
 layout (location = PositionIndex) in vec3 position;
 layout (location = NormalIndex) in vec3 normal;
 layout (location = UVIndex) in vec2 uv;
+uniform mat4 uModelMatrix;
+uniform mat3 uNormalMatrix;
 out VS_OUT {
     vec3 position;
     vec3 normal;
@@ -136,8 +138,8 @@ out VS_OUT {
 } vs_out;
 
 void main() {
-    vs_out.position = position.xyz;
-    vs_out.normal = normal;
+    vs_out.position = vec3( uModelMatrix * vec4(position, 1) );
+    vs_out.normal = uNormalMatrix * normal;
     vs_out.uv = uv;
 }
 )";
@@ -167,15 +169,16 @@ void main()
     tcs_out[ID].normal = vs_out[ID].normal;
     tcs_out[ID].uv = vs_out[ID].uv;
     
-    if (ID == 0) {
+    //if (ID == 0) {
         gl_TessLevelInner[0] = TessLevelInner;
         gl_TessLevelOuter[0] = TessLevelOuter;
         gl_TessLevelOuter[1] = TessLevelOuter;
         gl_TessLevelOuter[2] = TessLevelOuter;
-    }
+    //}
 }
 )";
 
+// phong tessellation
 const std::string tessTES = R"(
 layout(triangles, equal_spacing, ccw) in;
 //in vec3 tcPosition[];
@@ -189,33 +192,39 @@ in TCS_OUT {
 out TES_OUT {
     vec3 position;
     vec3 normal;
-    vec3 patchDistance;
+    //vec3 patchDistance;
     vec2 uv;
 } tes_out;
-uniform mat4 Projection;
-uniform mat4 Modelview;
-uniform mat3 NormalMatrix;
+uniform mat4 uViewProjMatrix;
+//uniform mat4 Projection;
+//uniform mat4 Modelview;
+//uniform mat3 NormalMatrix;
 uniform sampler2D displacementMap;
 uniform float bumpiness;
+const float alpha = 0.75;   // phong tessellation control factor
+
+vec3 Project(vec3 q, vec3 p, vec3 n) {
+    return q - dot(q-p, n)*n;
+}
 
 void main()
 {
-    vec3 p0 = gl_TessCoord.x * tcs_out[0].position;
-    vec3 p1 = gl_TessCoord.y * tcs_out[1].position;
-    vec3 p2 = gl_TessCoord.z * tcs_out[2].position;
-    //tePatchDistance = gl_TessCoord;
-    tes_out.patchDistance = gl_TessCoord;
-    tes_out.position = p0 + p1 + p2;
-    tes_out.normal = gl_TessCoord.x * tcs_out[0].normal +
-                     gl_TessCoord.y * tcs_out[1].normal +
-                     gl_TessCoord.z * tcs_out[2].normal;
+    //tes_out.patchDistance = gl_TessCoord;
+    vec3 linear_pos = mat3(tcs_out[0].position, tcs_out[1].position, tcs_out[2].position) * gl_TessCoord;
+    vec3 proj_pos = mat3(Project(linear_pos, tcs_out[0].position, tcs_out[0].normal),
+                         Project(linear_pos, tcs_out[1].position, tcs_out[1].normal),
+                         Project(linear_pos, tcs_out[2].position, tcs_out[2].normal))
+                    * gl_TessCoord;
+    tes_out.position = mix(linear_pos, proj_pos, alpha);
+    tes_out.normal = mat3(tcs_out[0].normal,
+                          tcs_out[1].normal,
+                          tcs_out[2].normal) * gl_TessCoord;
     tes_out.normal = normalize(tes_out.normal);
     tes_out.uv = gl_TessCoord.x * tcs_out[0].uv +
                  gl_TessCoord.y * tcs_out[1].uv +
                  gl_TessCoord.z * tcs_out[2].uv;
     tes_out.position += texture(displacementMap, tes_out.uv).r * bumpiness * tes_out.normal;
-    tes_out.normal = normalize(NormalMatrix * tes_out.normal);
-    gl_Position = Projection * Modelview * vec4(tes_out.position, 1);
+    gl_Position =  uViewProjMatrix * vec4(tes_out.position, 1);
 }
 )";
 
@@ -257,7 +266,7 @@ out vec4 FragColor;
 in TES_OUT {
     vec3 position;
     vec3 normal;
-    vec3 patchDistance;
+    //vec3 patchDistance;
     vec2 uv;
 } tes_out;
 in float gPrimitive;
@@ -269,9 +278,9 @@ void main()
 {
     vec3 N = normalize(tes_out.normal);
     float NDotL = clamp(dot(N, lightDir), 0.0, 1.0);
-    //FragColor = texture(diffuseMap, tes_out.uv) * NDotL;
-    FragColor.rgb = vec3(NDotL);
-    FragColor.a = 1;
+    FragColor = texture(diffuseMap, tes_out.uv) * NDotL;
+    //FragColor.rgb = vec3(NDotL);
+    //FragColor.a = 1;
 }
 )";
 
@@ -372,6 +381,7 @@ int main()
     TwAddVarRO(myBar, "NumTexUnits", TW_TYPE_UINT32, &NumberOfTexUnits, " label='# of texture units' ");
     TwDefine(" GLOBAL help='This example shows how to integrate AntTweakBar with GLFW and OpenGL.' "); // Message added to the help bar.
     
+    double fps = 0;
     uint32_t tessLevelInner = 3;
     uint32_t tessLevelOuter = 2;
     float bumpiness = 0.001f;
@@ -390,7 +400,7 @@ int main()
                " label='Wireframe mode' key=w help='Toggle wireframe display mode.' ");
     
     // Add 'time' to 'bar': it is a read-only (RO) variable of type TW_TYPE_DOUBLE, with 1 precision digit
-    TwAddVarRO(myBar, "time", TW_TYPE_DOUBLE, &time, " label='Time' precision=1 help='Time (in seconds).' ");
+    TwAddVarRO(myBar, "fps", TW_TYPE_DOUBLE, &fps, " label='fps' precision=1 help='FPS' ");
     
     // Add 'bgColor' to 'bar': it is a modifable variable of type TW_TYPE_COLOR3F (3 floats color)
     TwAddVarRW(myBar, "bgColor", TW_TYPE_COLOR3F, &bgColor, " label='Background color' ");
@@ -469,6 +479,8 @@ int main()
     //glDisable(GL_CULL_FACE);
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     
+    double t = glfwGetTime();
+    
     // Game loop
     while (!glfwWindowShouldClose(window))
     {
@@ -496,13 +508,13 @@ int main()
         auto proj = glm::perspective(glm::radians(camera.Zoom), float(width)/height, 0.1f, 100.f);
         auto mvp = proj * view * model;
         
-        glDisable(GL_CULL_FACE);
-        auto sky_mvp = proj * view * glm::scale(glm::mat4(), glm::vec3(10, 10, 10));
-        skyShader.Use();
-        skyShader.BindUniformMat4("mvp", sky_mvp);
-        skyShader.BindUniformTexture("skyTex", skyTex.GetGLTexuture(), 0, GL_TEXTURE_CUBE_MAP);
-        Model::GetSphere().Render(skyShader);
-        //glEnable(GL_CULL_FACE);
+//        glDisable(GL_CULL_FACE);
+//        auto sky_mvp = proj * view * glm::scale(glm::mat4(), glm::vec3(10, 10, 10));
+//        skyShader.Use();
+//        skyShader.BindUniformMat4("mvp", sky_mvp);
+//        skyShader.BindUniformTexture("skyTex", skyTex.GetGLTexuture(), 0, GL_TEXTURE_CUBE_MAP);
+//        Model::GetSphere().Render(skyShader);
+//        glEnable(GL_CULL_FACE);
         
 //        shader.Use();
 //        shader.BindUniformMat4("mvp", mvp);
@@ -512,27 +524,31 @@ int main()
 //        shader.BindUniformTexture("normalMap", normalMap.GetGLTexuture(), 1);
 //        head.Render(shader);
         
-        auto modelView = view * glm::rotate(glm::mat4(), -45.0f, glm::vec3(1, 0, 0));
+        //auto modelView = view * glm::rotate(glm::mat4(), -45.0f, glm::vec3(1, 0, 0));
+        //auto modelView = view * model;
+        auto modelView = view;
         tessShader.Use();
-        tessShader.BindUniformMat4("Projection", proj);
-        tessShader.BindUniformMat4("Modelview", modelView);
-        tessShader.BindUniformMat3("NormalMatrix", glm::mat3(modelView));
+        tessShader.BindUniformMat4("uViewProjMatrix", proj * view);
+        tessShader.BindUniformMat4("uModelMatrix", glm::mat4());
+        tessShader.BindUniformMat3("uNormalMatrix", glm::mat3(modelView));
         //tessShader.BindUniformVec3("LightPosition", glm::vec3(5, 5, 5));
         tessShader.BindUniformFloat("TessLevelInner", tessLevelInner);
         tessShader.BindUniformFloat("TessLevelOuter", tessLevelOuter);
         tessShader.BindUniformFloat("bumpiness", bumpiness);
         tessShader.BindUniformTexture("displacementMap", bricksDisplacementMap.GetGLTexuture(), 0);
-        //tessShader.BindUniformTexture("diffuseMap", diffuse.GetGLTexuture(), 1);
+        tessShader.BindUniformTexture("diffuseMap", bricksDiffuse.GetGLTexuture(), 1);
         //Model::GetIcosahedron().RenderPatch(tessShader);
         //Model::GetBox().RenderPatch(tessShader);
         //head.RenderPatch(tessShader);
-        quad.RenderPatch(tessShader);
+        sphere88.RenderPatch(tessShader);
+        //quad.RenderPatch(tessShader);
         
 //        glCheckError();
 //        simpleShader.Use();
 //        simpleShader.BindUniformMat4("mvp", proj * view);
 //        //Model::GetIcosahedron().Render(simpleShader);
-//        Model::GetQuad().Render(simpleShader);
+//        //Model::GetQuad().Render(simpleShader);
+//        Model::GetBox().Render(simpleShader);
         
 //        visualizeNormalShader.Use();
 //        visualizeNormalShader.BindUniformMat4("model", model);
@@ -540,6 +556,9 @@ int main()
 //        visualizeNormalShader.BindUniformMat4("proj", proj);
 //        head.Render(shader);
         
+        double new_t = glfwGetTime();
+        fps = 1.0 / (new_t - t);
+        t = new_t;
         if (wire == 1) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         TwDraw();
         
