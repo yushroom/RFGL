@@ -123,23 +123,37 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\sources\App.hpp" />
+    <ClInclude Include="..\sources\Behavior.hpp" />
     <ClInclude Include="..\sources\Camera.hpp" />
+    <ClInclude Include="..\sources\Component.hpp" />
     <ClInclude Include="..\sources\GameObject.hpp" />
     <ClInclude Include="..\sources\GLError.hpp" />
+    <ClInclude Include="..\sources\GUI.hpp" />
+    <ClInclude Include="..\sources\Input.hpp" />
+    <ClInclude Include="..\sources\IRunable.hpp" />
+    <ClInclude Include="..\sources\Log.hpp" />
     <ClInclude Include="..\sources\Model.hpp" />
-    <ClInclude Include="..\sources\PRT.hpp" />
+    <ClInclude Include="..\sources\RFGL.hpp" />
+    <ClInclude Include="..\sources\RenderSystem.hpp" />
     <ClInclude Include="..\sources\Shader.hpp" />
     <ClInclude Include="..\sources\Texture.hpp" />
+    <ClInclude Include="..\sources\Transform.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\Camera.cpp" />
     <ClCompile Include="..\sources\GameObject.cpp" />
     <ClCompile Include="..\sources\GLError.cpp" />
     <ClCompile Include="..\sources\glew.c" />
+    <ClCompile Include="..\sources\GUI.cpp" />
+    <ClCompile Include="..\sources\Input.cpp" />
+    <ClCompile Include="..\sources\Log.cpp" />
     <ClCompile Include="..\sources\main.cpp" />
     <ClCompile Include="..\sources\Model.cpp" />
+    <ClCompile Include="..\sources\RenderSystem.cpp" />
     <ClCompile Include="..\sources\Shader.cpp" />
     <ClCompile Include="..\sources\Texture.cpp" />
+    <ClCompile Include="..\sources\Transform.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

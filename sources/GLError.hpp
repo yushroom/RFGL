@@ -1,7 +1,7 @@
 #ifndef GLERROR_H
 #define GLERROR_H
 
-void _check_gl_error(const char *file, int line);
+void _checkOpenGLError(const char *file, int line);
 
 ///
 /// Usage
@@ -13,6 +13,6 @@ void _check_gl_error(const char *file, int line);
 //#else
 //#define check_gl_error()
 //#endif
-#define glCheckError() _check_gl_error(__FILE__,__LINE__)
+#define glCheckError() _checkOpenGLError(__FILE__,__LINE__)
 
 #endif // GLERROR_H

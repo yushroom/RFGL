@@ -11,11 +11,12 @@
 //#  include <GL3/gl3.h>
 //#endif
 
-#include "PRT.hpp"
+#include "RFGL.hpp"
+#include "Log.hpp"
 
 using namespace std;
 
-void _check_gl_error(const char *file, int line) {
+void _checkOpenGLError(const char *file, int line) {
 	GLenum err(glGetError());
 
 	while (err != GL_NO_ERROR) {
@@ -30,7 +31,8 @@ void _check_gl_error(const char *file, int line) {
 		}
 
         //SDL_Log("error");
-		cerr << "GL_" << error.c_str() << " - " << file << ":" << line << endl;
+		//cerr << "GL_" << error.c_str() << " - " << file << ":" << line << endl;
+		warning("GL_%s - %s:%d", error.c_str(), file, line);
 		err = glGetError();
 	}
 }

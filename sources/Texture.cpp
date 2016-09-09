@@ -11,10 +11,13 @@
 #include <stb/stb_image.h>
 #include <gli/gli.hpp>
 #include "GLError.hpp"
+#include "Log.hpp"
 
 Texture::~Texture() {
     glDeleteTextures(1, &m_texture);
 }
+
+
 
 // http://gli.g-truc.net/0.8.1/api/a00006.html
 // bug fixed
@@ -23,7 +26,11 @@ GLuint create_texture(char const* Filename)
     glCheckError();
     
     gli::texture Texture = gli::load(Filename);
-    assert(!Texture.empty());
+	if (Texture.empty()) {
+		error("Texture %s not found", Filename);
+		abort();
+	}
+    //assert(!Texture.empty());
     
     gli::gl GL(gli::gl::PROFILE_GL33);
     gli::gl::format const Format = GL.translate(Texture.format(), Texture.swizzles());
@@ -212,16 +219,23 @@ GLuint CreateTexture(const std::string& path) {
     return t;
 }
 
+void Texture::fromFile(const std::string& path)
+{
+	auto pos = path.find_last_of('.');
+	assert(pos != std::string::npos);
+	auto ext = path.substr(pos + 1);
+	if (ext == "dds") {
+		m_texture = create_texture(path.c_str());
+	}
+	else if (ext == "bmp" || ext == "png" || ext == "jpg") {
+		m_texture = CreateTexture(path);
+	}
+	else {
+		printf("texture type[%s] not supported\n", ext.c_str());
+		abort();
+	}
+}
+
 Texture::Texture(const std::string& path) {
-    auto pos = path.find_last_of('.');
-    assert(pos != std::string::npos);
-    auto ext = path.substr(pos+1);
-    if (ext == "dds") {
-        m_texture = create_texture(path.c_str());
-    } else if (ext == "bmp" || ext == "png" || ext == "jpg") {
-        m_texture = CreateTexture(path);
-    } else {
-        printf("texture type[%s] not supported\n", ext.c_str());
-        abort();
-    }
+	fromFile(path);
 }

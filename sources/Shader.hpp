@@ -9,7 +9,7 @@
 #ifndef Shader_hpp
 #define Shader_hpp
 
-#include "PRT.hpp"
+#include "RFGL.hpp"
 #include <string>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -34,37 +34,39 @@ public:
     Shader() = default;
     Shader(const Shader&) = delete;
     Shader& operator=(const Shader&) = delete;
-    void FromString(const std::string& vs_str, const std::string& fs_str);
-    void FromString(const std::string& vs_str, const std::string& fs_str, const std::string& gs_str);
-    void FromString(const std::string& vs_str,
+	Shader(Shader&&);
+
+    void fromString(const std::string& vs_str, const std::string& fs_str);
+    void fromString(const std::string& vs_str, const std::string& fs_str, const std::string& gs_str);
+    void fromString(const std::string& vs_str,
                     const std::string& tcs_str,
                     const std::string& tes_str,
                     const std::string& gs_str,
                     const std::string& fs_str);
-    void FromFile(const std::string& vs_path, const std::string ps_path);
+    void fromFile(const std::string& vs_path, const std::string ps_path);
 	//Shader(const std::string& vs_path, const std::string ps_path);
     ~Shader();
     
-    void Use();
+    void use() const;
     
-    GLuint GetGLProgram() const {
+    GLuint getGLProgram() const {
         return m_program;
     }
     
-    GLuint GetAttribLocation(const char* name) const;
+    GLuint getAttribLocation(const char* name) const;
     
-    void BindUniformFloat(const char* name, const float value) const;
-    void BindUniformVec3(const char* name, const glm::vec3& value) const;
-    void BindUniformMat3(const char* name, const glm::mat3& value) const;
-    void BindUniformMat4(const char* name, const glm::mat4& value) const;
+    void bindUniformFloat(const char* name, const float value) const;
+    void bindUniformVec3(const char* name, const glm::vec3& value) const;
+    void bindUniformMat3(const char* name, const glm::mat3& value) const;
+    void bindUniformMat4(const char* name, const glm::mat4& value) const;
     
     
-    void BindUniformTexture(const char* name, const GLuint texture, const GLuint id, GLenum textureType = GL_TEXTURE_2D);
+    void bindUniformTexture(const char* name, const GLuint texture, const GLuint id, GLenum textureType = GL_TEXTURE_2D);
 
 private:
 	GLuint m_program = 0;
     
-    GLint GetUniformLocation(const char* name) const;
+    GLint _getUniformLocation(const char* name) const;
 };
 
 #endif

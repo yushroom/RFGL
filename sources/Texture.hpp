@@ -9,12 +9,13 @@
 #ifndef Texture_hpp
 #define Texture_hpp
 
-#include "PRT.hpp"
+#include "RFGL.hpp"
 #include <string>
 
 class Texture
 {
 public:
+	Texture() {}
     //Texture(GLuint texture) : m_texture(texture) {};
     Texture(const std::string& path);
     Texture(const Texture&) = delete;
@@ -22,8 +23,10 @@ public:
     ~Texture();
     
     //static Texture& GetSimpleTexutreCubeMap();
+
+	void fromFile(const std::string& path);
     
-    GLuint GetGLTexuture() const {
+    GLuint getGLTexuture() const {
         return m_texture;
     }
     

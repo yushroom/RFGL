@@ -26,6 +26,7 @@ enum VertexUsage {
 class Model
 {
 public:
+	Model();
     Model(std::vector<float> position_buffer, std::vector<uint32_t> index_buffer);
     Model(const int n_vertex, const int n_face, float* positions, uint32_t* indices);
     Model(const int n_vertex, const int n_face, float* positions, float* normals, uint32_t* indices);
@@ -33,20 +34,24 @@ public:
     
     Model(const Model&) = delete;
     void operator=(const Model&) = delete;
+
+	Model(Model&& m);
     
     ~Model();
     
-    void SetVertexUsage(int vertexUsage) {
-        BindBuffer(vertexUsage);
+	void fromObjFile(const std::string path, int vertexUsage);
+
+    void setVertexUsage(int vertexUsage) {
+        _bindBuffer(vertexUsage);
     }
     
-    void Render(const Shader& shader);
-    void RenderPatch(const Shader& shader);
+    void render(const Shader& shader);
+    void renderPatch(const Shader& shader);
     
-    static Model& GetQuad();
-    static Model& GetBox();
-    static Model& GetSphere();
-    static Model& GetIcosahedron();
+    static Model& getQuad();
+    static Model& getBox();
+    static Model& getSphere();
+    static Model& getIcosahedron();
     
 private:
     std::vector<float>      m_positionBuffer;
@@ -61,8 +66,13 @@ private:
     GLuint m_uvVBO;
     GLuint m_tangentVBO;
     
-	void GenerateBuffer(int vertexUsage);
-    void BindBuffer(int vertexUsage);
+	void _generateBuffer(int vertexUsage);
+    void _bindBuffer(int vertexUsage);
+};
+
+class DynamicModel
+{
+
 };
 
 #endif /* Model_hpp */

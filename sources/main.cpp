@@ -1,33 +1,15 @@
 #include <iostream>
 
-// GLEW
-#define GLEW_STATIC
-#include <GL/glew.h>
+#include "RenderSystem.hpp"
+#include "Log.hpp"
 
-// GLFW
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-#include <AntTweakBar.h>
-
-#include "Shader.hpp"
-#include "Model.hpp"
-#include "Texture.hpp"
-#include "GLError.hpp"
+#include "App.hpp"
+#include "Input.hpp"
+#include "GUI.hpp"
+#include "GameObject.hpp"
 #include "Camera.hpp"
 
-
-// Function prototypes
-void windowSizeCallback(GLFWwindow* window, int width, int height);
-void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void Do_Movement();
-
-// Window dimensions
-const GLuint WIDTH = 800, HEIGHT = 600;
+using namespace std;
 
 // Shaders
 const std::string simpleVS = R"(
@@ -47,7 +29,7 @@ void main()
 }
 )";
 
-const std::string vertexShaderSource = R"(//#version 410 core
+const std::string normalMapVS = R"(//#version 410 core
 layout (location = PositionIndex) in vec3 position;
 layout (location = NormalIndex) in vec3 normal;
 layout (location = TangentIndex) in vec3 tangent;
@@ -69,7 +51,7 @@ void main()
     gl_Position = mvp * vec4(position, 1.0);
 }
 )";
-const std::string fragmentShaderSource = R"(//#version 410 core
+const std::string normalMapFS = R"(//#version 410 core
 const vec3 lightDir = normalize(vec3(1, 1, 1));
 const float bumpiness = 0.2;
 uniform sampler2D diffuseMap;
@@ -100,7 +82,7 @@ void main()
 }
 )";
 
-const std::string skyBoxVert = R"(//#version 410 core
+const std::string skyBoxVS = R"(//#version 410 core
 layout(location = 0) in vec3 position;
 out vec3 uv;
 uniform mat4 mvp;
@@ -112,7 +94,7 @@ void main()
 }
 )";
 
-const std::string skyBoxFrag = R"(//#version 410 core
+const std::string skyBoxFS = R"(//#version 410 core
 in vec3 uv;
 layout(location = PositionIndex) out vec4 color;
 uniform float intensity;
@@ -284,7 +266,7 @@ void main()
 }
 )";
 
-const std::string visualizeNormalVert = R"(//#version 410 core
+const std::string visualizeNormalVS = R"(//#version 410 core
 layout (location = PositionIndex) in vec3 position;
 layout (location = NormalIndex) in vec3 normal;
 out VS_OUT {
@@ -326,7 +308,7 @@ void main()
 }
 )";
 
-const std::string visualizeNormalFrag = R"(//#version 330 core
+const std::string visualizeNormalFS = R"(//#version 330 core
 out vec4 color;
 void main()
 {
@@ -334,306 +316,128 @@ void main()
 }
 )";
 
+class ExampleApp1 : public App
+{
+private:
+	Shader m_normalMapShader;
+	Shader m_skyShader;
+	Shader m_visualizeNormalShader;
 
-Camera camera(glm::vec3(0, 0, 3));
-bool keys[1024];
-GLfloat lastX = 400, lastY = 300;
-bool firstMouse = true;
+	Texture m_skyTexture;
+	Texture m_headDiffuseTexture;
+	Texture m_headNormalMapTexture;
 
-GLfloat deltaTime = 0.0f;
-GLfloat lastFrame = 0.0f;
+	Model m_headModel;
+
+	bool m_isWireFrameMode = false;
+	bool m_visualizeNormal = false;
+
+	
+
+public:
+
+	virtual void init() override {
+#if defined(_WIN32)
+		const std::string root_dir = "../";
+#else
+		const std::string root_dir = "/Users/yushroom/program/graphics/RFGL/";
+#endif
+		const std::string models_dir = root_dir + "models/";
+		const std::string textures_dir = root_dir + "textures/";
+
+		m_normalMapShader.fromString(normalMapVS, normalMapFS);
+		m_skyShader.fromString(skyBoxVS, skyBoxFS);
+		m_visualizeNormalShader.fromString(visualizeNormalVS, visualizeNormalFS, visualizeNormalGS);
+		glCheckError();
+
+		m_headModel.fromObjFile(models_dir + "/head/head_combined.obj", VertexUsagePNUT);
+		glCheckError();
+
+		Model& quad = Model::getQuad();
+		quad.setVertexUsage(VertexUsagePNUT);
+
+		m_skyTexture.fromFile(textures_dir + "StPeters/DiffuseMap.dds");
+		m_headDiffuseTexture.fromFile(models_dir + "/head/lambertian.jpg");
+		m_headNormalMapTexture.fromFile(models_dir + "/head/NormalMap_RG16f_1024_mipmaps.dds");
+
+		GUI::addBool("WireFrame", m_isWireFrameMode);
+		GUI::addBool("VisiualizeNormal", m_visualizeNormal);
+	}
+
+	virtual void run() override {
+		if (m_isWireFrameMode)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		else
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+		//glPatchParameteri(GL_PATCH_VERTICES, 3);
+
+		static float angle = 0;
+		glm::mat4 model = glm::rotate(glm::scale(glm::mat4(), glm::vec3(10, 10, 10)), angle, glm::vec3(0, 1, 0));
+		//angle += 0.005f;
+		if (angle > M_PI * 2.0f) angle -= M_PI * 2.0f;
+		auto camera = RenderSystem::getInstance().getMainCamera();
+		auto view = camera->getViewMatrix();
+		auto proj = camera->getProjectMatrix();
+		auto mvp = proj * view * model;
+
+		glDisable(GL_CULL_FACE);
+		auto sky_mvp = proj * view * glm::scale(glm::mat4(), glm::vec3(10, 10, 10));
+		m_skyShader.use();
+		m_skyShader.bindUniformMat4("mvp", sky_mvp);
+		m_skyShader.bindUniformTexture("skyTex", m_skyTexture.getGLTexuture(), 0, GL_TEXTURE_CUBE_MAP);
+		Model::getSphere().render(m_skyShader);
+		glEnable(GL_CULL_FACE);
+
+		m_normalMapShader.use();
+		m_normalMapShader.bindUniformMat4("mvp", mvp);
+		m_normalMapShader.bindUniformMat4("model", model);
+		//shader.BindUniformTexture("bumpTex", bumpTexture.GetGLTexuture(), 0);
+		m_normalMapShader.bindUniformTexture("diffuseMap", m_headDiffuseTexture.getGLTexuture(), 0);
+		m_normalMapShader.bindUniformTexture("normalMap", m_headNormalMapTexture.getGLTexuture(), 1);
+		m_headModel.render(m_normalMapShader);
+
+		auto modelView = view;
+
+		if (m_visualizeNormal) {
+			m_visualizeNormalShader.use();
+			m_visualizeNormalShader.bindUniformMat4("model", model);
+			m_visualizeNormalShader.bindUniformMat4("view", view);
+			m_visualizeNormalShader.bindUniformMat4("proj", proj);
+			m_headModel.render(m_visualizeNormalShader);
+		}
+
+		if (Input::getKeyDown(Input::KeyCode_A)) {
+			info("A pressed");
+		}
+		if (Input::getKey(Input::KeyCode_A)) {
+			info("A held");
+		}
+		if (Input::getKeyUp(Input::KeyCode_A)) {
+			info("A released");
+		}
+
+		if (m_isWireFrameMode)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
+	virtual void clean() override {
+
+	}
+};
 
 
-// The MAIN function, from here we start the application and run the game loop
 int main()
 {
-    std::cout << "Starting GLFW context, OpenGL 4.1" << std::endl;
-    // Init GLFW
-    glfwInit();
-    // Set all the required options for GLFW
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-
-    // Create a GLFWwindow object that we can use for GLFW's functions
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
-    glfwMakeContextCurrent(window);
-
-    // Set the required callback functions
-    glfwSetKeyCallback(window, key_callback);
-    glfwSetCursorPosCallback(window, mouse_callback);
-    glfwSetScrollCallback(window, scroll_callback);
-
-
-    // Set this to true so GLEW knows to use a modern approach to retrieving function pointers and extensions
-    glewExperimental = GL_TRUE;
-    // Initialize GLEW to setup the OpenGL Function pointers
-    glewInit();
-    
-    glCheckError();
-    
-    TwInit(TW_OPENGL_CORE, NULL);
-    TwBar *myBar = TwNewBar("MyBar");
-    unsigned int NumberOfTexUnits = 0; // query the hardware to get the number of available texture units
-    // ...
-    TwAddVarRO(myBar, "NumTexUnits", TW_TYPE_UINT32, &NumberOfTexUnits, " label='# of texture units' ");
-    TwDefine(" GLOBAL help='This example shows how to integrate AntTweakBar with GLFW and OpenGL.' "); // Message added to the help bar.
-    
-    double fps = 0;
-    uint32_t tessLevelInner = 3;
-    uint32_t tessLevelOuter = 2;
-    float bumpiness = 0.001f;
-    double time = 0;// Current time and enlapsed time
-    //double turn = 0;    // Model turn counter
-    double speed = 0.3; // Model rotation speed
-    int wire = 0;       // Draw model in wireframe?
-    float bgColor[] = { 0.1f, 0.2f, 0.4f };         // Background color
-    unsigned char cubeColor[] = { 255, 0, 0, 128 }; // Model color (32bits RGBA)
-    // Add 'speed' to 'bar': it is a modifable (RW) variable of type TW_TYPE_DOUBLE. Its key shortcuts are [s] and [S].
-    TwAddVarRW(myBar, "speed", TW_TYPE_DOUBLE, &speed,
-               " label='Rot speed' min=0 max=2 step=0.01 keyIncr=s keyDecr=S help='Rotation speed (turns/second)' ");
-    
-    // Add 'wire' to 'bar': it is a modifable variable of type TW_TYPE_BOOL32 (32 bits boolean). Its key shortcut is [w].
-    TwAddVarRW(myBar, "wire", TW_TYPE_BOOL32, &wire,
-               " label='Wireframe mode' key=w help='Toggle wireframe display mode.' ");
-    
-    // Add 'time' to 'bar': it is a read-only (RO) variable of type TW_TYPE_DOUBLE, with 1 precision digit
-    TwAddVarRO(myBar, "fps", TW_TYPE_DOUBLE, &fps, " label='fps' precision=1 help='FPS' ");
-    
-    // Add 'bgColor' to 'bar': it is a modifable variable of type TW_TYPE_COLOR3F (3 floats color)
-    TwAddVarRW(myBar, "bgColor", TW_TYPE_COLOR3F, &bgColor, " label='Background color' ");
-    
-    // Add 'cubeColor' to 'bar': it is a modifable variable of type TW_TYPE_COLOR32 (32 bits color) with alpha
-    TwAddVarRW(myBar, "cubeColor", TW_TYPE_COLOR32, &cubeColor,
-               " label='Cube color' alpha help='Color and transparency of the cube.' ");
-    TwAddVarRW(myBar, "TessLevelInner", TW_TYPE_UINT32, &tessLevelInner, "label='TessLevelInner' min=1 max=32");
-    TwAddVarRW(myBar, "TessLevelOuter", TW_TYPE_UINT32, &tessLevelOuter, "label='TessLevelOuter' min=1 max=32");
-    TwAddVarRW(myBar, "Bumpiness", TW_TYPE_FLOAT, &bumpiness,
-               " label='bumpinrdd' min=0 max=0.5 step=0.01 keyIncr=s keyDecr=S help='Rotation speed (turns/second)' ");
-    
-    glfwSetWindowSizeCallback(window, windowSizeCallback);
-    glfwSetMouseButtonCallback(window, mouseButtonCallback);
-
-    GLint MaxPatchVertices = 0;
-    glGetIntegerv(GL_MAX_PATCH_VERTICES, &MaxPatchVertices);
-    printf("Max supported patch vertices %d\n", MaxPatchVertices);
-    glPatchParameteri(GL_PATCH_VERTICES, 3);
-    
-    // Define the viewport dimensions
-    int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
-    glViewport(0, 0, width, height);
-    TwWindowSize(width, height);
-
-    //Camera camera(glm::vec3(0, 0, 3));
-#if defined(_WIN32)
-	const std::string root_dir = "../";
-#else
-    const std::string root_dir = "/Users/yushroom/program/graphics/RFGL/";
-#endif
-    //const std::string root_dir = "/Users/yushroom/Downloads/head2";
-    const std::string models_dir = root_dir + "models/";
-    const std::string textures_dir = root_dir + "textures/";
-    //const std::string models_dir = root_dir;
-    //const std::string textures_dir = root_dir;
-    
-    Shader shader;
-    shader.FromString(vertexShaderSource, fragmentShaderSource);
-    Shader skyShader;
-    skyShader.FromString(skyBoxVert, skyBoxFrag);
-    Shader visualizeNormalShader;
-    visualizeNormalShader.FromString(visualizeNormalVert, visualizeNormalFrag, visualizeNormalGS);
-    Shader simpleShader;
-    simpleShader.FromString(simpleVS, simpleFS);
-    
-    Shader tessShader;
-    tessShader.FromString(tessVS, tessTCS, tessTES, "", tessFS);
-    //Model head("/Users/yushroom/program/graphics/SoftRenderer/Model/head/head.OBJ");
-    //Model head(models_dir+"head/head_optimized.obj");
-    Model head(models_dir+"/head/head.obj", VertexUsagePNUT);
-    //head.SetVertexUsage(VertexUsagePNUT);
-    glCheckError();
-    
-    Model& quad = Model::GetQuad();
-    quad.SetVertexUsage(VertexUsagePNUT);
-    
-    Texture skyTex(textures_dir+"StPeters/DiffuseMap.dds");
-    //auto& skyTex = Texture::GetSimpleTexutreCubeMap();
-    //Texture diffuse(models_dir+"head/DiffuseMap_R8G8B8A8_1024_mipmaps.dds");
-    Texture diffuse(models_dir+"/head/lambertian.jpg");
-    //bump.png
-    //Texture bumpTexture(models_dir + "/head/bump.png");
-    Texture bumpTexture(models_dir + "/head/bump-lowRes.png");
-    Texture normalMap(models_dir + "/head/NormalMap_RG16f_1024_mipmaps.dds");
-    //Texture diffuse("/Users/yushroom/program/github/SeparableSSS/SeparableSSS/head/head_optimized.png");
-    Texture bricksDiffuse(textures_dir + "/bricks_diffuse.jpg");
-    Texture bricksDisplacementMap(textures_dir + "/bricks_displacementmap.png");
-    
-    // Uncommenting this call will result in wireframe polygons.
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    //glDisable(GL_CULL_FACE);
-    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-    
-    double t = glfwGetTime();
-    
-    // Game loop
-    while (!glfwWindowShouldClose(window))
-    {
-        // Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
-        glfwPollEvents();
-        Do_Movement();
-
-        
-        if (wire == 1)
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        else
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        // Render
-        // Clear the colorbuffer
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-        glPatchParameteri(GL_PATCH_VERTICES, 3);
-
-        static float angle = 0;
-        glm::mat4 model = glm::rotate(glm::scale(glm::mat4(), glm::vec3(10, 10, 10)), angle, glm::vec3(0, 1, 0));
-        //angle += 0.005f;
-        if (angle > M_PI * 2.0f) angle -= M_PI * 2.0f;
-        auto view = camera.GetViewMatrix();
-        auto proj = glm::perspective(glm::radians(camera.Zoom), float(width)/height, 0.1f, 100.f);
-        auto mvp = proj * view * model;
-        
-//        glDisable(GL_CULL_FACE);
-//        auto sky_mvp = proj * view * glm::scale(glm::mat4(), glm::vec3(10, 10, 10));
-//        skyShader.Use();
-//        skyShader.BindUniformMat4("mvp", sky_mvp);
-//        skyShader.BindUniformTexture("skyTex", skyTex.GetGLTexuture(), 0, GL_TEXTURE_CUBE_MAP);
-//        Model::GetSphere().Render(skyShader);
-//        glEnable(GL_CULL_FACE);
-        
-//        shader.Use();
-//        shader.BindUniformMat4("mvp", mvp);
-//        shader.BindUniformMat4("model", model);
-//        //shader.BindUniformTexture("bumpTex", bumpTexture.GetGLTexuture(), 0);
-//        shader.BindUniformTexture("diffuseMap", diffuse.GetGLTexuture(), 0);
-//        shader.BindUniformTexture("normalMap", normalMap.GetGLTexuture(), 1);
-//        head.Render(shader);
-        
-        //auto modelView = view * glm::rotate(glm::mat4(), -45.0f, glm::vec3(1, 0, 0));
-        //auto modelView = view * model;
-        auto modelView = view;
-        tessShader.Use();
-        tessShader.BindUniformMat4("uViewProjMatrix", proj * view);
-        tessShader.BindUniformMat4("uModelMatrix", glm::mat4());
-        tessShader.BindUniformMat3("uNormalMatrix", glm::mat3(modelView));
-        //tessShader.BindUniformVec3("LightPosition", glm::vec3(5, 5, 5));
-        tessShader.BindUniformFloat("TessLevelInner", tessLevelInner);
-        tessShader.BindUniformFloat("TessLevelOuter", tessLevelOuter);
-        tessShader.BindUniformFloat("bumpiness", bumpiness);
-        tessShader.BindUniformTexture("displacementMap", bricksDisplacementMap.GetGLTexuture(), 0);
-        tessShader.BindUniformTexture("diffuseMap", bricksDiffuse.GetGLTexuture(), 1);
-        //Model::GetIcosahedron().RenderPatch(tessShader);
-        //Model::GetBox().RenderPatch(tessShader);
-        //head.RenderPatch(tessShader);
-        sphere88.RenderPatch(tessShader);
-        //quad.RenderPatch(tessShader);
-        
-//        glCheckError();
-//        simpleShader.Use();
-//        simpleShader.BindUniformMat4("mvp", proj * view);
-//        //Model::GetIcosahedron().Render(simpleShader);
-//        //Model::GetQuad().Render(simpleShader);
-//        Model::GetBox().Render(simpleShader);
-        
-//        visualizeNormalShader.Use();
-//        visualizeNormalShader.BindUniformMat4("model", model);
-//        visualizeNormalShader.BindUniformMat4("view", view);
-//        visualizeNormalShader.BindUniformMat4("proj", proj);
-//        head.Render(shader);
-        
-        double new_t = glfwGetTime();
-        fps = 1.0 / (new_t - t);
-        t = new_t;
-        if (wire == 1) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        TwDraw();
-        
-        // Swap the screen buffers
-        glfwSwapBuffers(window);
-    }
-    
-    // Terminate GLFW, clearing any resources allocated by GLFW.
-    glfwTerminate();
+	initLogSystem();
+	auto& render_system = RenderSystem::getInstance();
+	render_system.addRunable(make_shared<ExampleApp1>());
+	render_system.init();
+	render_system.run();
+	render_system.clean();
     return 0;
-}
-
-void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
-{
-    TwEventMouseButtonGLFW(button, action);
-}
-
-void windowSizeCallback(GLFWwindow* window, int width, int height)
-{
-    //glViewport(0, 0, width, height);
-    TwWindowSize(width, height);
-}
-
-// Is called whenever a key is pressed/released via GLFW
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
-{
-    //cout << key << endl;
-    if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GL_TRUE);
-    
-    if(action == GLFW_PRESS)
-        keys[key] = true;
-    else if(action == GLFW_RELEASE)
-        keys[key] = false;
-    
-    TwEventKeyGLFW(key, action);
-}
-
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-    if(firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-    
-    GLfloat xoffset = xpos - lastX;
-    GLfloat yoffset = lastY - ypos;  // Reversed since y-coordinates go from bottom to left
-    
-    lastX = xpos;
-    lastY = ypos;
-    
-    //camera.ProcessMouseMovement(xoffset, yoffset);
-    //TwEventMousePosGLFW(xpos, ypos);
-    TwEventMousePosGLFW(xpos*2, ypos*2); // for retina
-}
-
-
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-    //printf("%le\n", yoffset);
-    camera.ProcessMouseScroll(yoffset);
-    TwEventMouseWheelGLFW(yoffset);
-}
-
-void Do_Movement()
-{
-    // Camera controls
-    if(keys[GLFW_KEY_W])
-        camera.ProcessKeyboard(FORWARD, deltaTime);
-    if(keys[GLFW_KEY_S])
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
-    if(keys[GLFW_KEY_A])
-        camera.ProcessKeyboard(LEFT, deltaTime);
-    if(keys[GLFW_KEY_D])
-        camera.ProcessKeyboard(RIGHT, deltaTime);
 }

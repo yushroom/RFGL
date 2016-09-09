@@ -5,17 +5,22 @@
 #include <cassert>
 using namespace std;
 
-void Shader::FromString(const std::string &vs_string, const std::string &ps_string)
+Shader::Shader(Shader&& s)
 {
-    FromString(vs_string, "", "", "", ps_string);
+	m_program = s.m_program;
 }
 
-void Shader::FromString(const std::string& vs_string, const std::string& ps_string, const std::string& gs_string)
+void Shader::fromString(const std::string &vs_string, const std::string &ps_string)
 {
-    FromString(vs_string, "", "", gs_string, ps_string);
+    fromString(vs_string, "", "", "", ps_string);
 }
 
-void Shader::FromString(const std::string& vs_string,
+void Shader::fromString(const std::string& vs_string, const std::string& ps_string, const std::string& gs_string)
+{
+    fromString(vs_string, "", "", gs_string, ps_string);
+}
+
+void Shader::fromString(const std::string& vs_string,
                         const std::string& tcs_string,
                         const std::string& tes_string,
                         const std::string& gs_string,
@@ -102,7 +107,7 @@ void Shader::FromString(const std::string& vs_string,
         glDeleteProgram(gs);
 }
 
-void Shader::FromFile(const std::string& vs_path, const std::string ps_path)
+void Shader::fromFile(const std::string& vs_path, const std::string ps_path)
 {
     assert(m_program == 0);
 	std::ifstream vs_stream(vs_path);
@@ -116,7 +121,7 @@ void Shader::FromFile(const std::string& vs_path, const std::string ps_path)
 	string ps_string = ps_sstream.str();
 //	std::cout << vs_string << endl;
 //	std::cout << ps_string << endl;
-    FromString(vs_string, ps_string);
+    fromString(vs_string, ps_string);
 }
 
 
@@ -125,42 +130,42 @@ Shader::~Shader()
 	glDeleteProgram(m_program);
 }
 
-void Shader::Use() {
+void Shader::use() const {
     glUseProgram(this->m_program);
 }
 
-GLuint Shader::GetAttribLocation(const char* name) const {
+GLuint Shader::getAttribLocation(const char* name) const {
     return glGetAttribLocation(m_program, name);
 }
 
-void Shader::BindUniformFloat(const char* name, const float value) const {
-    GLint loc = GetUniformLocation(name);
+void Shader::bindUniformFloat(const char* name, const float value) const {
+    GLint loc = _getUniformLocation(name);
     glUniform1f(loc, value);
 }
 
-void Shader::BindUniformVec3(const char* name, const glm::vec3& value) const {
-    GLint loc = GetUniformLocation(name);
+void Shader::bindUniformVec3(const char* name, const glm::vec3& value) const {
+    GLint loc = _getUniformLocation(name);
     glUniform3fv(loc, 1, glm::value_ptr(value));
 }
 
-void Shader::BindUniformMat4(const char* name, const glm::mat4& value) const {
-    GLint loc = GetUniformLocation(name);
+void Shader::bindUniformMat4(const char* name, const glm::mat4& value) const {
+    GLint loc = _getUniformLocation(name);
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value));
 }
 
-void Shader::BindUniformMat3(const char* name, const glm::mat3& value) const {
-    GLint loc = GetUniformLocation(name);
+void Shader::bindUniformMat3(const char* name, const glm::mat3& value) const {
+    GLint loc = _getUniformLocation(name);
     glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(value));
 }
 
-void Shader::BindUniformTexture(const char* name, const GLuint texture, const GLuint id, GLenum textureType /*= GL_TEXTURE_2D*/) {
+void Shader::bindUniformTexture(const char* name, const GLuint texture, const GLuint id, GLenum textureType /*= GL_TEXTURE_2D*/) {
     glActiveTexture(GLenum(GL_TEXTURE0+id));
     glBindTexture(textureType, texture);
-    GLuint loc = GetUniformLocation(name);
+    GLuint loc = _getUniformLocation(name);
     glUniform1i(loc, id);
 }
 
-GLint Shader::GetUniformLocation(const char* name) const {
+GLint Shader::_getUniformLocation(const char* name) const {
     GLint loc = glGetUniformLocation(m_program, name);
     if (loc == -1) {
         printf("uniform[%s] not found\n", name);
