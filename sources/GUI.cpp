@@ -52,7 +52,17 @@ void GUI::addBool(const std::string& label, bool& value)
 	TwAddVarRW(m_twBar, label.c_str(), TW_TYPE_BOOLCPP, &value, "");
 }
 
-void GUI::addDouble(const std::string& label, double& value)
+void GUI::addFloat(const std::string& label, const float& value)
+{
+	TwAddVarRO(m_twBar, label.c_str(), TW_TYPE_FLOAT, &value, "precision=1");
+}
+
+void GUI::addVector3(const std::string& label, const Vector3& value)
+{
+	TwAddVarRO(m_twBar, label.c_str(), TW_TYPE_DIR3F, &value, "");
+}
+
+void GUI::addDouble(const std::string& label, const double& value)
 {
 	TwAddVarRO(m_twBar, label.c_str(), TW_TYPE_DOUBLE, &value, "precision=1");
 }
@@ -65,4 +75,33 @@ void GUI::update()
 void GUI::clean()
 {
 	TwTerminate();
+}
+
+void GUI::onKey(int key, int action)
+{
+	TwEventKeyGLFW(key, action);
+}
+
+void GUI::onWindowSizeChanged(int width, int height)
+{
+	TwWindowSize(width, height);
+}
+
+void GUI::onMouse(double xpos, double ypos)
+{
+#if defined(_WIN32)
+	TwEventMousePosGLFW(xpos, ypos);
+#else
+	TwEventMousePosGLFW(xpos * 2, ypos * 2); // for retina
+#endif
+}
+
+bool GUI::onMouseButton(int button, int action)
+{
+	return TwEventMouseButtonGLFW(button, action);
+}
+
+bool GUI::onMouseScroll(double yoffset)
+{
+	return TwEventMouseWheelGLFW(yoffset);
 }

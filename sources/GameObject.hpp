@@ -15,11 +15,13 @@ public:
 
 	void addComponent(std::shared_ptr<Component> component) {
 		component->gameObject = this;
+		component->transform = &transform;
 		m_components.push_back(component);
 	}
     
     void addScript(std::shared_ptr<Script> script) {
         script->gameObject = this;
+		script->transform = &transform;
         m_scripts.push_back(script);
     }
 
@@ -33,10 +35,17 @@ public:
 		return nullptr;
 	}
     
+	void start() {
+		transform.start();
+		for (auto& s : m_scripts) {
+			s->start();
+		}
+	}
+
     void update() {
         transform.update();
-        for (auto& comp : m_scripts){
-            comp->update();
+        for (auto& s : m_scripts){
+            s->update();
         }
     }
 

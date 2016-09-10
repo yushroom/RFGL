@@ -8,6 +8,7 @@
 #include "GUI.hpp"
 #include "GameObject.hpp"
 #include "Camera.hpp"
+#include "Time.hpp"
 
 using namespace std;
 
@@ -319,9 +320,35 @@ void main()
 class Rotator : public Script
 {
 public:
+
+	bool isRunning = false;
+	float rotateSpeed = 40;
+	float dragSpeed = 10;
+
+	virtual void start() override
+	{
+		GUI::addBool("rotate", isRunning);
+	}
+
     virtual void update() override
     {
-        gameObject->transform.rotateAround(Vector3(0, 0, 0), Vector3(0, 1, 0), 1);
+		if (isRunning)
+			gameObject->transform.rotateAround(Vector3(0, 0, 0), Vector3(0, 1, 0), 1);
+
+		if (Input::getMouseButton(1)) {
+			float h = rotateSpeed * Input::getAxis(Input::Axis_MouseX);
+			float v = rotateSpeed * Input::getAxis(Input::Axis_MouseY);
+			info("%lf,  %lf", h, v);
+			transform->rotate(v, -h, 0);
+			// fix "up" dirction
+			transform->lookAt(transform->getForward() + transform->getPosition());
+		}
+
+		if (Input::getMouseButton(2)) {
+			float x = dragSpeed * Input::getAxis(Input::Axis_MouseX);
+			float y = dragSpeed * Input::getAxis(Input::Axis_MouseY);
+			transform->translate(-x, -y, 0);
+		}
     }
 };
 
@@ -341,11 +368,12 @@ private:
 	bool m_isWireFrameMode = false;
 	bool m_visualizeNormal = false;
 
-	
+	float m_fps = 0;
 
 public:
 
 	virtual void init() override {
+		glCheckError();
 #if defined(_WIN32)
 		const std::string root_dir = "../";
 #else
@@ -355,7 +383,9 @@ public:
 		const std::string textures_dir = root_dir + "textures/";
 
 		m_normalMapShader.fromString(normalMapVS, normalMapFS);
+		glCheckError();
 		m_skyShader.fromString(skyBoxVS, skyBoxFS);
+		glCheckError();
 		m_visualizeNormalShader.fromString(visualizeNormalVS, visualizeNormalFS, visualizeNormalGS);
 		glCheckError();
 
@@ -369,6 +399,7 @@ public:
 		m_headDiffuseTexture.fromFile(models_dir + "/head/lambertian.jpg");
 		m_headNormalMapTexture.fromFile(models_dir + "/head/NormalMap_RG16f_1024_mipmaps.dds");
 
+		GUI::addFloat("FPS", m_fps);
 		GUI::addBool("WireFrame", m_isWireFrameMode);
 		GUI::addBool("VisiualizeNormal", m_visualizeNormal);
         
@@ -377,6 +408,7 @@ public:
 	}
 
 	virtual void run() override {
+		m_fps = 1.f / Time::getDeltaTime();
 		if (m_isWireFrameMode)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		else
@@ -388,22 +420,21 @@ public:
 
 		//glPatchParameteri(GL_PATCH_VERTICES, 3);
 
-		static float angle = 0;
-		glm::mat4 model = glm::rotate(glm::scale(glm::mat4(), glm::vec3(10, 10, 10)), angle, glm::vec3(0, 1, 0));
-		//angle += 0.005f;
-		if (angle > M_PI * 2.0f) angle -= M_PI * 2.0f;
+		glm::mat4 model = glm::scale(glm::mat4(), glm::vec3(10, 10, 10));
 		auto camera = RenderSystem::getInstance().getMainCamera();
 		auto view = camera->getViewMatrix();
 		auto proj = camera->getProjectMatrix();
 		auto mvp = proj * view * model;
 
-		glDisable(GL_CULL_FACE);
-		auto sky_mvp = proj * view * glm::scale(glm::mat4(), glm::vec3(10, 10, 10));
+		//glDisable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+		auto sky_mvp = proj * view * glm::scale(glm::mat4(), glm::vec3(20, 20, 20));
 		m_skyShader.use();
 		m_skyShader.bindUniformMat4("mvp", sky_mvp);
 		m_skyShader.bindUniformTexture("skyTex", m_skyTexture.getGLTexuture(), 0, GL_TEXTURE_CUBE_MAP);
 		Model::getSphere().render(m_skyShader);
-		glEnable(GL_CULL_FACE);
+		//glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
 
 		m_normalMapShader.use();
 		m_normalMapShader.bindUniformMat4("mvp", mvp);

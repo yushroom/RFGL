@@ -15,13 +15,15 @@ private:
 
 public:
 	GLFWwindow* m_window;
-	double m_fps = 0;
 	double m_time = 0.;
 	int m_width;
 	int m_height;
-	std::vector<std::shared_ptr<GameObject>> m_gameObjects;
-	std::shared_ptr<Camera> m_mainCamera;
+	
+	static std::shared_ptr<Camera> m_mainCamera;
 
+	bool m_rotatingCamera = false;
+
+	std::vector<std::shared_ptr<GameObject>> m_gameObjects;
 	std::vector<std::shared_ptr<IRunable>> m_runables;
 
 public:
@@ -52,8 +54,15 @@ public:
 
 private:
 	static void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mode);
-    
+
     static void mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+
+	static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+
+	static void windowSizeCallback(GLFWwindow* window, int width, int height);
+
+	static void mouseCallback(GLFWwindow* window, double xpos, double ypos);
+
 };
 
 #endif // RenderSystem_hpp

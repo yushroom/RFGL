@@ -12,44 +12,8 @@
 
 // Window dimensions
 const uint32_t WIDTH = 800, HEIGHT = 600;
-GLfloat lastX = 400, lastY = 300;
-bool firstMouse = true;
 
-void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
-{
-	//TwEventMouseButtonGLFW(button, action);
-    GUI::onMouseButton(button, action);
-}
-
-void windowSizeCallback(GLFWwindow* window, int width, int height)
-{
-	//glViewport(0, 0, width, height);
-	TwWindowSize(width, height);
-}
-
-void mouseCallback(GLFWwindow* window, double xpos, double ypos)
-{
-	if (firstMouse)
-	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-	}
-
-	GLfloat xoffset = xpos - lastX;
-	GLfloat yoffset = lastY - ypos;  // Reversed since y-coordinates go from bottom to left
-
-	lastX = xpos;
-	lastY = ypos;
-
-	//camera.ProcessMouseMovement(xoffset, yoffset);
-#if defined(_WIN32)
-	TwEventMousePosGLFW(xpos, ypos);
-#else
-	TwEventMousePosGLFW(xpos * 2, ypos * 2); // for retina
-#endif
-}
-
+std::shared_ptr<Camera> RenderSystem::m_mainCamera = nullptr;
 
 void Do_Movement()
 {
@@ -95,7 +59,7 @@ void RenderSystem::init()
 
 	// Set the required callback functions
 	glfwSetKeyCallback(m_window, RenderSystem::keyCallBack);
-	glfwSetCursorPosCallback(m_window, mouseCallback);
+	glfwSetCursorPosCallback(m_window, RenderSystem::mouseCallback);
     glfwSetScrollCallback(m_window, RenderSystem::mouseScrollCallback);
 
 
@@ -109,8 +73,8 @@ void RenderSystem::init()
 	glfwGetFramebufferSize(m_window, &m_width, &m_height);
 	glViewport(0, 0, m_width, m_height);
 
-	glfwSetWindowSizeCallback(m_window, windowSizeCallback);
-	glfwSetMouseButtonCallback(m_window, mouseButtonCallback);
+	glfwSetWindowSizeCallback(m_window, RenderSystem::windowSizeCallback);
+	glfwSetMouseButtonCallback(m_window, RenderSystem::mouseButtonCallback);
 
 	GLint MaxPatchVertices = 0;
 	glGetIntegerv(GL_MAX_PATCH_VERTICES, &MaxPatchVertices);
@@ -120,16 +84,20 @@ void RenderSystem::init()
 	m_mainCamera = std::make_shared<Camera>(60.0f, float(m_width) / m_height, 0.1f, 100.f);
 	auto camera_go = std::make_shared<GameObject>();
 	camera_go->addComponent(m_mainCamera);
-	camera_go->transform.setPosition(0, 0, 3);
+	camera_go->transform.setPosition(0, 0, 5);
+	camera_go->transform.lookAt(Vector3(0, 0, 0));
 	m_gameObjects.push_back(camera_go);
 
 	GUI::init();
-	GUI::addDouble("FPS", m_fps);
 
 	m_time = glfwGetTime();
 
 	for (auto& r : m_runables) {
 		r->init();
+	}
+
+	for (auto& go : m_gameObjects) {
+		go->start();
 	}
 }
 
@@ -138,10 +106,12 @@ void RenderSystem::run()
 	// Game loop
 	while (!glfwWindowShouldClose(RenderSystem::m_window))
 	{
-        
-		// Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
+		Input::update();
+		// Check if any events have been activated (key pressed, mouse moved etc.) and call corresponding response functions
 		glfwPollEvents();
-		Do_Movement();
+		double xpos, ypos;
+		glfwGetCursorPos(m_window, &xpos, &ypos);
+		Input::updateMousePosition(float(xpos)/m_width, float(ypos)/m_height);
         
         for (auto& go : m_gameObjects) {
             go->update();
@@ -161,10 +131,8 @@ void RenderSystem::run()
 		// Swap the screen buffers
 		glfwSwapBuffers(m_window);
 
-		Input::reset();
         double new_t = glfwGetTime();
         Time::m_deltaTime = float(new_t - m_time);
-        m_fps = 1.0 / (new_t - m_time);
         m_time = new_t;
 	}
 }
@@ -197,7 +165,45 @@ void RenderSystem::mouseScrollCallback(GLFWwindow* window, double xoffset, doubl
 {
     //camera.ProcessMouseScroll(yoffset);
     //TwEventMouseWheelGLFW(yoffset);
-    GUI::onMouseScroll(yoffset);
+	bool handled = GUI::onMouseScroll(yoffset);
+	if (handled)
+		return;
+	auto& t = m_mainCamera->gameObject->transform;
+	t.setPosition(t.getPosition() - -0.2f*float(yoffset)*t.getForward());
 }
 
+GLfloat lastX = 400, lastY = 300;
+bool firstMouse = true;
 
+void RenderSystem::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+	//TwEventMouseButtonGLFW(button, action);
+	if (GUI::onMouseButton(button, action))
+		return;
+	Input::updateMouseButtonState(button, action == GLFW_PRESS ? Input::MouseButtonState_Down : Input::MouseButtonState_Up);
+}
+
+void RenderSystem::windowSizeCallback(GLFWwindow* window, int width, int height)
+{
+	//glViewport(0, 0, width, height);
+	GUI::onWindowSizeChanged(width, height);
+}
+
+void RenderSystem::mouseCallback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	GLfloat xoffset = xpos - lastX;
+	GLfloat yoffset = lastY - ypos;  // Reversed since y-coordinates go from bottom to left
+
+	lastX = xpos;
+	lastY = ypos;
+
+	//camera.ProcessMouseMovement(xoffset, yoffset);
+	GUI::onMouse(xpos, ypos);
+}

@@ -138,6 +138,7 @@
     <ClInclude Include="..\sources\RenderSystem.hpp" />
     <ClInclude Include="..\sources\Shader.hpp" />
     <ClInclude Include="..\sources\Texture.hpp" />
+    <ClInclude Include="..\sources\Time.hpp" />
     <ClInclude Include="..\sources\Transform.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +154,7 @@
     <ClCompile Include="..\sources\RenderSystem.cpp" />
     <ClCompile Include="..\sources\Shader.cpp" />
     <ClCompile Include="..\sources\Texture.cpp" />
+    <ClCompile Include="..\sources\Time.cpp" />
     <ClCompile Include="..\sources\Transform.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -3,6 +3,9 @@
 #include <iostream>
 #include <sstream>
 #include <cassert>
+
+#include "GLError.hpp"
+
 using namespace std;
 
 Shader::Shader(Shader&& s)
@@ -59,13 +62,16 @@ void Shader::fromString(const std::string& vs_string,
         shader = glCreateShader(shader_type);
         glShaderSource(shader, 1, &shader_c_str, NULL);
         glCompileShader(shader);
-        GLint success;
-        GLchar infoLog[1024];
+        GLint success = GL_FALSE;
+        //GLchar infoLog[1024];
+		GLint infoLogLength = 0;
         glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
         if (!success) {
+			std::vector<char> infoLog(infoLogLength + 1);
             std::cout << add_line_number(shader_str) << endl;
-            glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-            std::cout << infoLog << endl;
+            glGetShaderInfoLog(shader, infoLogLength, NULL, infoLog.data());
+            std::cout << string(&infoLog[0]) << endl;
             abort();
         }
     };
@@ -82,7 +88,7 @@ void Shader::fromString(const std::string& vs_string,
             compileShader(tcs, GL_TESS_CONTROL_SHADER, ShaderMacro + tcs_string);
         compileShader(tes, GL_TESS_EVALUATION_SHADER, ShaderMacro + tes_string);
     }
-    
+
     m_program = glCreateProgram();
     glAttachShader(m_program, vs);
     glAttachShader(m_program, ps);
@@ -101,10 +107,26 @@ void Shader::fromString(const std::string& vs_string,
         std::cout << infoLog << endl;
         abort();
     }
-    glDeleteProgram(vs);
-    glDeleteProgram(ps);
-    if (use_gs)
-        glDeleteProgram(gs);
+
+	glDetachShader(m_program, vs);
+	glDetachShader(m_program, ps);
+	if (use_gs) {
+		glDetachShader(m_program, gs);
+	}
+	if (use_ts) {
+		if (tcs != 0) glDetachShader(m_program, tcs);
+		glDetachShader(m_program, tes);
+	}
+	glDeleteShader(vs);
+	glDeleteShader(ps);
+	if (use_gs) {
+		glDeleteShader(gs);
+	}
+	if (use_ts) {
+		if (tcs != 0) glDeleteShader(tcs);
+		glDeleteShader(tes);
+	}
+	glCheckError();
 }
 
 void Shader::fromFile(const std::string& vs_path, const std::string ps_path)

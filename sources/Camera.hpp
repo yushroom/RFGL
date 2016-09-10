@@ -33,7 +33,8 @@ public:
 	}
 
 	Matrix4x4 getViewMatrix() const {
-		return glm::inverse(gameObject->transform.getMatrix());
+		return gameObject->transform.getWorld2LocalMatrix();
+		//return gameObject->transform.getMatrix();
 	}
 
 	Matrix4x4 getProjectMatrix() const {

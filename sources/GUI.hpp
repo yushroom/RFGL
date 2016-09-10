@@ -16,25 +16,21 @@ public:
 	static void init();
 
 	static void addBool(const std::string& label,  bool& value);
-
-	static void addDouble(const std::string& label, double& value);
+	static void addFloat(const std::string& label, const float& value);
+	static void addVector3(const std::string& label, const Vector3& value);
+	static void addDouble(const std::string& label, const double& value);
 
 	static void update();
 
 	static void clean();
     
-    static void onKey(int key, int action)
-    {
-        TwEventKeyGLFW(key, action);
-    }
-    static void onMouseButton(int button, int action)
-    {
-        TwEventMouseButtonGLFW(button, action);
-    }
-    static void onMouseScroll(double yoffset)
-    {
-        TwEventMouseWheelGLFW(yoffset);
-    }
+    static void onKey(int key, int action);
+	static void onWindowSizeChanged(int width, int height);
+	static void onMouse(double xpos, double ypos);
+    static bool onMouseButton(int button, int action);
+
+	// return true if the mouse wheel event has been handled by GUI
+    static bool onMouseScroll(double yoffset);
 
 private:
 	static TwBar *m_twBar;

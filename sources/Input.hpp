@@ -21,10 +21,32 @@ public:
 		KeyState_None = 3,
 	};
 
+	enum MouseButtonCode {
+		MouseButtonCode_Left = 0,
+		MouseButtonCode_Right = 1,
+		MouseButtonCode_Middle = 2,
+	};
+
+	enum MouseButtonState {
+		MouseButtonState_None = 0,
+		MouseButtonState_Down = 1,
+		MouseButtonState_Held = 2,
+		MouseButtonState_Up = 3,
+	};
+
+	enum Axis {
+		Axis_Vertical = 0,
+		Axis_Horizontal,
+		Axis_MouseX,
+		Axis_MouseY,
+	};
+
 	Input() = delete;
 
 	// Returns the value of the virtual axis identified by axisName.
-	static void getAxis();
+	static float getAxis(Axis axis) {
+		return m_axis[axis];
+	}
 
 	// Returns true while the user holds down the key identified by name. Think auto fire.
 	static bool getKey(KeyCode key);
@@ -36,20 +58,32 @@ public:
 	static bool getKeyUp(KeyCode key);
 
 	// Returns whether the given mouse button is held down.
-	static bool getMouseButton();
+	// button values are 0 for left button, 1 for right button, 2 for the middle button.
+	static bool getMouseButton(int button);
 
 	// Returns true during the frame the user pressed the given mouse button.
-	static bool getMouseButtonDown();
+	// button values are 0 for left button, 1 for right button, 2 for the middle button.
+	static bool getMouseButtonDown(int button);
 
 	// Returns true during the frame the user releases the given mouse button.
-	static bool getMouseButtonUp();
+	// button values are 0 for left button, 1 for right button, 2 for the middle button.
+	static bool getMouseButtonUp(int button);
 
 private:
 	static KeyState m_keyStates[1024];
 
+	// button values are 0 for left button, 1 for right button, 2 for the middle button.
+	static MouseButtonState m_mouseButtonStates[3];
+	static float m_mousePositionX;
+	static float m_mousePositionY;
+	static float m_axis[4];
+
 	static void init();
-	static void reset();
+	static void update();
+
+	static void updateMousePosition(float xpos, float ypos);
 	static void updateKeyState(KeyCode key, KeyState state);
+	static void updateMouseButtonState(int button, MouseButtonState state);
 };
 
 #endif // Input_hpp

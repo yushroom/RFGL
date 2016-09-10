@@ -4,6 +4,7 @@
 #include "RFGL.hpp"
 
 class GameObject;
+class Transform;
 
 //template<typename T>
 //static std::string getClassName(std::shared_ptr<T> v) {
@@ -23,6 +24,7 @@ class Component
 public:
 	virtual std::string getClassName() const = 0;
 	GameObject* gameObject;
+	Transform* transform;
 };
 
 #endif // Component_hpp
