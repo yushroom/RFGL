@@ -25,6 +25,7 @@ public:
 	virtual std::string getClassName() const = 0;
 	GameObject* gameObject;
 	Transform* transform;
+	//Transform* getTransform() const;;
 };
 
 #endif // Component_hpp

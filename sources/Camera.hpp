@@ -33,7 +33,7 @@ public:
 	}
 
 	Matrix4x4 getViewMatrix() const {
-		return gameObject->transform.getWorld2LocalMatrix();
+		return gameObject->transform.getWorldToLocalMatrix();
 		//return gameObject->transform.getMatrix();
 	}
 

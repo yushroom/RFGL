@@ -9,6 +9,8 @@ class GameObject
 public:
 	Transform transform;
 
+	static GameObject root;
+
 public:
 	GameObject();
 	~GameObject();
@@ -16,12 +18,18 @@ public:
 	void addComponent(std::shared_ptr<Component> component) {
 		component->gameObject = this;
 		component->transform = &transform;
+		if (component->transform->getParent() == nullptr) {
+			component->transform->setParent(&root.transform);
+		}
 		m_components.push_back(component);
 	}
     
     void addScript(std::shared_ptr<Script> script) {
         script->gameObject = this;
 		script->transform = &transform;
+		if (script->transform->getParent() == nullptr) {
+			script->transform->setParent(&root.transform);
+		}
         m_scripts.push_back(script);
     }
 

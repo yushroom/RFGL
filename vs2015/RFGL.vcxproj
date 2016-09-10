@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sources\Camera.cpp" />
+    <ClCompile Include="..\sources\Component.cpp" />
     <ClCompile Include="..\sources\GameObject.cpp" />
     <ClCompile Include="..\sources\GLError.cpp" />
     <ClCompile Include="..\sources\glew.c" />

@@ -37,8 +37,7 @@ public:
         Space_Self
     };
     
-	Transform() : m_position(0, 0, 0), m_scale(1, 1, 1), m_rotation(1, 0, 0, 0) {
-	}
+	Transform();
 
 	void start() {
 		//GUI::addFloat("tx", m_position.x);
@@ -51,57 +50,63 @@ public:
 	}
 
 	Vector3 getPosition() const {
-		return m_position;
+		return m_localPosition;
 	}
 
 	Vector3 getScale() const {
-		return m_scale;
+		return m_localScale;
 	}
 
 	Quaternion getRotation() const {
-		return m_rotation;
+		return m_localRotation;
 	}
 
 	// The rotation as Euler angles in degrees.
 	Vector3 getEulerAngles() const {
 		if (m_isDirty)
 			update();
-		return m_eulerAngles;
+		return m_localEulerAngles;
 	}
 
 	void setPosition(const Vector3& position) {
-		m_position = position;
+		m_localPosition = position;
 		m_isDirty = true;
 	}
 
 	void setPosition(const float x, const float y, const float z) {
-		m_position.x = x;
-		m_position.y = y;
-		m_position.z = z;
+		m_localPosition.x = x;
+		m_localPosition.y = y;
+		m_localPosition.z = z;
 		m_isDirty = true;
 	}
 
 	void setScale(const Vector3& scale) {
-		m_scale = scale;
+		m_localScale = scale;
 		m_isDirty = true;
 	}
 
 	void setScale(const float x, const float y, const float z) {
-		m_scale.x = x;
-		m_scale.y = y;
-		m_scale.z = z;
+		m_localScale.x = x;
+		m_localScale.y = y;
+		m_localScale.z = z;
 		m_isDirty = true;
 	}
 
 	void setEulerAngles(const Vector3& eulerAngles) {
-		m_rotation = glm::quat(eulerAngles);
+		m_localRotation = glm::quat(eulerAngles);
 		m_isDirty = true;
 	}
 
-	Matrix4x4 getWorld2LocalMatrix() const {
+	Matrix4x4 getLocalToWorldMatrix() const {
 		if (m_isDirty)
 			update();
-		return m_world2LocalMatrix;
+		return m_localToWorldMatrix;
+	}
+
+	Matrix4x4 getWorldToLocalMatrix() const {
+		if (m_isDirty)
+			update();
+		return m_worldToLocalMatrix;
 	}
 
 	Vector3 getForward() const {
@@ -112,16 +117,17 @@ public:
 
 	void setForward(const Vector3& forward) {
 		auto rot = fromToRotation(m_forward, forward);
-		m_rotation = rot * m_rotation;
+		m_localRotation = rot * m_localRotation;
 		m_isDirty = true;
 	}
 
 	void update() const {
-		m_eulerAngles = glm::eulerAngles(m_rotation);
-		m_local2WorldMatrix = glm::scale(glm::translate(glm::mat4(1.0f), m_position) * glm::mat4_cast(m_rotation), m_scale);
-		m_world2LocalMatrix = glm::inverse(m_local2WorldMatrix);
-		m_forward = m_rotation * Vector3(0, 0, -1);
-		m_right = m_rotation * Vector3(1, 0, 0);
+		m_localEulerAngles = glm::eulerAngles(m_localRotation);
+		m_localToWorldMatrix = m_parent->getLocalToWorldMatrix() * glm::scale(glm::translate(glm::mat4(1.0f), m_localPosition) * glm::mat4_cast(m_localRotation), m_localScale);
+		m_worldToLocalMatrix = glm::inverse(m_localToWorldMatrix);
+
+		m_forward = m_localRotation * Vector3(0, 0, -1);
+		m_right = m_localRotation * Vector3(1, 0, 0);
 		m_isDirty = false;
 		//m_matrix = glm::translate(glm::mat4(1.0f), m_position) * glm::mat4_cast(m_rotation) * glm::scale(glm::mat4(1.0f), m_scale);
 	}
@@ -129,9 +135,9 @@ public:
 	// Rotates the transform so the forward vector points at /target/'s current position.
 	void lookAt(const Vector3& target, const Vector3& worldUp = Vector3(0, 1, 0))
     {
-		m_world2LocalMatrix = glm::lookAt(m_position, target, worldUp);
-		m_local2WorldMatrix = glm::inverse(m_world2LocalMatrix);
-		m_rotation = glm::quat_cast(m_local2WorldMatrix);
+		m_worldToLocalMatrix = glm::lookAt(m_localPosition, target, worldUp);
+		m_localToWorldMatrix = glm::inverse(m_worldToLocalMatrix);
+		m_localRotation = glm::quat_cast(m_localToWorldMatrix);
 		m_isDirty = true;
 		//update();
     }
@@ -143,16 +149,16 @@ public:
 	Vector3 TransformDirection(const Vector3& direction)
 	{
 		log(direction);
-		Vector3 result = m_local2WorldMatrix * Vector4(direction, 0);
+		Vector3 result = m_localToWorldMatrix * Vector4(direction, 0);
 		//log(result);
 		return result;
 	}
 
 	void translate(const Vector3& translation, Space relativeTo = Space_Self) {
 		if (relativeTo == Space_World)
-			m_position += translation;
+			m_localPosition += translation;
 		else
-			m_position += TransformDirection(translation);
+			m_localPosition += TransformDirection(translation);
 		m_isDirty = true;
 	}
 
@@ -170,7 +176,7 @@ public:
 		//else {
 		//
 		//}
-		m_rotation = lhs * m_rotation;
+		m_localRotation = lhs * m_localRotation;
 		m_isDirty = true;
 		//m_rotation = glm::inverse(m_rotation) * rhs * m_rotation * m_rotation;
 	}
@@ -183,23 +189,35 @@ public:
     // Rotates the transform about axis passing through point in world coordinates by angle degrees.
     void rotateAround(const Vector3& point, const Vector3& axis, float angle) {
 		auto rotation = angleAxis(angle, axis);
-		m_position = point + rotation * (m_position - point);
+		m_localPosition = point + rotation * (m_localPosition - point);
 		lookAt(point);
     }
+
+	Transform* getParent() const {
+		return m_parent;
+	}
+
+	void setParent(Transform* parent) {
+		m_parent = parent;
+	}
     
 private:
-	Vector3 m_position;
-	Vector3 m_scale;
-	Quaternion m_rotation;
+	//Vector3 m_position;
+	//Vector3 m_scale;
+	//Quaternion m_rotation;
+
+	Vector3 m_localPosition;
+	Vector3 m_localScale;
+	Quaternion m_localRotation;
+
+	Transform* m_parent;
 
 	mutable bool m_isDirty = true;
-
 	mutable Vector3 m_right;	// (1, 0, 0) in local space
 	mutable Vector3 m_forward;	// (0, 0, -1) in local space
-	mutable Vector3 m_eulerAngles;
-	
-	mutable Matrix4x4 m_local2WorldMatrix; // localToWorld
-	mutable Matrix4x4 m_world2LocalMatrix; // worldToLocal
+	mutable Vector3 m_localEulerAngles;
+	mutable Matrix4x4 m_localToWorldMatrix; // localToWorld
+	mutable Matrix4x4 m_worldToLocalMatrix; // worldToLocal
 };
 
 #endif // Transform_hpp

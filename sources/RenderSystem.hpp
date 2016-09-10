@@ -21,8 +21,6 @@ public:
 	
 	static std::shared_ptr<Camera> m_mainCamera;
 
-	bool m_rotatingCamera = false;
-
 	std::vector<std::shared_ptr<GameObject>> m_gameObjects;
 	std::vector<std::shared_ptr<IRunable>> m_runables;
 
