@@ -8,16 +8,23 @@
 
 /* Begin PBXBuildFile section */
 		BF1B7A0E1CE2FCEC00AFE8C8 /* libassimp.3.2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1B7A0D1CE2FCEC00AFE8C8 /* libassimp.3.2.0.dylib */; };
-		BF1B7A3B1CE4481100AFE8C8 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF1B7A2F1CE4481100AFE8C8 /* Camera.cpp */; };
-		BF1B7A3C1CE4481100AFE8C8 /* GLError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF1B7A311CE4481100AFE8C8 /* GLError.cpp */; };
-		BF1B7A3D1CE4481100AFE8C8 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF1B7A331CE4481100AFE8C8 /* main.cpp */; };
-		BF1B7A3E1CE4481100AFE8C8 /* Model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF1B7A341CE4481100AFE8C8 /* Model.cpp */; };
-		BF1B7A3F1CE4481100AFE8C8 /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF1B7A371CE4481100AFE8C8 /* Shader.cpp */; };
-		BF1B7A401CE4481100AFE8C8 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF1B7A391CE4481100AFE8C8 /* Texture.cpp */; };
 		BF52374E1CEA210A00261769 /* libAntTweakBar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF52374D1CEA210A00261769 /* libAntTweakBar.a */; };
-		BFE07C781CE23FF2004F52CD /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE07C761CE23FF2004F52CD /* libGLEW.a */; };
 		BFE07C791CE23FF2004F52CD /* libglfw3.3.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE07C771CE23FF2004F52CD /* libglfw3.3.1.dylib */; };
 		BFE07C7B1CE2400C004F52CD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE07C7A1CE2400C004F52CD /* OpenGL.framework */; };
+		BFFF94C31D82F89A002B4EBB /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94A71D82F89A002B4EBB /* Camera.cpp */; };
+		BFFF94C41D82F89A002B4EBB /* GameObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94AA1D82F89A002B4EBB /* GameObject.cpp */; };
+		BFFF94C51D82F89A002B4EBB /* GLError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94AD1D82F89A002B4EBB /* GLError.cpp */; };
+		BFFF94C71D82F89A002B4EBB /* GUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94B01D82F89A002B4EBB /* GUI.cpp */; };
+		BFFF94C81D82F89A002B4EBB /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94B21D82F89A002B4EBB /* Input.cpp */; };
+		BFFF94C91D82F89A002B4EBB /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94B51D82F89A002B4EBB /* Log.cpp */; };
+		BFFF94CA1D82F89A002B4EBB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94B71D82F89A002B4EBB /* main.cpp */; };
+		BFFF94CB1D82F89A002B4EBB /* Model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94B81D82F89A002B4EBB /* Model.cpp */; };
+		BFFF94CC1D82F89A002B4EBB /* RenderSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94BA1D82F89A002B4EBB /* RenderSystem.cpp */; };
+		BFFF94CD1D82F89A002B4EBB /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94BD1D82F89A002B4EBB /* Shader.cpp */; };
+		BFFF94CE1D82F89A002B4EBB /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94BF1D82F89A002B4EBB /* Texture.cpp */; };
+		BFFF94CF1D82F89A002B4EBB /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94C11D82F89A002B4EBB /* Transform.cpp */; };
+		BFFF94D51D82FC1C002B4EBB /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFFF94D41D82FC1C002B4EBB /* libGLEW.a */; };
+		BFFF94D81D8325AC002B4EBB /* Time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94D61D8325AC002B4EBB /* Time.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -34,23 +41,41 @@
 
 /* Begin PBXFileReference section */
 		BF1B7A0D1CE2FCEC00AFE8C8 /* libassimp.3.2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.3.2.0.dylib; path = ../../../../../usr/local/Cellar/assimp/3.2/lib/libassimp.3.2.0.dylib; sourceTree = "<group>"; };
-		BF1B7A2F1CE4481100AFE8C8 /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Camera.cpp; path = ../sources/Camera.cpp; sourceTree = "<group>"; };
-		BF1B7A301CE4481100AFE8C8 /* Camera.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Camera.hpp; path = ../sources/Camera.hpp; sourceTree = "<group>"; };
-		BF1B7A311CE4481100AFE8C8 /* GLError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLError.cpp; path = ../sources/GLError.cpp; sourceTree = "<group>"; };
-		BF1B7A321CE4481100AFE8C8 /* GLError.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GLError.hpp; path = ../sources/GLError.hpp; sourceTree = "<group>"; };
-		BF1B7A331CE4481100AFE8C8 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../sources/main.cpp; sourceTree = "<group>"; };
-		BF1B7A341CE4481100AFE8C8 /* Model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Model.cpp; path = ../sources/Model.cpp; sourceTree = "<group>"; };
-		BF1B7A351CE4481100AFE8C8 /* Model.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Model.hpp; path = ../sources/Model.hpp; sourceTree = "<group>"; };
-		BF1B7A361CE4481100AFE8C8 /* PRT.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = PRT.hpp; path = ../sources/PRT.hpp; sourceTree = "<group>"; };
-		BF1B7A371CE4481100AFE8C8 /* Shader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Shader.cpp; path = ../sources/Shader.cpp; sourceTree = "<group>"; };
-		BF1B7A381CE4481100AFE8C8 /* Shader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Shader.hpp; path = ../sources/Shader.hpp; sourceTree = "<group>"; };
-		BF1B7A391CE4481100AFE8C8 /* Texture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Texture.cpp; path = ../sources/Texture.cpp; sourceTree = "<group>"; };
-		BF1B7A3A1CE4481100AFE8C8 /* Texture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Texture.hpp; path = ../sources/Texture.hpp; sourceTree = "<group>"; };
 		BF52374D1CEA210A00261769 /* libAntTweakBar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAntTweakBar.a; path = /usr/local/Cellar/anttweakbar/1.16/lib/libAntTweakBar.a; sourceTree = "<absolute>"; };
 		BFE07C6A1CE23F3E004F52CD /* PRT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PRT; sourceTree = BUILT_PRODUCTS_DIR; };
-		BFE07C761CE23FF2004F52CD /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = /usr/local/Cellar/glew/1.13.0/lib/libGLEW.a; sourceTree = "<absolute>"; };
 		BFE07C771CE23FF2004F52CD /* libglfw3.3.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw3.3.1.dylib; path = /usr/local/Cellar/glfw3/3.1.2/lib/libglfw3.3.1.dylib; sourceTree = "<absolute>"; };
 		BFE07C7A1CE2400C004F52CD /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		BFFF94A51D82F89A002B4EBB /* App.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = App.hpp; path = ../sources/App.hpp; sourceTree = "<group>"; };
+		BFFF94A61D82F89A002B4EBB /* Behavior.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Behavior.hpp; path = ../sources/Behavior.hpp; sourceTree = "<group>"; };
+		BFFF94A71D82F89A002B4EBB /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Camera.cpp; path = ../sources/Camera.cpp; sourceTree = "<group>"; };
+		BFFF94A81D82F89A002B4EBB /* Camera.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Camera.hpp; path = ../sources/Camera.hpp; sourceTree = "<group>"; };
+		BFFF94A91D82F89A002B4EBB /* Component.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Component.hpp; path = ../sources/Component.hpp; sourceTree = "<group>"; };
+		BFFF94AA1D82F89A002B4EBB /* GameObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameObject.cpp; path = ../sources/GameObject.cpp; sourceTree = "<group>"; };
+		BFFF94AB1D82F89A002B4EBB /* GameObject.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameObject.hpp; path = ../sources/GameObject.hpp; sourceTree = "<group>"; };
+		BFFF94AD1D82F89A002B4EBB /* GLError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLError.cpp; path = ../sources/GLError.cpp; sourceTree = "<group>"; };
+		BFFF94AE1D82F89A002B4EBB /* GLError.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GLError.hpp; path = ../sources/GLError.hpp; sourceTree = "<group>"; };
+		BFFF94B01D82F89A002B4EBB /* GUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GUI.cpp; path = ../sources/GUI.cpp; sourceTree = "<group>"; };
+		BFFF94B11D82F89A002B4EBB /* GUI.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GUI.hpp; path = ../sources/GUI.hpp; sourceTree = "<group>"; };
+		BFFF94B21D82F89A002B4EBB /* Input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Input.cpp; path = ../sources/Input.cpp; sourceTree = "<group>"; };
+		BFFF94B31D82F89A002B4EBB /* Input.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Input.hpp; path = ../sources/Input.hpp; sourceTree = "<group>"; };
+		BFFF94B41D82F89A002B4EBB /* IRunable.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IRunable.hpp; path = ../sources/IRunable.hpp; sourceTree = "<group>"; };
+		BFFF94B51D82F89A002B4EBB /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Log.cpp; path = ../sources/Log.cpp; sourceTree = "<group>"; };
+		BFFF94B61D82F89A002B4EBB /* Log.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Log.hpp; path = ../sources/Log.hpp; sourceTree = "<group>"; };
+		BFFF94B71D82F89A002B4EBB /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../sources/main.cpp; sourceTree = "<group>"; };
+		BFFF94B81D82F89A002B4EBB /* Model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Model.cpp; path = ../sources/Model.cpp; sourceTree = "<group>"; };
+		BFFF94B91D82F89A002B4EBB /* Model.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Model.hpp; path = ../sources/Model.hpp; sourceTree = "<group>"; };
+		BFFF94BA1D82F89A002B4EBB /* RenderSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderSystem.cpp; path = ../sources/RenderSystem.cpp; sourceTree = "<group>"; };
+		BFFF94BB1D82F89A002B4EBB /* RenderSystem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RenderSystem.hpp; path = ../sources/RenderSystem.hpp; sourceTree = "<group>"; };
+		BFFF94BC1D82F89A002B4EBB /* RFGL.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RFGL.hpp; path = ../sources/RFGL.hpp; sourceTree = "<group>"; };
+		BFFF94BD1D82F89A002B4EBB /* Shader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Shader.cpp; path = ../sources/Shader.cpp; sourceTree = "<group>"; };
+		BFFF94BE1D82F89A002B4EBB /* Shader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Shader.hpp; path = ../sources/Shader.hpp; sourceTree = "<group>"; };
+		BFFF94BF1D82F89A002B4EBB /* Texture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Texture.cpp; path = ../sources/Texture.cpp; sourceTree = "<group>"; };
+		BFFF94C01D82F89A002B4EBB /* Texture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Texture.hpp; path = ../sources/Texture.hpp; sourceTree = "<group>"; };
+		BFFF94C11D82F89A002B4EBB /* Transform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Transform.cpp; path = ../sources/Transform.cpp; sourceTree = "<group>"; };
+		BFFF94C21D82F89A002B4EBB /* Transform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Transform.hpp; path = ../sources/Transform.hpp; sourceTree = "<group>"; };
+		BFFF94D41D82FC1C002B4EBB /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = ../../../../../../usr/local/Cellar/glew/2.0.0/lib/libGLEW.a; sourceTree = "<group>"; };
+		BFFF94D61D8325AC002B4EBB /* Time.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Time.cpp; path = ../sources/Time.cpp; sourceTree = "<group>"; };
+		BFFF94D71D8325AC002B4EBB /* Time.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Time.hpp; path = ../sources/Time.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,11 +83,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFFF94D51D82FC1C002B4EBB /* libGLEW.a in Frameworks */,
 				BFE07C7B1CE2400C004F52CD /* OpenGL.framework in Frameworks */,
 				BFE07C791CE23FF2004F52CD /* libglfw3.3.1.dylib in Frameworks */,
 				BF1B7A0E1CE2FCEC00AFE8C8 /* libassimp.3.2.0.dylib in Frameworks */,
 				BF52374E1CEA210A00261769 /* libAntTweakBar.a in Frameworks */,
-				BFE07C781CE23FF2004F52CD /* libGLEW.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,6 +97,7 @@
 		BFE07C611CE23F3E004F52CD = {
 			isa = PBXGroup;
 			children = (
+				BFFF94B71D82F89A002B4EBB /* main.cpp */,
 				BFE07C801CE242FA004F52CD /* Sources */,
 				BFE07C7C1CE2416E004F52CD /* Framwork */,
 				BFE07C6B1CE23F3E004F52CD /* Products */,
@@ -89,9 +115,9 @@
 		BFE07C7C1CE2416E004F52CD /* Framwork */ = {
 			isa = PBXGroup;
 			children = (
+				BFFF94D41D82FC1C002B4EBB /* libGLEW.a */,
 				BFE07C7A1CE2400C004F52CD /* OpenGL.framework */,
 				BF52374D1CEA210A00261769 /* libAntTweakBar.a */,
-				BFE07C761CE23FF2004F52CD /* libGLEW.a */,
 				BF1B7A0D1CE2FCEC00AFE8C8 /* libassimp.3.2.0.dylib */,
 				BFE07C771CE23FF2004F52CD /* libglfw3.3.1.dylib */,
 			);
@@ -101,18 +127,35 @@
 		BFE07C801CE242FA004F52CD /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				BF1B7A2F1CE4481100AFE8C8 /* Camera.cpp */,
-				BF1B7A301CE4481100AFE8C8 /* Camera.hpp */,
-				BF1B7A311CE4481100AFE8C8 /* GLError.cpp */,
-				BF1B7A321CE4481100AFE8C8 /* GLError.hpp */,
-				BF1B7A331CE4481100AFE8C8 /* main.cpp */,
-				BF1B7A341CE4481100AFE8C8 /* Model.cpp */,
-				BF1B7A351CE4481100AFE8C8 /* Model.hpp */,
-				BF1B7A361CE4481100AFE8C8 /* PRT.hpp */,
-				BF1B7A371CE4481100AFE8C8 /* Shader.cpp */,
-				BF1B7A381CE4481100AFE8C8 /* Shader.hpp */,
-				BF1B7A391CE4481100AFE8C8 /* Texture.cpp */,
-				BF1B7A3A1CE4481100AFE8C8 /* Texture.hpp */,
+				BFFF94D61D8325AC002B4EBB /* Time.cpp */,
+				BFFF94D71D8325AC002B4EBB /* Time.hpp */,
+				BFFF94A51D82F89A002B4EBB /* App.hpp */,
+				BFFF94A61D82F89A002B4EBB /* Behavior.hpp */,
+				BFFF94A71D82F89A002B4EBB /* Camera.cpp */,
+				BFFF94A81D82F89A002B4EBB /* Camera.hpp */,
+				BFFF94A91D82F89A002B4EBB /* Component.hpp */,
+				BFFF94AA1D82F89A002B4EBB /* GameObject.cpp */,
+				BFFF94AB1D82F89A002B4EBB /* GameObject.hpp */,
+				BFFF94AD1D82F89A002B4EBB /* GLError.cpp */,
+				BFFF94AE1D82F89A002B4EBB /* GLError.hpp */,
+				BFFF94B01D82F89A002B4EBB /* GUI.cpp */,
+				BFFF94B11D82F89A002B4EBB /* GUI.hpp */,
+				BFFF94B21D82F89A002B4EBB /* Input.cpp */,
+				BFFF94B31D82F89A002B4EBB /* Input.hpp */,
+				BFFF94B41D82F89A002B4EBB /* IRunable.hpp */,
+				BFFF94B51D82F89A002B4EBB /* Log.cpp */,
+				BFFF94B61D82F89A002B4EBB /* Log.hpp */,
+				BFFF94B81D82F89A002B4EBB /* Model.cpp */,
+				BFFF94B91D82F89A002B4EBB /* Model.hpp */,
+				BFFF94BA1D82F89A002B4EBB /* RenderSystem.cpp */,
+				BFFF94BB1D82F89A002B4EBB /* RenderSystem.hpp */,
+				BFFF94BC1D82F89A002B4EBB /* RFGL.hpp */,
+				BFFF94BD1D82F89A002B4EBB /* Shader.cpp */,
+				BFFF94BE1D82F89A002B4EBB /* Shader.hpp */,
+				BFFF94BF1D82F89A002B4EBB /* Texture.cpp */,
+				BFFF94C01D82F89A002B4EBB /* Texture.hpp */,
+				BFFF94C11D82F89A002B4EBB /* Transform.cpp */,
+				BFFF94C21D82F89A002B4EBB /* Transform.hpp */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
@@ -173,12 +216,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF1B7A3B1CE4481100AFE8C8 /* Camera.cpp in Sources */,
-				BF1B7A3C1CE4481100AFE8C8 /* GLError.cpp in Sources */,
-				BF1B7A3D1CE4481100AFE8C8 /* main.cpp in Sources */,
-				BF1B7A401CE4481100AFE8C8 /* Texture.cpp in Sources */,
-				BF1B7A3E1CE4481100AFE8C8 /* Model.cpp in Sources */,
-				BF1B7A3F1CE4481100AFE8C8 /* Shader.cpp in Sources */,
+				BFFF94CC1D82F89A002B4EBB /* RenderSystem.cpp in Sources */,
+				BFFF94CB1D82F89A002B4EBB /* Model.cpp in Sources */,
+				BFFF94C81D82F89A002B4EBB /* Input.cpp in Sources */,
+				BFFF94D81D8325AC002B4EBB /* Time.cpp in Sources */,
+				BFFF94C41D82F89A002B4EBB /* GameObject.cpp in Sources */,
+				BFFF94C31D82F89A002B4EBB /* Camera.cpp in Sources */,
+				BFFF94CF1D82F89A002B4EBB /* Transform.cpp in Sources */,
+				BFFF94C91D82F89A002B4EBB /* Log.cpp in Sources */,
+				BFFF94CD1D82F89A002B4EBB /* Shader.cpp in Sources */,
+				BFFF94C71D82F89A002B4EBB /* GUI.cpp in Sources */,
+				BFFF94CE1D82F89A002B4EBB /* Texture.cpp in Sources */,
+				BFFF94CA1D82F89A002B4EBB /* main.cpp in Sources */,
+				BFFF94C51D82F89A002B4EBB /* GLError.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,10 +325,10 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/usr/local/Cellar/glew/1.13.0/lib,
 					/usr/local/Cellar/glfw3/3.1.2/lib,
 					/usr/local/Cellar/assimp/3.2/lib,
 					/usr/local/Cellar/anttweakbar/1.16/lib,
+					/usr/local/Cellar/glew/2.0.0/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -293,10 +343,10 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/usr/local/Cellar/glew/1.13.0/lib,
 					/usr/local/Cellar/glfw3/3.1.2/lib,
 					/usr/local/Cellar/assimp/3.2/lib,
 					/usr/local/Cellar/anttweakbar/1.16/lib,
+					/usr/local/Cellar/glew/2.0.0/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

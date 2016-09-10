@@ -52,6 +52,8 @@ public:
 
 private:
 	static void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mode);
+    
+    static void mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 };
 
 #endif // RenderSystem_hpp

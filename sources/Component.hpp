@@ -5,10 +5,10 @@
 
 class GameObject;
 
-template<typename T>
-static std::string getClassName(std::shared_ptr<T> v) {
-	return T::getClassName();
-}
+//template<typename T>
+//static std::string getClassName(std::shared_ptr<T> v) {
+//	return T::getClassName();
+//}
 
 #define ClassName(name) \
 	static std::string className() { \

@@ -57,7 +57,7 @@ void GUI::addDouble(const std::string& label, double& value)
 	TwAddVarRO(m_twBar, label.c_str(), TW_TYPE_DOUBLE, &value, "precision=1");
 }
 
-void GUI::run()
+void GUI::update()
 {
 	TwDraw();
 }

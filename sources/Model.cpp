@@ -256,7 +256,7 @@ Model& Model::getQuad()
 	//static Model quad("D:/program/RFGL/models/Quad.obj", VertexUsagePNUT);
 	static Model quad("../models/Quad.obj", VertexUsagePNUT);
 #else
-    static Model quad("/Users/yushroom/program/graphics/RFGL/models/Quad.obj");
+    static Model quad("/Users/yushroom/program/graphics/RFGL/models/Quad.obj", VertexUsagePNUT);
 #endif
     return quad;
 }
@@ -266,7 +266,7 @@ Model& Model::getBox()
 #if defined(_WIN32)
 	static Model box("../models/cube.obj", VertexUsagePNUT);
 #else
-	static Model box("/Users/yushroom/program/graphics/RFGL/models/box.obj");
+	static Model box("/Users/yushroom/program/graphics/RFGL/models/box.obj", VertexUsagePNUT);
 #endif
     return box;
 }
@@ -277,7 +277,7 @@ Model& Model::getSphere()
 	//static Model sphere("D:/program/RFGL/models/Sphere.obj", VertexUsagePNUT);
 	static Model sphere("../models/Sphere.obj", VertexUsagePNUT);
 #else
-    static Model sphere("/Users/yushroom/program/github/SeparableSSS/SeparableSSS/Models/Sphere.obj");
+    static Model sphere("/Users/yushroom/program/github/SeparableSSS/SeparableSSS/Models/Sphere.obj", VertexUsagePNUT);
 #endif
     return sphere;
 }

@@ -316,6 +316,15 @@ void main()
 }
 )";
 
+class Rotator : public Script
+{
+public:
+    virtual void update() override
+    {
+        gameObject->transform.rotateAround(Vector3(0, 0, 0), Vector3(0, 1, 0), 1);
+    }
+};
+
 class ExampleApp1 : public App
 {
 private:
@@ -362,6 +371,9 @@ public:
 
 		GUI::addBool("WireFrame", m_isWireFrameMode);
 		GUI::addBool("VisiualizeNormal", m_visualizeNormal);
+        
+        auto camera = RenderSystem::getInstance().getMainCamera();
+        camera->gameObject->addScript(make_shared<Rotator>());
 	}
 
 	virtual void run() override {

@@ -28,8 +28,8 @@ public:
 		return m_aspect;
 	}
 
-	void setAspect(float aspect) const {
-		m_aspect;
+	void setAspect(float aspect) {
+		m_aspect = aspect;
 	}
 
 	Matrix4x4 getViewMatrix() const {

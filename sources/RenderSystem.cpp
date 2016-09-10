@@ -8,30 +8,23 @@
 #include "Input.hpp"
 #include "GUI.hpp"
 #include "Camera.hpp"
+#include "Time.hpp"
 
 // Window dimensions
 const uint32_t WIDTH = 800, HEIGHT = 600;
-
-bool keys[1024];
 GLfloat lastX = 400, lastY = 300;
 bool firstMouse = true;
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-	TwEventMouseButtonGLFW(button, action);
+	//TwEventMouseButtonGLFW(button, action);
+    GUI::onMouseButton(button, action);
 }
 
 void windowSizeCallback(GLFWwindow* window, int width, int height)
 {
 	//glViewport(0, 0, width, height);
 	TwWindowSize(width, height);
-}
-
-
-
-// Is called whenever a key is pressed/released via GLFW
-void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mode)
-{
 }
 
 void mouseCallback(GLFWwindow* window, double xpos, double ypos)
@@ -57,12 +50,6 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 #endif
 }
 
-
-void mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
-{
-	//camera.ProcessMouseScroll(yoffset);
-	TwEventMouseWheelGLFW(yoffset);
-}
 
 void Do_Movement()
 {
@@ -109,7 +96,7 @@ void RenderSystem::init()
 	// Set the required callback functions
 	glfwSetKeyCallback(m_window, RenderSystem::keyCallBack);
 	glfwSetCursorPosCallback(m_window, mouseCallback);
-	glfwSetScrollCallback(m_window, mouseScrollCallback);
+    glfwSetScrollCallback(m_window, RenderSystem::mouseScrollCallback);
 
 
 	// Set this to true so GLEW knows to use a modern approach to retrieving function pointers and extensions
@@ -151,9 +138,14 @@ void RenderSystem::run()
 	// Game loop
 	while (!glfwWindowShouldClose(RenderSystem::m_window))
 	{
+        
 		// Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
 		glfwPollEvents();
 		Do_Movement();
+        
+        for (auto& go : m_gameObjects) {
+            go->update();
+        }
 
 		// Render
 		// Clear the color buffer
@@ -164,18 +156,17 @@ void RenderSystem::run()
 			r->run();
 		}
 
-		GUI::run();
-
-		double new_t = glfwGetTime();
-		m_fps = 1.0 / (new_t - m_time);
-		m_time = new_t;
+		GUI::update();
 
 		// Swap the screen buffers
 		glfwSwapBuffers(m_window);
 
 		Input::reset();
+        double new_t = glfwGetTime();
+        Time::m_deltaTime = float(new_t - m_time);
+        m_fps = 1.0 / (new_t - m_time);
+        m_time = new_t;
 	}
-
 }
 
 void RenderSystem::clean()
@@ -198,6 +189,15 @@ void RenderSystem::keyCallBack(GLFWwindow* window, int key, int scancode, int ac
 		Input::updateKeyState((Input::KeyCode)key, (Input::KeyState)action);
 	}
 
-	TwEventKeyGLFW(key, action);
+	//TwEventKeyGLFW(key, action);
+    GUI::onKey(key, action);
 }
+
+void RenderSystem::mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    //camera.ProcessMouseScroll(yoffset);
+    //TwEventMouseWheelGLFW(yoffset);
+    GUI::onMouseScroll(yoffset);
+}
+
 
