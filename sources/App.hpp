@@ -11,9 +11,11 @@
 class App : public IRunable
 {
 public:
-    virtual ~App() = 0 {}
+    virtual ~App() = 0;
     //virtual void OnMouse() {};
     //virtual void OnKey() {};
 };
+
+
 
 #endif // App_hpp

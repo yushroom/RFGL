@@ -198,12 +198,12 @@ void Shader::FromString(const std::string& vs_string,
     Debug::Log("Program %u, Active Uniforms: %d", m_program, count);
     m_uniforms.clear();
     
-    for (int i = 0; i < count; i++)
-    {
+    for (int i = 0; i < count; i++) {
         glGetActiveUniform(m_program, (GLuint)i, bufSize, &length, &size, &type, name);
         //GLint location = glGetUniformLocation(m_program, name);
         Debug::Log("Uniform #%d Type: %s Name: %s", i, GLenumToString(type).c_str(), name);
-        m_uniforms.push_back(UniformInfo{type, string(name), (GLuint)i});
+        auto loc = GetUniformLocation(name);
+        m_uniforms.push_back(UniformInfo{type, string(name), (GLuint)loc});
     }
 
     glDetachShader(m_program, vs);
@@ -319,7 +319,7 @@ void Shader::BindTextures(const std::map<std::string, Texture::PTexture>& textur
         auto it = textures.find(u.name);
         if (it != textures.end()) {
             GLenum type = u.type == GL_SAMPLER_2D ? GL_TEXTURE_2D : GL_TEXTURE_CUBE_MAP;
-            //BindUniformTexture(u.name.c_str(), it->second, texture_id, type);
+            //BindUniformTexture(u.name.c_str(), it->second->GLTexuture(), texture_id, type);
             glActiveTexture(GLenum(GL_TEXTURE0 + texture_id));
             glBindTexture(type, it->second->GLTexuture());
             //GLuint loc = _getUniformLocation(name);

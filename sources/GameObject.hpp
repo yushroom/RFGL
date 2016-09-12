@@ -12,8 +12,12 @@ class Scene;
 class GameObject : public Object
 {
 public:
-    GameObject();
-    ~GameObject();
+    GameObject() {
+        m_transform.m_gameObject = this;
+    }
+    
+
+    ~GameObject() = default;
 
     typedef std::shared_ptr<GameObject> PGameObject;
 

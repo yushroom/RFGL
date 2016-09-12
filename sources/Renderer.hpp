@@ -9,9 +9,7 @@ class Renderer : public Component
 public:
     InjectClassName(Renderer)
     
-    Renderer() {
-        
-    }
+    Renderer() = default;
     
     Renderer(Material::PMaterial material)
     {

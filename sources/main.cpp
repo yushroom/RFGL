@@ -21,11 +21,11 @@ public:
 
     float m_fps = 0;
 
-    virtual void Start() {
+    virtual void Start() override {
         GUI::AddFloat("FPS", m_fps);
     }
 
-    virtual void Update() {
+    virtual void Update() override {
         m_fps = 1.f / Time::DeltaTime();
         if (Input::GetKeyDown(Input::KeyCode_A)) {
             Debug::Log("A pressed");
@@ -46,11 +46,11 @@ public:
 
     bool m_active = true;
     
-    virtual void Start() {
+    virtual void Start() override {
         GUI::AddBool("show", m_active);
     }
 
-    virtual void Update() {
+    virtual void Update() override {
         if (m_active && !m_gameObject->activeSelf()) {
             Debug::Log("show");
             m_gameObject->SetActive(true);
@@ -144,7 +144,7 @@ public:
         headGO->AddComponent(meshFilter1);
         headGO->AddComponent(meshRenderer1);
         headGO->AddScript(make_shared<VisualizeNormal>());
-        headGO->AddScript(make_shared<DeactiveSelf>());
+        //headGO->AddScript(make_shared<DeactiveSelf>());
 
         Scene::mainCamera()->gameObject()->AddScript(make_shared<ShowFPS>());
     }

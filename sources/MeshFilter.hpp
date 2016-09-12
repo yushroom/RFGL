@@ -12,9 +12,7 @@ class MeshFilter : public Component
 public:
     InjectClassName(MeshFilter)
     
-    MeshFilter() {
-        
-    }
+    MeshFilter() = default;
     
     MeshFilter(std::shared_ptr<Mesh> mesh) : m_mesh(mesh) {
         

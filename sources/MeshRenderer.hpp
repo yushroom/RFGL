@@ -4,15 +4,14 @@
 #include "Renderer.hpp"
 #include "MeshFilter.hpp"
 #include "Scene.hpp"
+#include "GLError.hpp"
 
 class MeshRenderer : public Renderer
 {
 public:
     InjectClassName(MeshRenderer)
     
-    MeshRenderer() {
-        
-    }
+    MeshRenderer() = default;
     
     MeshRenderer(Material::PMaterial material) : Renderer(material)
     {

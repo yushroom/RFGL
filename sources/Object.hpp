@@ -17,7 +17,7 @@ public:
     std::string name() const {return m_name; }
     void setName(const std::string& name) { m_name = name; }
 
-    virtual ~Object() = 0 {}
+    virtual ~Object() = 0;
 
 protected:
     std::string m_name;
