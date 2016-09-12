@@ -9,9 +9,7 @@
 #ifndef Model_hpp
 #define Model_hpp
 
-#include <gl/glew.h>
-#include <vector>
-#include "Shader.hpp"
+#include "RFGL.hpp"
 
 enum VertexUsage {
     VertexUsagePosition = 1<<0,
@@ -39,14 +37,22 @@ public:
     
     ~Model();
     
+    typedef std::shared_ptr<Model> PModel;
+
+    static PModel createFromObjFile(const std::string path, int vertexUsage) {
+        auto m = std::make_shared<Model>();
+        m->fromObjFile(path, vertexUsage);
+        return m;
+    }
+
 	void fromObjFile(const std::string path, int vertexUsage);
 
     void setVertexUsage(int vertexUsage) {
         _bindBuffer(vertexUsage);
     }
     
-    void render(const Shader& shader);
-    void renderPatch(const Shader& shader);
+    void render();
+    //void renderPatch(const Shader& shader);
     
     static Model& getQuad();
     static Model& getBox();

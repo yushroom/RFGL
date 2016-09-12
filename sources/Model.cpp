@@ -7,7 +7,7 @@
 //
 
 #include "Model.hpp"
-#include "Log.hpp"
+#include "Debug.hpp"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -16,6 +16,8 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+
+#include "Shader.hpp"
 
 using namespace std;
 
@@ -109,7 +111,7 @@ void Model::fromObjFile(const std::string path, int vertexUsage)
 	const aiScene* scene = importer.ReadFile(path.c_str(), load_option);
 	if (!scene) {
 		std::cout << "Can not open file " << path << endl;
-		error("Can not open file %s", path.c_str());
+        Debug::LogError("Can not open file %s", path.c_str());
 		abort();
 	}
 
@@ -173,17 +175,17 @@ void Model::fromObjFile(const std::string path, int vertexUsage)
 	_bindBuffer(vertexUsage);
 }
 
-void Model::render(const Shader& shader) {
+void Model::render() {
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, (GLsizei)m_indexBuffer.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 
-void Model::renderPatch(const Shader &shader) {
-    glBindVertexArray(m_VAO);
-    glDrawElements(GL_PATCHES, (GLsizei)m_indexBuffer.size(), GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
-}
+//void Model::renderPatch(const Shader &shader) {
+//    glBindVertexArray(m_VAO);
+//    glDrawElements(GL_PATCHES, (GLsizei)m_indexBuffer.size(), GL_UNSIGNED_INT, 0);
+//    glBindVertexArray(0);
+//}
 
 void Model::_generateBuffer(int vertexUsage) {
 	// VAO

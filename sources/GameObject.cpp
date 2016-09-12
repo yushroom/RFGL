@@ -1,9 +1,10 @@
 #include "GameObject.hpp"
 
-GameObject GameObject::root;
+GameObject GameObject::m_root;
 
 GameObject::GameObject()
 {
+    m_transform.m_gameObject = this;
 }
 
 

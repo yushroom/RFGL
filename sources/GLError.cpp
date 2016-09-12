@@ -12,7 +12,7 @@
 //#endif
 
 #include "RFGL.hpp"
-#include "Log.hpp"
+#include "Debug.hpp"
 
 using namespace std;
 
@@ -32,7 +32,7 @@ void _checkOpenGLError(const char *file, int line) {
 
         //SDL_Log("error");
 		//cerr << "GL_" << error.c_str() << " - " << file << ":" << line << endl;
-		warning("GL_%s - %s:%d", error.c_str(), file, line);
+		Debug::LogWarning("GL_%s - %s:%d", error.c_str(), file, line);
 		err = glGetError();
 	}
 }

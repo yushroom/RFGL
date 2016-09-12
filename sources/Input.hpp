@@ -2,7 +2,6 @@
 #define Input_hpp
 
 #include "RFGL.hpp"
-#include "Log.hpp"
 
 class RenderSystem;
 

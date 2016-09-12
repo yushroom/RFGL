@@ -1,6 +1,8 @@
 #include "Input.hpp"
 #include <cassert>
 
+#include "Debug.hpp"
+
 Input::KeyState Input::m_keyStates[1024] = { Input::KeyState_None };
 Input::MouseButtonState Input::m_mouseButtonStates[3] = {Input::MouseButtonState_None};
 
@@ -37,7 +39,7 @@ bool Input::getMouseButton(int button)
 		return m_mouseButtonStates[button] == MouseButtonState_Held;
 	}
 	else {
-		warning("invalid mouse button id: %d", button);
+        Debug::LogWarning("invalid mouse button id: %d", button);
 		return false;
 	}
 }
@@ -48,7 +50,7 @@ bool Input::getMouseButtonDown(int button)
 		return m_mouseButtonStates[button] == MouseButtonState_Down;
 	}
 	else {
-		warning("invalid mouse button id: %d", button);
+        Debug::LogWarning("invalid mouse button id: %d", button);
 		return false;
 	}
 }
@@ -59,7 +61,7 @@ bool Input::getMouseButtonUp(int button)
 		return m_mouseButtonStates[button] == MouseButtonState_Up;
 	}
 	else {
-		warning("invalid mouse button id: %d", button);
+		Debug::LogWarning("invalid mouse button id: %d", button);
 		return false;
 	}
 }
@@ -88,7 +90,6 @@ void Input::updateMousePosition(float xpos, float ypos)
 
 void Input::updateKeyState(KeyCode key, KeyState state)
 {
-	//info("%d %d", key, state);
 	m_keyStates[key] = state;
 }
 

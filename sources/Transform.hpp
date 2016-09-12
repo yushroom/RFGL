@@ -2,14 +2,8 @@
 #define Transform_hpp
 
 #include "RFGL.hpp"
-#include "Log.hpp"
 #include "Component.hpp"
 #include "GUI.hpp"
-
-
-static void log(const Vector3& v) {
-	info("Vector3(%lf, %lf, %lf)", v.x, v.y, v.z);
-}
 
 // Creates a rotation which rotates angle degrees around axis.
 static Quaternion angleAxis(float angle, Vector3 axis)
@@ -123,9 +117,14 @@ public:
 
 	void update() const {
 		m_localEulerAngles = glm::eulerAngles(m_localRotation);
-		m_localToWorldMatrix = m_parent->getLocalToWorldMatrix() * glm::scale(glm::translate(glm::mat4(1.0f), m_localPosition) * glm::mat4_cast(m_localRotation), m_localScale);
+        m_localToWorldMatrix = glm::scale(glm::translate(glm::mat4(1.0f), m_localPosition) * glm::mat4_cast(m_localRotation), m_localScale);
+        if (m_parent != nullptr)
+            m_localToWorldMatrix = m_parent->getLocalToWorldMatrix() * m_localToWorldMatrix;
 		m_worldToLocalMatrix = glm::inverse(m_localToWorldMatrix);
 
+        m_position = m_localToWorldMatrix * Vector4(0, 0, 0, 1);
+        
+        
 		m_forward = m_localRotation * Vector3(0, 0, -1);
 		m_right = m_localRotation * Vector3(1, 0, 0);
 		m_isDirty = false;
@@ -139,19 +138,12 @@ public:
 		m_localToWorldMatrix = glm::inverse(m_worldToLocalMatrix);
 		m_localRotation = glm::quat_cast(m_localToWorldMatrix);
 		m_isDirty = true;
-		//update();
     }
 
-	/// <summary>
-	///   <para>Transforms direction from local space to world space.</para>
-	/// </summary>
-	/// <param name="direction"></param>
+	// Transforms direction from local space to world space.
 	Vector3 TransformDirection(const Vector3& direction)
 	{
-		log(direction);
-		Vector3 result = m_localToWorldMatrix * Vector4(direction, 0);
-		//log(result);
-		return result;
+		return m_localToWorldMatrix * Vector4(direction, 0);
 	}
 
 	void translate(const Vector3& translation, Space relativeTo = Space_Self) {
@@ -193,7 +185,7 @@ public:
 		lookAt(point);
     }
 
-	Transform* getParent() const {
+	Transform* parent() const {
 		return m_parent;
 	}
 
@@ -202,20 +194,22 @@ public:
 	}
     
 private:
-	//Vector3 m_position;
-	//Vector3 m_scale;
-	//Quaternion m_rotation;
+	mutable Vector3 m_position;
+	mutable Vector3 m_scale;
+	mutable Quaternion m_rotation;
+    mutable Vector3 m_eulerAngles;
 
 	Vector3 m_localPosition;
 	Vector3 m_localScale;
 	Quaternion m_localRotation;
+    mutable Vector3 m_localEulerAngles;
 
-	Transform* m_parent;
+	Transform* m_parent = nullptr;
 
 	mutable bool m_isDirty = true;
 	mutable Vector3 m_right;	// (1, 0, 0) in local space
 	mutable Vector3 m_forward;	// (0, 0, -1) in local space
-	mutable Vector3 m_localEulerAngles;
+	
 	mutable Matrix4x4 m_localToWorldMatrix; // localToWorld
 	mutable Matrix4x4 m_worldToLocalMatrix; // worldToLocal
 };

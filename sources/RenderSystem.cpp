@@ -3,32 +3,17 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Log.hpp"
+#include "Debug.hpp"
 #include "GLError.hpp"
 #include "Input.hpp"
 #include "GUI.hpp"
 #include "Camera.hpp"
 #include "Time.hpp"
+#include "MeshRenderer.hpp"
+#include "Scene.hpp"
 
 // Window dimensions
 const uint32_t WIDTH = 800, HEIGHT = 600;
-
-std::shared_ptr<Camera> RenderSystem::m_mainCamera = nullptr;
-
-void Do_Movement()
-{
-	// Camera controls
-	//if(keys[GLFW_KEY_W])
-	//    camera.ProcessKeyboard(FORWARD, deltaTime);
-	//if(keys[GLFW_KEY_S])
-	//    camera.ProcessKeyboard(BACKWARD, deltaTime);
-	//if(keys[GLFW_KEY_A])
-	//    camera.ProcessKeyboard(LEFT, deltaTime);
-	//if(keys[GLFW_KEY_D])
-	//    camera.ProcessKeyboard(RIGHT, deltaTime);
-}
-
-
 RenderSystem::RenderSystem()
 {
 
@@ -44,7 +29,7 @@ void RenderSystem::init()
 {
 	Input::init();
 
-	info("Starting GLFW context, OpenGL 4.1");
+    Debug::Log("Starting GLFW context, OpenGL 4.1");
 	glfwInit();
 	// Set all the required options for GLFW
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -76,29 +61,26 @@ void RenderSystem::init()
 	glfwSetWindowSizeCallback(m_window, RenderSystem::windowSizeCallback);
 	glfwSetMouseButtonCallback(m_window, RenderSystem::mouseButtonCallback);
 
-	GLint MaxPatchVertices = 0;
-	glGetIntegerv(GL_MAX_PATCH_VERTICES, &MaxPatchVertices);
-	info("Max supported patch vertices %d", MaxPatchVertices);
-	glPatchParameteri(GL_PATCH_VERTICES, 3);
+	//GLint MaxPatchVertices = 0;
+	//glGetIntegerv(GL_MAX_PATCH_VERTICES, &MaxPatchVertices);
+    //Debug::Log("Max supported patch vertices %d", MaxPatchVertices);
+	//glPatchParameteri(GL_PATCH_VERTICES, 3);
 
-	m_mainCamera = std::make_shared<Camera>(60.0f, float(m_width) / m_height, 0.1f, 100.f);
-	auto camera_go = std::make_shared<GameObject>();
-	camera_go->addComponent(m_mainCamera);
-	camera_go->transform.setPosition(0, 0, 5);
-	camera_go->transform.lookAt(Vector3(0, 0, 0));
-	m_gameObjects.push_back(camera_go);
-
+    Shader::staticInit();
+    Material::staticInit();
+    
 	GUI::init();
+    GUI::addBool("WireFrame", m_isWireFrameMode);
+    
+    Scene::init();
 
 	m_time = glfwGetTime();
 
 	for (auto& r : m_runables) {
 		r->init();
 	}
-
-	for (auto& go : m_gameObjects) {
-		go->start();
-	}
+    
+    Scene::start();
 }
 
 void RenderSystem::run()
@@ -113,18 +95,29 @@ void RenderSystem::run()
 		glfwGetCursorPos(m_window, &xpos, &ypos);
 		Input::updateMousePosition(float(xpos)/m_width, float(ypos)/m_height);
         
-        for (auto& go : m_gameObjects) {
-            go->update();
-        }
-
 		// Render
 		// Clear the color buffer
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+        
+        if (m_isWireFrameMode)
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        else
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 
 		for (auto& r : m_runables) {
 			r->run();
 		}
+
+        Scene::update();
+        
+        if (m_isWireFrameMode)
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		GUI::update();
 
@@ -163,17 +156,17 @@ void RenderSystem::keyCallBack(GLFWwindow* window, int key, int scancode, int ac
 
 void RenderSystem::mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    //camera.ProcessMouseScroll(yoffset);
     //TwEventMouseWheelGLFW(yoffset);
 	bool handled = GUI::onMouseScroll(yoffset);
 	if (handled)
 		return;
-	auto& t = m_mainCamera->gameObject->transform;
-	t.setPosition(t.getPosition() - -0.2f*float(yoffset)*t.getForward());
+	//auto& t = m_mainCamera->gameObject->transform;
+    auto t = Scene::getMainCamera()->transform();
+	t->setPosition(t->getPosition() - -0.2f*float(yoffset)*t->getForward());
 }
 
-GLfloat lastX = 400, lastY = 300;
-bool firstMouse = true;
+//GLfloat lastX = 400, lastY = 300;
+//bool firstMouse = true;
 
 void RenderSystem::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
@@ -191,19 +184,18 @@ void RenderSystem::windowSizeCallback(GLFWwindow* window, int width, int height)
 
 void RenderSystem::mouseCallback(GLFWwindow* window, double xpos, double ypos)
 {
-	if (firstMouse)
-	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-	}
+//	if (firstMouse)
+//	{
+//		lastX = xpos;
+//		lastY = ypos;
+//		firstMouse = false;
+//	}
 
-	GLfloat xoffset = xpos - lastX;
-	GLfloat yoffset = lastY - ypos;  // Reversed since y-coordinates go from bottom to left
+	//GLfloat xoffset = xpos - lastX;
+	//GLfloat yoffset = lastY - ypos;  // Reversed since y-coordinates go from bottom to left
 
-	lastX = xpos;
-	lastY = ypos;
+	//lastX = xpos;
+	//lastY = ypos;
 
-	//camera.ProcessMouseMovement(xoffset, yoffset);
 	GUI::onMouse(xpos, ypos);
 }

@@ -5,3 +5,5 @@
 /vs2015/*.db
 /vs2015/*.user
 
+/osx/build
+

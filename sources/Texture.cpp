@@ -11,7 +11,7 @@
 #include <stb/stb_image.h>
 #include <gli/gli.hpp>
 #include "GLError.hpp"
-#include "Log.hpp"
+#include "Debug.hpp"
 
 Texture::~Texture() {
     glDeleteTextures(1, &m_texture);
@@ -27,7 +27,7 @@ GLuint create_texture(char const* Filename)
     
     gli::texture Texture = gli::load(Filename);
 	if (Texture.empty()) {
-		error("Texture %s not found", Filename);
+        Debug::LogError("Texture %s not found", Filename);
 		abort();
 	}
     //assert(!Texture.empty());

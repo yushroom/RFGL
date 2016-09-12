@@ -6,11 +6,6 @@
 class GameObject;
 class Transform;
 
-//template<typename T>
-//static std::string getClassName(std::shared_ptr<T> v) {
-//	return T::getClassName();
-//}
-
 #define ClassName(name) \
 	static std::string className() { \
 		return #name; \
@@ -23,9 +18,20 @@ class Component
 {
 public:
 	virtual std::string getClassName() const = 0;
-	GameObject* gameObject;
-	Transform* transform;
-	//Transform* getTransform() const;;
+    
+    GameObject* gameObject() const {
+        return m_gameObject;
+    }
+    
+    Transform* transform() const {
+        return m_transform;
+    }
+    
+    friend class GameObject;
+    
+protected:
+	GameObject* m_gameObject;
+	Transform* m_transform;
 };
 
 #endif // Component_hpp

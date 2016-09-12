@@ -18,11 +18,8 @@ public:
 	double m_time = 0.;
 	int m_width;
 	int m_height;
-	
-	static std::shared_ptr<Camera> m_mainCamera;
-
-	std::vector<std::shared_ptr<GameObject>> m_gameObjects;
-	std::vector<std::shared_ptr<IRunable>> m_runables;
+    
+    std::vector<std::shared_ptr<IRunable>> m_runables;
 
 public:
 
@@ -37,11 +34,7 @@ public:
 	void addRunable(std::shared_ptr<IRunable> p_runable) {
 		m_runables.push_back(p_runable);
 	}
-
-	std::shared_ptr<Camera> getMainCamera() {
-		return m_mainCamera;
-	}
-
+    
 	int getWidth() {
 		return m_width;
 	}
@@ -61,6 +54,7 @@ private:
 
 	static void mouseCallback(GLFWwindow* window, double xpos, double ypos);
 
+    bool m_isWireFrameMode = false;
 };
 
 #endif // RenderSystem_hpp
