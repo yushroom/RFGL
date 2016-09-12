@@ -1,11 +1,3 @@
-//
-//  Renderer.hpp
-//  PRT
-//
-//  Created by 俞云康 on 9/11/16.
-//  Copyright © 2016 yushroom. All rights reserved.
-//
-
 #ifndef Renderer_hpp
 #define Renderer_hpp
 
@@ -15,7 +7,7 @@
 class Renderer : public Component
 {
 public:
-    ClassName(Renderer)
+    InjectClassName(Renderer)
     
     Renderer() {
         
@@ -26,7 +18,7 @@ public:
         m_materials.push_back(material);
     }
     
-    void addMaterial(std::shared_ptr<Material> material) {
+    void AddMaterial(std::shared_ptr<Material> material) {
         m_materials.push_back(material);
     }
     
@@ -42,7 +34,7 @@ public:
     
     
 protected:
-    virtual void render() const = 0;
+    virtual void Render() const = 0;
     std::vector<Material::PMaterial> m_materials;
 };
 

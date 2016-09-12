@@ -4,9 +4,9 @@
 class IRunable
 {
 public:
-	virtual void init() = 0;
-	virtual void run() = 0;
-	virtual void clean() = 0;
+	virtual void Init() = 0;
+	virtual void Run() = 0;
+	virtual void Clean() = 0;
 };
 
 #endif // IRunable_hpp

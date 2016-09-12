@@ -1,26 +1,16 @@
-//
-//  MeshFilter.hpp
-//  PRT
-//
-//  Created by 俞云康 on 9/10/16.
-//  Copyright © 2016 yushroom. All rights reserved.
-//
-
 #ifndef MeshFilter_hpp
 #define MeshFilter_hpp
 
 #include "Component.hpp"
 #include "GameObject.hpp"
 #include "Shader.hpp"
-#include "Model.hpp"
+#include "Mesh.hpp"
 #include "RenderSystem.hpp"
-
-typedef Model Mesh;
 
 class MeshFilter : public Component
 {
 public:
-    ClassName(MeshFilter)
+    InjectClassName(MeshFilter)
     
     MeshFilter() {
         
@@ -30,11 +20,11 @@ public:
         
     }
     
-    std::shared_ptr<Mesh> getMesh() const {
+    std::shared_ptr<Mesh> mesh() const {
         return m_mesh;
     }
     
-    void setMesh(std::shared_ptr<Mesh> mesh) {
+    void SetMesh(std::shared_ptr<Mesh> mesh) {
         m_mesh = mesh;
     }
     

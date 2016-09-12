@@ -1,11 +1,3 @@
-//
-//  Time.hpp
-//  PRT
-//
-//  Created by 俞云康 on 9/10/16.
-//  Copyright © 2016 yushroom. All rights reserved.
-//
-
 #ifndef Time_hpp
 #define Time_hpp
 
@@ -17,7 +9,7 @@ public:
     friend class RenderSystem;
     Time() = delete;
     
-    static float getDeltaTime() {
+    static float DeltaTime() {
         return m_deltaTime;
     }
     

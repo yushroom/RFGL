@@ -16,34 +16,85 @@ using namespace std;
 
 typedef shared_ptr<Texture> PTexture;
 
-class VisualizeNormal : public Script
+class ShowFPS : public Script
 {
 public:
-    bool visualizeNormal = true;
-    shared_ptr<MeshRenderer> meshRenderer = nullptr;
-    Material::PMaterial material = nullptr;
+    InjectClassName(ShowFPS);
+
+    float m_fps = 0;
+
+    virtual void Start() {
+        GUI::AddFloat("FPS", m_fps);
+    }
+
+    virtual void Update() {
+        m_fps = 1.f / Time::DeltaTime();
+        if (Input::GetKeyDown(Input::KeyCode_A)) {
+            Debug::Log("A pressed");
+        }
+        if (Input::GetKey(Input::KeyCode_A)) {
+            Debug::Log("A held");
+        }
+        if (Input::GetKeyUp(Input::KeyCode_A)) {
+            Debug::Log("A released");
+        }
+    }
+};
+
+class DeactiveSelf : public Script
+{
+public:
+    InjectClassName(DeactiveSelf);
+
+    bool m_active = true;
     
-    virtual void start() override {
-        GUI::addBool("VisiualizeNormal", visualizeNormal);
-        meshRenderer = m_gameObject->getComponent<MeshRenderer>();
-        material = Material::builtinMaterial("VisualizeNormal");
+    virtual void Start() {
+        GUI::AddBool("show", m_active);
+    }
+
+    virtual void Update() {
+        if (m_active && !m_gameObject->activeSelf()) {
+            Debug::Log("show");
+            m_gameObject->SetActive(true);
+        }
+        if (!m_active && m_gameObject->activeSelf()) {
+            Debug::Log("hide");
+            m_gameObject->SetActive(false);
+        }
+    }
+
+};
+
+class VisualizeNormal : public Script
+{
+private:
+    bool m_added = false;
+    shared_ptr<MeshRenderer> m_meshRenderer = nullptr;
+    Material::PMaterial m_material = nullptr;
+
+public:
+    InjectClassName(VisualizeNormal);
+
+    bool m_visualizeNormal = false;
+
+    virtual void Start() override {
+        GUI::AddBool("VisiualizeNormal", m_visualizeNormal);
+        m_meshRenderer = m_gameObject->GetComponent<MeshRenderer>();
+        m_material = Material::builtinMaterial("VisualizeNormal");
     }
     
-    virtual void update() override {
-        auto& materials = meshRenderer->materials();
-        if (visualizeNormal) {
-            bool already_in = false;
-            for (auto& m : materials) {
-                if (m == material) {
-                    already_in = true;
-                }
-            }
-            if (!already_in) {
-                meshRenderer->addMaterial(material);
+    virtual void Update() override {
+        auto& materials = m_meshRenderer->materials();
+        if (m_visualizeNormal) {
+            if (!m_added) {
+                m_meshRenderer->AddMaterial(m_material);
+                m_added = true;
             }
         } else {
-            if (materials[materials.size()-1] == material)
+            if (materials[materials.size()-1] == m_material) {
                 materials.pop_back();
+                m_added = false;
+            }
         }
     }
 };
@@ -52,90 +103,74 @@ class ExampleApp1 : public App
 {
 public:
 
-	virtual void init() override {
-		glCheckError();
+    virtual void Init() override {
+        glCheckError();
 #if defined(_WIN32)
-		const std::string root_dir = "../";
+        const std::string root_dir = "../";
 #else
-		const std::string root_dir = "/Users/yushroom/program/graphics/RFGL/";
+        const std::string root_dir = "/Users/yushroom/program/graphics/RFGL/";
 #endif
-		const std::string models_dir = root_dir + "models/";
-		const std::string textures_dir = root_dir + "textures/";
+        const std::string models_dir = root_dir + "models/";
+        const std::string textures_dir = root_dir + "textures/";
 
-        auto headModel = Model::createFromObjFile(models_dir + "/head/head_combined.obj", VertexUsagePNUT);
+        auto headModel = Mesh::CreateFromObjFile(models_dir + "/head/head_combined.obj", VertexUsagePNUT);
         
-        auto sphere = Model::createFromObjFile(models_dir+"/Sphere.obj", VertexUsagePNUT);
+        auto sphere = Mesh::CreateFromObjFile(models_dir+"/Sphere.obj", VertexUsagePNUT);
 
-		m_skyTexture.fromFile(textures_dir + "StPeters/DiffuseMap.dds");
-		m_headDiffuseTexture.fromFile(models_dir + "/head/lambertian.jpg");
-		m_headNormalMapTexture.fromFile(models_dir + "/head/NormalMap_RG16f_1024_mipmaps.dds");
+        m_skyTexture.FromFile(textures_dir + "StPeters/DiffuseMap.dds");
+        m_headDiffuseTexture.FromFile(models_dir + "/head/lambertian.jpg");
+        m_headNormalMapTexture.FromFile(models_dir + "/head/NormalMap_RG16f_1024_mipmaps.dds");
         
         map<string, GLuint> textures;
-        textures["skyTex"] = m_skyTexture.getGLTexuture();
+        textures["skyTex"] = m_skyTexture.GLTexuture();
         
-        auto skyboxGO = Scene::createGameOjbect();
+        auto skyboxGO = Scene::CreateGameObject();
         skyboxGO->transform()->setScale(20, 20, 20);
         auto meshFilter = make_shared<MeshFilter>(sphere);
         auto material = Material::builtinMaterial("SkyBox");
-        material->preBindAllTexture(textures);
+        material->BindTextures(textures);
         auto meshRenderer = make_shared<MeshRenderer>(material);
-        skyboxGO->addComponent(meshFilter);
-        skyboxGO->addComponent(meshRenderer);
+        skyboxGO->AddComponent(meshFilter);
+        skyboxGO->AddComponent(meshRenderer);
         
         textures.clear();
-        textures["diffuseMap"] = m_headDiffuseTexture.getGLTexuture();
-        textures["normalMap"] = m_headNormalMapTexture.getGLTexuture();
-        //m_normalMapShader->preBindAllTexture(textures);
+        textures["diffuseMap"] = m_headDiffuseTexture.GLTexuture();
+        textures["normalMap"] = m_headNormalMapTexture.GLTexuture();
 
-        auto headGO = Scene::createGameOjbect();
+        auto headGO = Scene::CreateGameObject();
         headGO->transform()->setScale(10, 10, 10);
         auto meshFilter1 = make_shared<MeshFilter>(headModel);
         auto material1 = Material::builtinMaterial("NormalMap");
-        material1->preBindAllTexture(textures);
+        material1->BindTextures(textures);
         auto meshRenderer1 = make_shared<MeshRenderer>(material1);
-        //auto material2 = Material::builtinMaterial("VisualizeNormal");
-        //meshRenderer1->addMaterial(material2);
-        headGO->addComponent(meshFilter1);
-        headGO->addComponent(meshRenderer1);
-        headGO->addScript(make_shared<VisualizeNormal>());
-        
-		GUI::addFloat("FPS", m_fps);
-	}
+        headGO->AddComponent(meshFilter1);
+        headGO->AddComponent(meshRenderer1);
+        headGO->AddScript(make_shared<VisualizeNormal>());
+        headGO->AddScript(make_shared<DeactiveSelf>());
 
-	virtual void run() override {
-		m_fps = 1.f / Time::getDeltaTime();
+        Scene::mainCamera()->gameObject()->AddScript(make_shared<ShowFPS>());
+    }
 
-        if (Input::getKeyDown(Input::KeyCode_A)) {
-            Debug::Log("A pressed");
-		}
-		if (Input::getKey(Input::KeyCode_A)) {
-			Debug::Log("A held");
-		}
-		if (Input::getKeyUp(Input::KeyCode_A)) {
-			Debug::Log("A released");
-		}
-	}
+    virtual void Run() override {
+    }
 
-	virtual void clean() override {
-
-	}
+    virtual void Clean() override {
+    }
     
 private:
     Texture m_skyTexture;
     Texture m_headDiffuseTexture;
     Texture m_headNormalMapTexture;
-    bool m_visualizeNormal = false;
-    float m_fps = 0;
 };
 
 
 int main()
 {
     Debug::Init();
-	auto& render_system = RenderSystem::getInstance();
-	render_system.addRunable(make_shared<ExampleApp1>());
-	render_system.init();
-	render_system.run();
-	render_system.clean();
+    auto& render_system = RenderSystem::GetInstance();
+    render_system.AddRunable(make_shared<ExampleApp1>());
+    render_system.Init();
+    render_system.Run();
+    render_system.Clean();
     return 0;
 }

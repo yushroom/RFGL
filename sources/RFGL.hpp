@@ -27,11 +27,4 @@ typedef glm::mat4 Matrix4x4;
 typedef glm::mat3 float3x3;
 typedef glm::quat Quaternion;
 
-//#define Property(type, name, var) \
-//public: \
-//	void Set#name (const type& value) { var = value; } \
-//	type Get#name () const { return var; } \
-//private: \
-//	type var;
-
 #endif

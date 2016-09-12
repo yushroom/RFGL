@@ -10,7 +10,7 @@ float Input::m_mousePositionX = 0;
 float Input::m_mousePositionY = 0;
 float Input::m_axis[4] = {0, 0, 0, 0};
 
-void Input::init()
+void Input::Init()
 {
 	for (auto& s : m_keyStates)
 		s = KeyState_None;
@@ -18,22 +18,22 @@ void Input::init()
 		b = MouseButtonState_None;
 }
 
-bool Input::getKey(KeyCode key)
+bool Input::GetKey(KeyCode key)
 {
 	return m_keyStates[key] == KeyState_Held;
 }
 
-bool Input::getKeyDown(KeyCode key)
+bool Input::GetKeyDown(KeyCode key)
 {
 	return m_keyStates[key] == KeyState_Down;
 }
 
-bool Input::getKeyUp(KeyCode key)
+bool Input::GetKeyUp(KeyCode key)
 {
 	return m_keyStates[key] == KeyState_Up;
 }
 
-bool Input::getMouseButton(int button)
+bool Input::GetMouseButton(int button)
 {
 	if (button >= 0 && button <= 3) {
 		return m_mouseButtonStates[button] == MouseButtonState_Held;
@@ -44,7 +44,7 @@ bool Input::getMouseButton(int button)
 	}
 }
 
-bool Input::getMouseButtonDown(int button)
+bool Input::GetMouseButtonDown(int button)
 {
 	if (button >= 0 && button <= 3) {
 		return m_mouseButtonStates[button] == MouseButtonState_Down;
@@ -55,7 +55,7 @@ bool Input::getMouseButtonDown(int button)
 	}
 }
 
-bool Input::getMouseButtonUp(int button)
+bool Input::GetMouseButtonUp(int button)
 {
 	if (button >= 0 && button <= 3) {
 		return m_mouseButtonStates[button] == MouseButtonState_Up;
@@ -66,7 +66,7 @@ bool Input::getMouseButtonUp(int button)
 	}
 }
 
-void Input::update()
+void Input::Update()
 {
 	//memset(m_keyStates, 0, 1024 * sizeof(KeyState));
 	for (auto& s : m_keyStates) {
@@ -80,7 +80,7 @@ void Input::update()
 	}
 }
 
-void Input::updateMousePosition(float xpos, float ypos)
+void Input::UpdateMousePosition(float xpos, float ypos)
 {
 	m_axis[Axis_MouseX] = xpos - m_mousePositionX;
 	m_axis[Axis_MouseY] = -(ypos - m_mousePositionY);
@@ -88,12 +88,12 @@ void Input::updateMousePosition(float xpos, float ypos)
 	m_mousePositionY = ypos;
 }
 
-void Input::updateKeyState(KeyCode key, KeyState state)
+void Input::UpdateKeyState(KeyCode key, KeyState state)
 {
 	m_keyStates[key] = state;
 }
 
-void Input::updateMouseButtonState(int button, MouseButtonState state)
+void Input::UpdateMouseButtonState(int button, MouseButtonState state)
 {
 	assert(button >= 0 && button <= 3);
 	m_mouseButtonStates[button] = state;

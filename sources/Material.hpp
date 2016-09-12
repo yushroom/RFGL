@@ -1,11 +1,3 @@
-//
-//  Material.hpp
-//  PRT
-//
-//  Created by 俞云康 on 9/11/16.
-//  Copyright © 2016 yushroom. All rights reserved.
-//
-
 #ifndef Material_hpp
 #define Material_hpp
 
@@ -22,7 +14,7 @@ public:
         
     }
     
-    void setShader(std::shared_ptr<Shader> shader) {
+    void SetShader(std::shared_ptr<Shader> shader) {
         m_shader = shader;
     }
     
@@ -32,27 +24,27 @@ public:
         return m_shader;
     }
     
-    void preBindAllTexture(const std::map<std::string, GLuint>& textures) {
+    void BindTextures(const std::map<std::string, GLuint>& textures) {
         m_textures = textures;
     }
     
-    void update() {
-        m_shader->bindAllTexture(m_textures);
+    void Update() {
+        m_shader->BindTextures(m_textures);
     }
     
     //========== Static Region ==========
     
-    static void staticInit() {
+    static void Init() {
         
         for (auto& s : std::vector<std::string>{"SkyBox", "NormalMap", "VisualizeNormal"})
         {
             auto material = std::make_shared<Material>();
-            material->setShader(Shader::getBuiltinShader(s));
+            material->SetShader(Shader::builtinShader(s));
             m_builtinMaterial[s] = material;
         }
     }
     
-    static PMaterial createMaterial() {
+    static PMaterial CreateMaterial() {
         return std::make_shared<Material>();
     }
     

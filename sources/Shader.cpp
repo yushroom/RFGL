@@ -10,17 +10,17 @@ using namespace std;
 
 Shader::Shader(Shader&& s)
 {
-	m_program = s.m_program;
+    m_program = s.m_program;
 }
 
-void Shader::fromString(const std::string &vs_string, const std::string &fs_string)
+void Shader::FromString(const std::string &vs_string, const std::string &fs_string)
 {
-    fromString(vs_string, "", "", "", fs_string);
+    FromString(vs_string, "", "", "", fs_string);
 }
 
-void Shader::fromString(const std::string& vs_string, const std::string& fs_string, const std::string& gs_string)
+void Shader::FromString(const std::string& vs_string, const std::string& fs_string, const std::string& gs_string)
 {
-    fromString(vs_string, "", "", gs_string, fs_string);
+    FromString(vs_string, "", "", gs_string, fs_string);
 }
 
 
@@ -68,7 +68,7 @@ bool startsWith(const std::string& str, const std::string& str2) {
     return str.substr(0, str2.size()) == str2;
 }
 
-void Shader::fromString(const std::string& vs_string,
+void Shader::FromString(const std::string& vs_string,
                         const std::string& tcs_string,
                         const std::string& tes_string,
                         const std::string& gs_string,
@@ -109,11 +109,11 @@ void Shader::fromString(const std::string& vs_string,
         glCompileShader(shader);
         GLint success = GL_FALSE;
         //GLchar infoLog[1024];
-		GLint infoLogLength = 0;
+        GLint infoLogLength = 0;
         glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
         if (!success) {
-			std::vector<char> infoLog(infoLogLength + 1);
+            std::vector<char> infoLog(infoLogLength + 1);
             std::cout << add_line_number(shader_str) << endl;
             glGetShaderInfoLog(shader, infoLogLength, NULL, infoLog.data());
             std::cout << string(&infoLog[0]) << endl;
@@ -194,96 +194,166 @@ void Shader::fromString(const std::string& vs_string,
     GLsizei length; // name length
     
     glGetProgramiv(m_program, GL_ACTIVE_UNIFORMS, &count);
-    printf("Program %u, Active Uniforms: %d\n", m_program, count);
+    Debug::Log("Program %u, Active Uniforms: %d", m_program, count);
     m_uniforms.clear();
     
     for (int i = 0; i < count; i++)
     {
         glGetActiveUniform(m_program, (GLuint)i, bufSize, &length, &size, &type, name);
-        printf("Uniform #%d Type: %s Name: %s\n", i, GLenumToString(type).c_str(), name);
-        m_uniforms.push_back(UniformInfo{type, string(name)});
+        //GLint location = glGetUniformLocation(m_program, name);
+        Debug::Log("Uniform #%d Type: %s Name: %s", i, GLenumToString(type).c_str(), name);
+        m_uniforms.push_back(UniformInfo{type, string(name), (GLuint)i});
     }
 
-	glDetachShader(m_program, vs);
-	glDetachShader(m_program, ps);
-	if (use_gs) {
-		glDetachShader(m_program, gs);
-	}
-	if (use_ts) {
-		if (tcs != 0) glDetachShader(m_program, tcs);
-		glDetachShader(m_program, tes);
-	}
-	glDeleteShader(vs);
-	glDeleteShader(ps);
-	if (use_gs) {
-		glDeleteShader(gs);
-	}
-	if (use_ts) {
-		if (tcs != 0) glDeleteShader(tcs);
-		glDeleteShader(tes);
-	}
-	glCheckError();
+    glDetachShader(m_program, vs);
+    glDetachShader(m_program, ps);
+    if (use_gs) {
+        glDetachShader(m_program, gs);
+    }
+    if (use_ts) {
+        if (tcs != 0) glDetachShader(m_program, tcs);
+        glDetachShader(m_program, tes);
+    }
+    glDeleteShader(vs);
+    glDeleteShader(ps);
+    if (use_gs) {
+        glDeleteShader(gs);
+    }
+    if (use_ts) {
+        if (tcs != 0) glDeleteShader(tcs);
+        glDeleteShader(tes);
+    }
+    glCheckError();
 }
 
-void Shader::fromFile(const std::string& vs_path, const std::string ps_path)
+void Shader::FromFile(const std::string& vs_path, const std::string ps_path)
 {
     assert(m_program == 0);
-	std::ifstream vs_stream(vs_path);
-	std::ifstream ps_stream(ps_path);
-	assert(vs_stream.is_open());
-	assert(ps_stream.is_open());
-	std::stringstream vs_sstream, ps_sstream;
-	vs_sstream << vs_stream.rdbuf();
-	ps_sstream << ps_stream.rdbuf();
-	string vs_string = vs_sstream.str();
-	string fs_string = ps_sstream.str();
+    std::ifstream vs_stream(vs_path);
+    std::ifstream ps_stream(ps_path);
+    assert(vs_stream.is_open());
+    assert(ps_stream.is_open());
+    std::stringstream vs_sstream, ps_sstream;
+    vs_sstream << vs_stream.rdbuf();
+    ps_sstream << ps_stream.rdbuf();
+    string vs_string = vs_sstream.str();
+    string fs_string = ps_sstream.str();
 //	std::cout << vs_string << endl;
 //	std::cout << fs_string << endl;
-    fromString(vs_string, fs_string);
+    FromString(vs_string, fs_string);
 }
 
 
 Shader::~Shader()
 {
-	glDeleteProgram(m_program);
+    glDeleteProgram(m_program);
 }
 
-void Shader::use() const {
+void Shader::Use() const {
     glUseProgram(this->m_program);
 }
 
-GLuint Shader::getAttribLocation(const char* name) const {
-    return glGetAttribLocation(m_program, name);
-}
+//GLuint Shader::getAttribLocation(const char* name) const {
+//    return glGetAttribLocation(m_program, name);
+//}
 
-void Shader::bindUniformFloat(const char* name, const float value) const {
-    GLint loc = _getUniformLocation(name);
+void Shader::BindUniformFloat(const char* name, const float value) const {
+    GLint loc = GetUniformLocation(name);
     glUniform1f(loc, value);
 }
 
-void Shader::bindUniformVec3(const char* name, const glm::vec3& value) const {
-    GLint loc = _getUniformLocation(name);
+void Shader::BindUniformVec3(const char* name, const glm::vec3& value) const {
+    GLint loc = GetUniformLocation(name);
     glUniform3fv(loc, 1, glm::value_ptr(value));
 }
 
-void Shader::bindUniformMat4(const char* name, const glm::mat4& value) const {
-    GLint loc = _getUniformLocation(name);
+void Shader::BindUniformMat4(const char* name, const glm::mat4& value) const {
+    GLint loc = GetUniformLocation(name);
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value));
 }
 
-void Shader::bindUniformMat3(const char* name, const glm::mat3& value) const {
-    GLint loc = _getUniformLocation(name);
+void Shader::BindUniformMat3(const char* name, const glm::mat3& value) const {
+    GLint loc = GetUniformLocation(name);
     glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(value));
 }
 
-void Shader::bindUniformTexture(const char* name, const GLuint texture, const GLuint id, GLenum textureType /*= GL_TEXTURE_2D*/) const {
+void Shader::BindUniformTexture(const char* name, const GLuint texture, const GLuint id, GLenum textureType /*= GL_TEXTURE_2D*/) const {
     glActiveTexture(GLenum(GL_TEXTURE0+id));
     glBindTexture(textureType, texture);
-    GLuint loc = _getUniformLocation(name);
+    GLuint loc = GetUniformLocation(name);
     glUniform1i(loc, id);
 }
 
-GLint Shader::_getUniformLocation(const char* name) const {
+void Shader::BindBuiltinUniforms(const BuiltinShaderUniforms& uniforms) const
+{
+    for (auto& u : m_uniforms) {
+        if (u.type == GL_FLOAT_MAT4) {
+            auto it = uniforms.mat4s.find(u.name);
+            if (it != uniforms.mat4s.end()) {
+                //BindUniformMat4(u.name.c_str(), it->second);
+                glUniformMatrix4fv(u.location, 1, GL_FALSE, glm::value_ptr(it->second));
+            }
+            else {
+                Debug::LogWarning("%s of type %u not found", u.name.c_str(), u.type);
+            }
+        }
+        else if (u.type == GL_FLOAT_VEC3) {
+            auto it = uniforms.vec3s.find(u.name);
+            if (it != uniforms.vec3s.end()) {
+                //BindUniformVec3(u.name.c_str(), it->second);
+                glUniform3fv(u.location, 1, glm::value_ptr(it->second));
+            }
+            else {
+                Debug::LogWarning("%s of type %u not found", u.name.c_str(), u.type);
+            }
+        }
+    }
+}
+
+void Shader::BindTextures(const std::map<std::string, GLuint>& textures) const
+{
+    int texture_id = 0;
+    for (auto& u : m_uniforms) {
+        if (u.type != GL_SAMPLER_2D && u.type != GL_SAMPLER_CUBE) continue;
+        auto it = textures.find(u.name);
+        if (it != textures.end()) {
+            GLenum type = u.type == GL_SAMPLER_2D ? GL_TEXTURE_2D : GL_TEXTURE_CUBE_MAP;
+            //BindUniformTexture(u.name.c_str(), it->second, texture_id, type);
+            glActiveTexture(GLenum(GL_TEXTURE0 + texture_id));
+            glBindTexture(type, it->second);
+            //GLuint loc = _getUniformLocation(name);
+            glUniform1i(u.location, texture_id);
+            texture_id++;
+        }
+        else {
+            Debug::LogWarning("%s of type %u not found", u.name.c_str(), u.type);
+        }
+    }
+}
+
+void Shader::PreRender() const
+{
+    glCullFace(m_cullface);
+    glDepthMask(m_ZWrite);
+}
+
+void Shader::PostRender() const
+{
+    glDepthMask(GL_TRUE);
+    glCullFace(GL_BACK);
+}
+
+Shader::PShader Shader::builtinShader(const std::string& name)
+{
+    auto it = m_builtinShaders.find(name);
+    if (it != m_builtinShaders.end()) {
+        return it->second;
+    }
+    Debug::LogWarning("No builtin shader called %d", name.c_str());
+    return nullptr;
+}
+
+GLint Shader::GetUniformLocation(const char* name) const {
     GLint loc = glGetUniformLocation(m_program, name);
     if (loc == -1) {
         printf("uniform[%s] not found\n", name);
@@ -600,8 +670,8 @@ void main()
 }
 )";
 
-void Shader::staticInit() {
-    m_builtinShaders["NormalMap"] = Shader::createFromString(normalMapVS, normalMapFS);
-    m_builtinShaders["SkyBox"] = Shader::createFromString(skyBoxVS, skyBoxFS);
-    m_builtinShaders["VisualizeNormal"] = Shader::createFromString(visualizeNormalVS, visualizeNormalFS, visualizeNormalGS);
+void Shader::Init() {
+    m_builtinShaders["NormalMap"] = Shader::CreateFromString(normalMapVS, normalMapFS);
+    m_builtinShaders["SkyBox"] = Shader::CreateFromString(skyBoxVS, skyBoxFS);
+    m_builtinShaders["VisualizeNormal"] = Shader::CreateFromString(visualizeNormalVS, visualizeNormalFS, visualizeNormalGS);
 }

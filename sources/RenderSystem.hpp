@@ -8,7 +8,7 @@
 #include "IRunable.hpp"
 #include "Camera.hpp"
 
-class RenderSystem : public IRunable
+class RenderSystem
 {
 private:
 	RenderSystem();
@@ -23,38 +23,39 @@ public:
 
 public:
 
-	static RenderSystem& getInstance();
+	static RenderSystem& GetInstance();
 
-	virtual void init() override;
+	void Init();
 
-	virtual void run() override;
+	void Run();
 
-	virtual void clean() override;
+	void Clean();
 
-	void addRunable(std::shared_ptr<IRunable> p_runable) {
+	void AddRunable(std::shared_ptr<IRunable> p_runable) {
 		m_runables.push_back(p_runable);
 	}
     
-	int getWidth() {
+	int width() {
 		return m_width;
 	}
 
-	int getHeight() {
+	int height() {
 		return m_height;
 	}
 
 private:
-	static void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mode);
+	static void KeyCallBack(GLFWwindow* window, int key, int scancode, int action, int mode);
 
-    static void mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+    static void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
-	static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+	static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 
-	static void windowSizeCallback(GLFWwindow* window, int width, int height);
+	static void WindowSizeCallback(GLFWwindow* window, int width, int height);
 
-	static void mouseCallback(GLFWwindow* window, double xpos, double ypos);
+	static void MouseCallback(GLFWwindow* window, double xpos, double ypos);
 
     bool m_isWireFrameMode = false;
+    bool m_useGammaCorrection = true;
 };
 
 #endif // RenderSystem_hpp

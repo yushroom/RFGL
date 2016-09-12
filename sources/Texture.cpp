@@ -1,11 +1,3 @@
-//
-//  Texture.cpp
-//  PRT
-//
-//  Created by 俞云康 on 5/11/16.
-//  Copyright © 2016 yushroom. All rights reserved.
-//
-
 #include "Texture.hpp"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
@@ -219,7 +211,7 @@ GLuint CreateTexture(const std::string& path) {
     return t;
 }
 
-void Texture::fromFile(const std::string& path)
+void Texture::FromFile(const std::string& path)
 {
 	auto pos = path.find_last_of('.');
 	assert(pos != std::string::npos);
@@ -237,5 +229,5 @@ void Texture::fromFile(const std::string& path)
 }
 
 Texture::Texture(const std::string& path) {
-	fromFile(path);
+	FromFile(path);
 }

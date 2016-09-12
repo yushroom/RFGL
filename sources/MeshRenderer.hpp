@@ -1,11 +1,3 @@
-//
-//  MeshRenderer.hpp
-//  PRT
-//
-//  Created by 俞云康 on 9/11/16.
-//  Copyright © 2016 yushroom. All rights reserved.
-//
-
 #ifndef MeshRenderer_hpp
 #define MeshRenderer_hpp
 
@@ -16,7 +8,7 @@
 class MeshRenderer : public Renderer
 {
 public:
-    ClassName(MeshRenderer)
+    InjectClassName(MeshRenderer)
     
     MeshRenderer() {
         
@@ -28,17 +20,17 @@ public:
     }
     
     //protected:
-    virtual void render() const override {
-        auto meshFilter = m_gameObject->getComponent<MeshFilter>();
+    virtual void Render() const override {
+        auto meshFilter = m_gameObject->GetComponent<MeshFilter>();
         if (meshFilter == nullptr) {
             Debug::LogWarning("This GameObject has no MeshFilter");
             return;
         }
         
-        auto model = m_transform->getLocalToWorldMatrix();
-        auto camera = Scene::getMainCamera();
-        auto view = camera->getViewMatrix();
-        auto proj = camera->getProjectMatrix();
+        auto model = transform()->localToWorldMatrix();
+        auto camera = Scene::mainCamera();
+        auto view = camera->worldToCameraMatrix();
+        auto proj = camera->projectionMatrix();
         auto mv = view * model;
         auto mvp = proj * mv;
 
@@ -52,18 +44,18 @@ public:
         uniforms.mat4s["MATRIX_MV"] = mv;
         uniforms.mat4s["MATRIX_IT_MV"] = glm::inverse(glm::transpose(mv));
         //auto camera = Scene::getMainCamera();
-        uniforms.vec3s["_WorldSpaceCameraPos"] = camera->transform()->getPosition();
+        uniforms.vec3s["_WorldSpaceCameraPos"] = camera->transform()->position();
         
         for (auto& m : m_materials) {
             auto shader = m->shader();
-            shader->use();
-            shader->preRender();
-            shader->bindBuiltinUniforms(uniforms);
+            shader->Use();
+            shader->PreRender();
+            shader->BindBuiltinUniforms(uniforms);
             //shader->bindAllTexture();
             //for (auto& m : m_materials)
-            m->update();
-            meshFilter->getMesh()->render();
-            shader->postRender();
+            m->Update();
+            meshFilter->mesh()->Render();
+            shader->PostRender();
         }
     }
 };

@@ -43,30 +43,30 @@ public:
 	Input() = delete;
 
 	// Returns the value of the virtual axis identified by axisName.
-	static float getAxis(Axis axis) {
+	static float GetAxis(Axis axis) {
 		return m_axis[axis];
 	}
 
 	// Returns true while the user holds down the key identified by name. Think auto fire.
-	static bool getKey(KeyCode key);
+	static bool GetKey(KeyCode key);
 
 	// Returns true during the frame the user starts pressing down the key identified by name.
-	static bool getKeyDown(KeyCode key);
+	static bool GetKeyDown(KeyCode key);
 
 	// Returns true during the frame the user releases the key identified by name.
-	static bool getKeyUp(KeyCode key);
+	static bool GetKeyUp(KeyCode key);
 
 	// Returns whether the given mouse button is held down.
 	// button values are 0 for left button, 1 for right button, 2 for the middle button.
-	static bool getMouseButton(int button);
+	static bool GetMouseButton(int button);
 
 	// Returns true during the frame the user pressed the given mouse button.
 	// button values are 0 for left button, 1 for right button, 2 for the middle button.
-	static bool getMouseButtonDown(int button);
+	static bool GetMouseButtonDown(int button);
 
 	// Returns true during the frame the user releases the given mouse button.
 	// button values are 0 for left button, 1 for right button, 2 for the middle button.
-	static bool getMouseButtonUp(int button);
+	static bool GetMouseButtonUp(int button);
 
 private:
 	static KeyState m_keyStates[1024];
@@ -77,12 +77,12 @@ private:
 	static float m_mousePositionY;
 	static float m_axis[4];
 
-	static void init();
-	static void update();
+	static void Init();
+	static void Update();
 
-	static void updateMousePosition(float xpos, float ypos);
-	static void updateKeyState(KeyCode key, KeyState state);
-	static void updateMouseButtonState(int button, MouseButtonState state);
+	static void UpdateMousePosition(float xpos, float ypos);
+	static void UpdateKeyState(KeyCode key, KeyState state);
+	static void UpdateMouseButtonState(int button, MouseButtonState state);
 };
 
 #endif // Input_hpp

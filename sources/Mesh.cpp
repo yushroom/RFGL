@@ -1,12 +1,5 @@
 //
-//  Model.cpp
-//  PRT
-//
-//  Created by 俞云康 on 5/11/16.
-//  Copyright © 2016 yushroom. All rights reserved.
-//
-
-#include "Model.hpp"
+#include "Mesh.hpp"
 #include "Debug.hpp"
 #include <iostream>
 #include <fstream>
@@ -22,36 +15,36 @@
 using namespace std;
 
 
-Model::Model()	
+Mesh::Mesh()	
 {
 
 }
 
-Model::Model(const int n_vertex, const int n_face, float* positions, uint32_t* indices)
+Mesh::Mesh(const int n_vertex, const int n_face, float* positions, uint32_t* indices)
     :   m_positionBuffer(positions, positions+n_vertex*3),
         m_indexBuffer(indices, indices+n_face*3)
 {
-    _generateBuffer(VertexUsagePosition);
-    _bindBuffer(VertexUsagePosition);
+    GenerateBuffer(VertexUsagePosition);
+    BindBuffer(VertexUsagePosition);
 }
 
-Model::Model(std::vector<float> position_buffer, std::vector<uint32_t> index_buffer)
+Mesh::Mesh(std::vector<float> position_buffer, std::vector<uint32_t> index_buffer)
 : m_positionBuffer(position_buffer), m_indexBuffer(index_buffer)
 {
-    _generateBuffer(VertexUsagePosition);
-    _bindBuffer(VertexUsagePosition);
+    GenerateBuffer(VertexUsagePosition);
+    BindBuffer(VertexUsagePosition);
 }
 
-Model::Model(const int n_vertex, const int n_face, float* positions, float* normals, uint32_t* indices)
+Mesh::Mesh(const int n_vertex, const int n_face, float* positions, float* normals, uint32_t* indices)
     :   m_positionBuffer(positions, positions+n_vertex*3),
         m_normalBuffer(normals, normals+n_vertex*3),
         m_indexBuffer(indices, indices+n_face*3)
 {
-    _generateBuffer(VertexUsagePN);
-    _bindBuffer(VertexUsagePN);
+    GenerateBuffer(VertexUsagePN);
+    BindBuffer(VertexUsagePN);
 }
 
-Model::Model(Model&& m) 
+Mesh::Mesh(Mesh&& m) 
 {
 	m_positionBuffer = std::move(m.m_positionBuffer);
 	m_normalBuffer = std::move(m.m_normalBuffer);
@@ -73,12 +66,12 @@ Model::Model(Model&& m)
 }
 
 
-Model::Model(const std::string& objModelPath, int vertexUsage)
+Mesh::Mesh(const std::string& objModelPath, int vertexUsage)
 {
-	fromObjFile(objModelPath, vertexUsage);
+	FromObjFile(objModelPath, vertexUsage);
 }
 
-Model::~Model() {
+Mesh::~Mesh() {
     // Properly de-allocate all resources once they've outlived their purpose
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_positionVBO);
@@ -87,7 +80,7 @@ Model::~Model() {
     glDeleteBuffers(1, &m_indexVBO);
 }
 
-void Model::fromObjFile(const std::string path, int vertexUsage)
+void Mesh::FromObjFile(const std::string path, int vertexUsage)
 {
 	Assimp::Importer importer;
 	importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_NORMALS);
@@ -105,7 +98,7 @@ void Model::fromObjFile(const std::string path, int vertexUsage)
 		| aiProcess_FlipUVs
 		//| aiProcess_ConvertToLeftHanded
 		;
-	bool load_tangent = vertexUsage & VertexUsageTangent;
+	bool load_tangent = (vertexUsage & VertexUsageTangent) != 0;
 	if (load_tangent)
 		load_option |= aiProcess_CalcTangentSpace;
 	const aiScene* scene = importer.ReadFile(path.c_str(), load_option);
@@ -136,7 +129,7 @@ void Model::fromObjFile(const std::string path, int vertexUsage)
 		//if (!has_uv)
 		//	printf("mesh[%d] do not have uv!\n", i);
 		assert(!((!has_uv) && (vertexUsage & VertexUsageUV)));
-		bool load_uv = vertexUsage & VertexUsageUV;
+		bool load_uv = (vertexUsage & VertexUsageUV) != 0;
 
 		for (unsigned int j = 0; j < mesh->mNumVertices; ++j) {
 			auto& v = mesh->mVertices[j];
@@ -171,11 +164,11 @@ void Model::fromObjFile(const std::string path, int vertexUsage)
 		idx += mesh->mNumFaces;
 	}
 
-	_generateBuffer(vertexUsage);
-	_bindBuffer(vertexUsage);
+	GenerateBuffer(vertexUsage);
+	BindBuffer(vertexUsage);
 }
 
-void Model::render() {
+void Mesh::Render() {
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, (GLsizei)m_indexBuffer.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
@@ -187,7 +180,7 @@ void Model::render() {
 //    glBindVertexArray(0);
 //}
 
-void Model::_generateBuffer(int vertexUsage) {
+void Mesh::GenerateBuffer(int vertexUsage) {
 	// VAO
 	glGenVertexArrays(1, &m_VAO);
 
@@ -219,7 +212,7 @@ void Model::_generateBuffer(int vertexUsage) {
 	}
 }
 
-void Model::_bindBuffer(int vertexUsage/* = VertexUsagePN*/) {
+void Mesh::BindBuffer(int vertexUsage/* = VertexUsagePN*/) {
     //glGenVertexArrays(1, &m_VAO);
     glBindVertexArray(m_VAO);
     
@@ -252,79 +245,79 @@ void Model::_bindBuffer(int vertexUsage/* = VertexUsagePN*/) {
     glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
 }
 
-Model& Model::getQuad()
-{
-#if defined(_WIN32)
-	//static Model quad("D:/program/RFGL/models/Quad.obj", VertexUsagePNUT);
-	static Model quad("../models/Quad.obj", VertexUsagePNUT);
-#else
-    static Model quad("/Users/yushroom/program/graphics/RFGL/models/Quad.obj", VertexUsagePNUT);
-#endif
-    return quad;
-}
-
-Model& Model::getBox()
-{
-#if defined(_WIN32)
-	static Model box("../models/cube.obj", VertexUsagePNUT);
-#else
-	static Model box("/Users/yushroom/program/graphics/RFGL/models/box.obj", VertexUsagePNUT);
-#endif
-    return box;
-}
-
-Model& Model::getSphere()
-{
-#if defined(_WIN32)
-	//static Model sphere("D:/program/RFGL/models/Sphere.obj", VertexUsagePNUT);
-	static Model sphere("../models/Sphere.obj", VertexUsagePNUT);
-#else
-    static Model sphere("/Users/yushroom/program/github/SeparableSSS/SeparableSSS/Models/Sphere.obj", VertexUsagePNUT);
-#endif
-    return sphere;
-}
-
-Model& Model::getIcosahedron()
-{
-    uint32_t indices[] = {
-        2, 1, 0,
-        3, 2, 0,
-        4, 3, 0,
-        5, 4, 0,
-        1, 5, 0,
-        
-        11, 6,  7,
-        11, 7,  8,
-        11, 8,  9,
-        11, 9,  10,
-        11, 10, 6,
-        
-        1, 2, 6,
-        2, 3, 7,
-        3, 4, 8,
-        4, 5, 9,
-        5, 1, 10,
-        
-        2,  7, 6,
-        3,  8, 7,
-        4,  9, 8,
-        5, 10, 9,
-        1, 6, 10 };
-    
-    float vertices[] = {
-        0.000f,  0.000f,  1.000f,
-        0.894f,  0.000f,  0.447f,
-        0.276f,  0.851f,  0.447f,
-        -0.724f,  0.526f,  0.447f,
-        -0.724f, -0.526f,  0.447f,
-        0.276f, -0.851f,  0.447f,
-        0.724f,  0.526f, -0.447f,
-        -0.276f,  0.851f, -0.447f,
-        -0.894f,  0.000f, -0.447f,
-        -0.276f, -0.851f, -0.447f,
-        0.724f, -0.526f, -0.447f,
-        0.000f,  0.000f, -1.000f };
-    static Model m(sizeof(vertices)/12, sizeof(indices)/12, vertices, indices);
-    return m;
-
-}
+//Model& Model::getQuad()
+//{
+//#if defined(_WIN32)
+//	//static Model quad("D:/program/RFGL/models/Quad.obj", VertexUsagePNUT);
+//	static Model quad("../models/Quad.obj", VertexUsagePNUT);
+//#else
+//    static Model quad("/Users/yushroom/program/graphics/RFGL/models/Quad.obj", VertexUsagePNUT);
+//#endif
+//    return quad;
+//}
+//
+//Model& Model::getBox()
+//{
+//#if defined(_WIN32)
+//	static Model box("../models/cube.obj", VertexUsagePNUT);
+//#else
+//	static Model box("/Users/yushroom/program/graphics/RFGL/models/box.obj", VertexUsagePNUT);
+//#endif
+//    return box;
+//}
+//
+//Model& Model::getSphere()
+//{
+//#if defined(_WIN32)
+//	//static Model sphere("D:/program/RFGL/models/Sphere.obj", VertexUsagePNUT);
+//	static Model sphere("../models/Sphere.obj", VertexUsagePNUT);
+//#else
+//    static Model sphere("/Users/yushroom/program/github/SeparableSSS/SeparableSSS/Models/Sphere.obj", VertexUsagePNUT);
+//#endif
+//    return sphere;
+//}
+//
+//Model& Model::getIcosahedron()
+//{
+//    uint32_t indices[] = {
+//        2, 1, 0,
+//        3, 2, 0,
+//        4, 3, 0,
+//        5, 4, 0,
+//        1, 5, 0,
+//        
+//        11, 6,  7,
+//        11, 7,  8,
+//        11, 8,  9,
+//        11, 9,  10,
+//        11, 10, 6,
+//        
+//        1, 2, 6,
+//        2, 3, 7,
+//        3, 4, 8,
+//        4, 5, 9,
+//        5, 1, 10,
+//        
+//        2,  7, 6,
+//        3,  8, 7,
+//        4,  9, 8,
+//        5, 10, 9,
+//        1, 6, 10 };
+//    
+//    float vertices[] = {
+//        0.000f,  0.000f,  1.000f,
+//        0.894f,  0.000f,  0.447f,
+//        0.276f,  0.851f,  0.447f,
+//        -0.724f,  0.526f,  0.447f,
+//        -0.724f, -0.526f,  0.447f,
+//        0.276f, -0.851f,  0.447f,
+//        0.724f,  0.526f, -0.447f,
+//        -0.276f,  0.851f, -0.447f,
+//        -0.894f,  0.000f, -0.447f,
+//        -0.276f, -0.851f, -0.447f,
+//        0.724f, -0.526f, -0.447f,
+//        0.000f,  0.000f, -1.000f };
+//    static Model m(sizeof(vertices)/12, sizeof(indices)/12, vertices, indices);
+//    return m;
+//
+//}

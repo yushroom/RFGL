@@ -24,7 +24,7 @@ static Quaternion fromToRotation(const Vector3& fromDirection, const Vector3& to
 class Transform : public Component
 {
 public:
-	ClassName(Transform)
+    InjectClassName(Transform)
     
     enum Space {
         Space_World = 0,
@@ -33,7 +33,7 @@ public:
     
 	Transform();
 
-	void start() {
+	void Start() {
 		//GUI::addFloat("tx", m_position.x);
 		//GUI::addFloat("ty", m_position.y);
 		//GUI::addFloat("tz", m_position.z);
@@ -43,22 +43,22 @@ public:
 		//GUI::addVector3("forward", m_forward);
 	}
 
-	Vector3 getPosition() const {
+	Vector3 position() const {
 		return m_localPosition;
 	}
 
-	Vector3 getScale() const {
+	Vector3 scale() const {
 		return m_localScale;
 	}
 
-	Quaternion getRotation() const {
+	Quaternion rotation() const {
 		return m_localRotation;
 	}
 
 	// The rotation as Euler angles in degrees.
-	Vector3 getEulerAngles() const {
+	Vector3 eulerAngles() const {
 		if (m_isDirty)
-			update();
+			Update();
 		return m_localEulerAngles;
 	}
 
@@ -91,21 +91,21 @@ public:
 		m_isDirty = true;
 	}
 
-	Matrix4x4 getLocalToWorldMatrix() const {
+	Matrix4x4 localToWorldMatrix() const {
 		if (m_isDirty)
-			update();
+			Update();
 		return m_localToWorldMatrix;
 	}
 
-	Matrix4x4 getWorldToLocalMatrix() const {
+	Matrix4x4 worldToLocalMatrix() const {
 		if (m_isDirty)
-			update();
+			Update();
 		return m_worldToLocalMatrix;
 	}
 
-	Vector3 getForward() const {
+	Vector3 forward() const {
 		if (m_isDirty)
-			update();
+			Update();
 		return m_forward;
 	}
 
@@ -115,11 +115,11 @@ public:
 		m_isDirty = true;
 	}
 
-	void update() const {
+	void Update() const {
 		m_localEulerAngles = glm::eulerAngles(m_localRotation);
         m_localToWorldMatrix = glm::scale(glm::translate(glm::mat4(1.0f), m_localPosition) * glm::mat4_cast(m_localRotation), m_localScale);
         if (m_parent != nullptr)
-            m_localToWorldMatrix = m_parent->getLocalToWorldMatrix() * m_localToWorldMatrix;
+            m_localToWorldMatrix = m_parent->localToWorldMatrix() * m_localToWorldMatrix;
 		m_worldToLocalMatrix = glm::inverse(m_localToWorldMatrix);
 
         m_position = m_localToWorldMatrix * Vector4(0, 0, 0, 1);
@@ -132,7 +132,7 @@ public:
 	}
 
 	// Rotates the transform so the forward vector points at /target/'s current position.
-	void lookAt(const Vector3& target, const Vector3& worldUp = Vector3(0, 1, 0))
+	void LookAt(const Vector3& target, const Vector3& worldUp = Vector3(0, 1, 0))
     {
 		m_worldToLocalMatrix = glm::lookAt(m_localPosition, target, worldUp);
 		m_localToWorldMatrix = glm::inverse(m_worldToLocalMatrix);
@@ -146,7 +146,7 @@ public:
 		return m_localToWorldMatrix * Vector4(direction, 0);
 	}
 
-	void translate(const Vector3& translation, Space relativeTo = Space_Self) {
+	void Translate(const Vector3& translation, Space relativeTo = Space_Self) {
 		if (relativeTo == Space_World)
 			m_localPosition += translation;
 		else
@@ -154,12 +154,12 @@ public:
 		m_isDirty = true;
 	}
 
-	void translate(float x, float y, float z, Space relativeTo = Space_Self) {
-		translate(Vector3(x, y, z), relativeTo);
+	void Translate(float x, float y, float z, Space relativeTo = Space_Self) {
+		Translate(Vector3(x, y, z), relativeTo);
 	}
      
     // Applies a rotation of eulerAngles.z degrees around the z axis, eulerAngles.x degrees around the x axis, and eulerAngles.y degrees around the y axis (in that order).
-	void rotate(Vector3 eulerAngles, Space relativeTo = Space::Space_Self)
+	void Rotate(Vector3 eulerAngles, Space relativeTo = Space::Space_Self)
 	{
 		Quaternion lhs(glm::radians(eulerAngles));
 		//if (Space_Self == relativeTo) {
@@ -174,15 +174,15 @@ public:
 	}
     
 	// Applies a rotation of zAngle degrees around the z axis, xAngle degrees around the x axis, and yAngle degrees around the y axis (in that order)
-	void rotate(float xAngle, float yAngle, float zAngle, Space relativeTo = Space::Space_Self) {
-		this->rotate(Vector3(xAngle, yAngle, zAngle), relativeTo);
+	void Rotate(float xAngle, float yAngle, float zAngle, Space relativeTo = Space::Space_Self) {
+		this->Rotate(Vector3(xAngle, yAngle, zAngle), relativeTo);
 	}
 
     // Rotates the transform about axis passing through point in world coordinates by angle degrees.
-    void rotateAround(const Vector3& point, const Vector3& axis, float angle) {
+    void RotateAround(const Vector3& point, const Vector3& axis, float angle) {
 		auto rotation = angleAxis(angle, axis);
 		m_localPosition = point + rotation * (m_localPosition - point);
-		lookAt(point);
+		LookAt(point);
     }
 
 	Transform* parent() const {

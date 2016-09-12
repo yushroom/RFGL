@@ -4,11 +4,11 @@
 
 TwBar* GUI::m_twBar = nullptr;
 
-void GUI::init()
+void GUI::Init()
 {
 	TwInit(TW_OPENGL_CORE, NULL);
 	m_twBar = TwNewBar("Tweak");
-	TwWindowSize(RenderSystem::getInstance().getWidth(), RenderSystem::getInstance().getHeight());
+	TwWindowSize(RenderSystem::GetInstance().width(), RenderSystem::GetInstance().height());
 
 	//static uint32_t tessLevelInner = 3;
 	//static uint32_t tessLevelOuter = 2;
@@ -47,61 +47,61 @@ void GUI::init()
 	//	" label='bumpiness' min=0 max=0.5 step=0.01 keyIncr=s keyDecr=S help='Rotation speed (turns/second)' ");
 }
 
-void GUI::addBool(const std::string& label, bool& value)
+void GUI::AddBool(const std::string& label, bool& value)
 {
 	TwAddVarRW(m_twBar, label.c_str(), TW_TYPE_BOOLCPP, &value, "");
 }
 
-void GUI::addFloat(const std::string& label, const float& value)
+void GUI::AddFloat(const std::string& label, const float& value)
 {
 	TwAddVarRO(m_twBar, label.c_str(), TW_TYPE_FLOAT, &value, "precision=1");
 }
 
-void GUI::addVector3(const std::string& label, const Vector3& value)
+void GUI::AddVector3(const std::string& label, const Vector3& value)
 {
 	TwAddVarRO(m_twBar, label.c_str(), TW_TYPE_DIR3F, &value, "");
 }
 
-void GUI::addDouble(const std::string& label, const double& value)
+void GUI::AddDouble(const std::string& label, const double& value)
 {
 	TwAddVarRO(m_twBar, label.c_str(), TW_TYPE_DOUBLE, &value, "precision=1");
 }
 
-void GUI::update()
+void GUI::Update()
 {
 	TwDraw();
 }
 
-void GUI::clean()
+void GUI::Clean()
 {
 	TwTerminate();
 }
 
-void GUI::onKey(int key, int action)
+void GUI::OnKey(int key, int action)
 {
 	TwEventKeyGLFW(key, action);
 }
 
-void GUI::onWindowSizeChanged(int width, int height)
+void GUI::OnWindowSizeChanged(int width, int height)
 {
 	TwWindowSize(width, height);
 }
 
-void GUI::onMouse(double xpos, double ypos)
+void GUI::OnMouse(double xpos, double ypos)
 {
 #if defined(_WIN32)
-	TwEventMousePosGLFW(xpos, ypos);
+	TwEventMousePosGLFW((int)xpos, (int)ypos);
 #else
 	TwEventMousePosGLFW(xpos * 2, ypos * 2); // for retina
 #endif
 }
 
-bool GUI::onMouseButton(int button, int action)
+bool GUI::OnMouseButton(int button, int action)
 {
-	return TwEventMouseButtonGLFW(button, action);
+	return TwEventMouseButtonGLFW(button, action) == 1;
 }
 
-bool GUI::onMouseScroll(double yoffset)
+bool GUI::OnMouseScroll(double yoffset)
 {
-	return TwEventMouseWheelGLFW(yoffset);
+	return TwEventMouseWheelGLFW((int)yoffset) == 1;
 }

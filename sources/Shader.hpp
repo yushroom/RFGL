@@ -1,11 +1,3 @@
-//
-//  Texture.hpp
-//  PRT
-//
-//  Created by 俞云康 on 5/11/16.
-//  Copyright © 2016 yushroom. All rights reserved.
-//
-
 #ifndef Shader_hpp
 #define Shader_hpp
 
@@ -78,108 +70,63 @@ public:
 
     typedef std::shared_ptr<Shader> PShader;
 
-    static PShader createFromString(const std::string& vs_str, const std::string& fs_str) {
+    static PShader CreateFromString(const std::string& vs_str, const std::string& fs_str) {
         auto s = std::make_shared<Shader>();
-        s->fromString(vs_str, fs_str);
+        s->FromString(vs_str, fs_str);
         return s;
     }
     
-    static PShader createFromString(const std::string& vs_str, const std::string& fs_str, const std::string& gs_str) {
+    static PShader CreateFromString(const std::string& vs_str, const std::string& fs_str, const std::string& gs_str) {
         auto s = std::make_shared<Shader>();
-        s->fromString(vs_str, fs_str, gs_str);
+        s->FromString(vs_str, fs_str, gs_str);
         return s;
     }
 
-    void fromString(const std::string& vs_str, const std::string& fs_str);
-    void fromString(const std::string& vs_str, const std::string& fs_str, const std::string& gs_str);
-    void fromString(const std::string& vs_str,
+    void FromString(const std::string& vs_str, const std::string& fs_str);
+    void FromString(const std::string& vs_str, const std::string& fs_str, const std::string& gs_str);
+    void FromString(const std::string& vs_str,
                     const std::string& tcs_str,
                     const std::string& tes_str,
                     const std::string& gs_str,
                     const std::string& fs_str);
-    void fromFile(const std::string& vs_path, const std::string ps_path);
+    void FromFile(const std::string& vs_path, const std::string ps_path);
 	//Shader(const std::string& vs_path, const std::string ps_path);
     ~Shader();
     
-    void use() const;
+    void Use() const;
     
-    GLuint getGLProgram() const {
+    GLuint program() const {
         return m_program;
     }
     
-    GLuint getAttribLocation(const char* name) const;
+    //GLuint getAttribLocation(const char* name) const;
     
-    void bindUniformFloat(const char* name, const float value) const;
-    void bindUniformVec3(const char* name, const glm::vec3& value) const;
-    void bindUniformMat3(const char* name, const glm::mat3& value) const;
-    void bindUniformMat4(const char* name, const glm::mat4& value) const;
-    
-    void bindUniformTexture(const char* name, const GLuint texture, const GLuint id, GLenum textureType = GL_TEXTURE_2D) const;
+    void BindUniformFloat(const char* name, const float value) const;
+    void BindUniformVec3(const char* name, const glm::vec3& value) const;
+    void BindUniformMat3(const char* name, const glm::mat3& value) const;
+    void BindUniformMat4(const char* name, const glm::mat4& value) const;
 
-    void bindBuiltinUniforms(const BuiltinShaderUniforms& uniforms) const {
-        for (auto& u : m_uniforms) {
-            if (u.type == GL_FLOAT_MAT4) {
-                auto it = uniforms.mat4s.find(u.name);
-                if (it != uniforms.mat4s.end()) {
-                    bindUniformMat4(u.name.c_str(), it->second);
-                } else {
-                    Debug::LogWarning("%s of type %u not found", u.name.c_str(), u.type);
-                }
-            } else if (u.type == GL_FLOAT_VEC3) {
-                auto it = uniforms.vec3s.find(u.name);
-                if (it != uniforms.vec3s.end()) {
-                    bindUniformVec3(u.name.c_str(), it->second);
-                } else {
-                    Debug::LogWarning("%s of type %u not found", u.name.c_str(), u.type);
-                }
-            }
-        }
-    }
+    void BindUniformTexture(const char* name, const GLuint texture, const GLuint id, GLenum textureType = GL_TEXTURE_2D) const;
+
+    void BindBuiltinUniforms(const BuiltinShaderUniforms& uniforms) const;
+    void BindTextures(const std::map<std::string, GLuint>& textures) const;
     
-    void bindAllTexture(const std::map<std::string, GLuint>& textures) const {
-        int texture_id = 0;
-        for (auto& u : m_uniforms) {
-            if (u.type != GL_SAMPLER_2D && u.type != GL_SAMPLER_CUBE) continue;
-            auto it = textures.find(u.name);
-            if (it != textures.end()) {
-                GLenum type = u.type==GL_SAMPLER_2D ? GL_TEXTURE_2D : GL_TEXTURE_CUBE_MAP;
-                bindUniformTexture(u.name.c_str(), it->second, texture_id, type);
-                texture_id ++;
-            } else {
-                Debug::LogWarning("%s of type %u not found", u.name.c_str(), u.type);
-            }
-        }
-    }
+    void PreRender() const;
+    void PostRender() const;
     
-    void preRender() const {
-        glCullFace(m_cullface);
-        glDepthMask(m_ZWrite);
-    }
-    
-    void postRender() const {
-        glDepthMask(GL_TRUE);
-        glCullFace(GL_BACK);
-    }
-    
-    static PShader getBuiltinShader(const std::string& name) {
-        auto it = m_builtinShaders.find(name);
-        if (it != m_builtinShaders.end()) {
-            return it->second;
-        }
-        Debug::LogWarning("No builtin shader called %d", name.c_str());
-        return nullptr;
-    }
+    static PShader builtinShader(const std::string& name);
     
 private:
 	GLuint m_program = 0;
     
-    GLint _getUniformLocation(const char* name) const;
+    GLint GetUniformLocation(const char* name) const;
     
     struct UniformInfo {
         //GLint size; // size of the variable
         GLenum type; // type of the variable (float, vec3 or mat4, etc)
         //GLchar name[32];
         std::string name;  // variable name in GLSL
+        GLuint location;
     };
     std::vector<UniformInfo> m_uniforms;
     
@@ -193,7 +140,7 @@ private:
     bool m_ZWrite = true;
     
     friend class RenderSystem;
-    static void staticInit();
+    static void Init();
     static std::map<std::string, PShader> m_builtinShaders;
 };
 

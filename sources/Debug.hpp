@@ -1,11 +1,3 @@
-//
-//  Debug.hpp
-//  PRT
-//
-//  Created by 俞云康 on 9/11/16.
-//  Copyright © 2016 yushroom. All rights reserved.
-//
-
 #ifndef Debug_hpp
 #define Debug_hpp
 

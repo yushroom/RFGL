@@ -84,7 +84,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;assimp-vc130-mt.lib;AntTweakBar.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;glew32s.lib;opengl32.lib;assimp-vc130-mt.lib;AntTweakBar.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -106,7 +106,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;assimp-vc130-mt.lib;AntTweakBar.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;glew32s.lib;opengl32.lib;assimp-vc130-mt.lib;AntTweakBar.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -124,35 +124,47 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\sources\App.hpp" />
-    <ClInclude Include="..\sources\Behavior.hpp" />
+    <ClInclude Include="..\sources\Behaviour.hpp" />
     <ClInclude Include="..\sources\Camera.hpp" />
     <ClInclude Include="..\sources\Component.hpp" />
+    <ClInclude Include="..\sources\Debug.hpp" />
     <ClInclude Include="..\sources\GameObject.hpp" />
     <ClInclude Include="..\sources\GLError.hpp" />
     <ClInclude Include="..\sources\GUI.hpp" />
     <ClInclude Include="..\sources\Input.hpp" />
     <ClInclude Include="..\sources\IRunable.hpp" />
-    <ClInclude Include="..\sources\Log.hpp" />
-    <ClInclude Include="..\sources\Model.hpp" />
+    <ClInclude Include="..\sources\Material.hpp" />
+    <ClInclude Include="..\sources\MeshFilter.hpp" />
+    <ClInclude Include="..\sources\MeshRenderer.hpp" />
+    <ClInclude Include="..\sources\Mesh.hpp" />
+    <ClInclude Include="..\sources\Object.hpp" />
+    <ClInclude Include="..\sources\Renderer.hpp" />
     <ClInclude Include="..\sources\RFGL.hpp" />
     <ClInclude Include="..\sources\RenderSystem.hpp" />
+    <ClInclude Include="..\sources\Scene.hpp" />
     <ClInclude Include="..\sources\Shader.hpp" />
     <ClInclude Include="..\sources\Texture.hpp" />
     <ClInclude Include="..\sources\Time.hpp" />
     <ClInclude Include="..\sources\Transform.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\sources\Behaviour.cpp" />
     <ClCompile Include="..\sources\Camera.cpp" />
     <ClCompile Include="..\sources\Component.cpp" />
+    <ClCompile Include="..\sources\Debug.cpp" />
     <ClCompile Include="..\sources\GameObject.cpp" />
     <ClCompile Include="..\sources\GLError.cpp" />
-    <ClCompile Include="..\sources\glew.c" />
     <ClCompile Include="..\sources\GUI.cpp" />
     <ClCompile Include="..\sources\Input.cpp" />
-    <ClCompile Include="..\sources\Log.cpp" />
     <ClCompile Include="..\sources\main.cpp" />
-    <ClCompile Include="..\sources\Model.cpp" />
+    <ClCompile Include="..\sources\Material.cpp" />
+    <ClCompile Include="..\sources\MeshFilter.cpp" />
+    <ClCompile Include="..\sources\MeshRenderer.cpp" />
+    <ClCompile Include="..\sources\Mesh.cpp" />
+    <ClCompile Include="..\sources\Object .cpp" />
+    <ClCompile Include="..\sources\Renderer.cpp" />
     <ClCompile Include="..\sources\RenderSystem.cpp" />
+    <ClCompile Include="..\sources\Scene.cpp" />
     <ClCompile Include="..\sources\Shader.cpp" />
     <ClCompile Include="..\sources\Texture.cpp" />
     <ClCompile Include="..\sources\Time.cpp" />
