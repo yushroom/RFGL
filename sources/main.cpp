@@ -14,8 +14,6 @@
 
 using namespace std;
 
-typedef shared_ptr<Texture> PTexture;
-
 class ShowFPS : public Script
 {
 public:
@@ -117,12 +115,12 @@ public:
         
         auto sphere = Mesh::CreateFromObjFile(models_dir+"/Sphere.obj", VertexUsagePNUT);
 
-        m_skyTexture.FromFile(textures_dir + "StPeters/DiffuseMap.dds");
-        m_headDiffuseTexture.FromFile(models_dir + "/head/lambertian.jpg");
-        m_headNormalMapTexture.FromFile(models_dir + "/head/NormalMap_RG16f_1024_mipmaps.dds");
+        auto sky_texture = Texture::CreateFromFile(textures_dir + "StPeters/DiffuseMap.dds");
+        auto head_diffuse = Texture::CreateFromFile(models_dir + "/head/lambertian.jpg");
+        auto head_normalmap = Texture::CreateFromFile(models_dir + "/head/NormalMap_RG16f_1024_mipmaps.dds");
         
-        map<string, GLuint> textures;
-        textures["skyTex"] = m_skyTexture.GLTexuture();
+        map<string, Texture::PTexture> textures;
+        textures["skyTex"] = sky_texture;
         
         auto skyboxGO = Scene::CreateGameObject();
         skyboxGO->transform()->setScale(20, 20, 20);
@@ -134,8 +132,8 @@ public:
         skyboxGO->AddComponent(meshRenderer);
         
         textures.clear();
-        textures["diffuseMap"] = m_headDiffuseTexture.GLTexuture();
-        textures["normalMap"] = m_headNormalMapTexture.GLTexuture();
+        textures["diffuseMap"] = head_diffuse;
+        textures["normalMap"] = head_normalmap;
 
         auto headGO = Scene::CreateGameObject();
         headGO->transform()->setScale(10, 10, 10);
@@ -156,11 +154,6 @@ public:
 
     virtual void Clean() override {
     }
-    
-private:
-    Texture m_skyTexture;
-    Texture m_headDiffuseTexture;
-    Texture m_headNormalMapTexture;
 };
 
 

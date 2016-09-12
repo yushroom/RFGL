@@ -2,6 +2,7 @@
 #define Material_hpp
 
 #include "Shader.hpp"
+#include "Texture.hpp"
 
 class Material
 {
@@ -24,7 +25,7 @@ public:
         return m_shader;
     }
     
-    void BindTextures(const std::map<std::string, GLuint>& textures) {
+    void BindTextures(const std::map<std::string, Texture::PTexture>& textures) {
         m_textures = textures;
     }
     
@@ -59,7 +60,7 @@ public:
 
 private:
     std::shared_ptr<Shader> m_shader = nullptr;
-    std::map<std::string, GLuint> m_textures;
+    std::map<std::string, Texture::PTexture> m_textures;
     
     static std::map<std::string, PMaterial> m_builtinMaterial;
 };

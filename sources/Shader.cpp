@@ -5,6 +5,7 @@
 #include <cassert>
 
 #include "GLError.hpp"
+#include "Texture.hpp"
 
 using namespace std;
 
@@ -310,7 +311,7 @@ void Shader::BindBuiltinUniforms(const BuiltinShaderUniforms& uniforms) const
     }
 }
 
-void Shader::BindTextures(const std::map<std::string, GLuint>& textures) const
+void Shader::BindTextures(const std::map<std::string, Texture::PTexture>& textures) const
 {
     int texture_id = 0;
     for (auto& u : m_uniforms) {
@@ -320,7 +321,7 @@ void Shader::BindTextures(const std::map<std::string, GLuint>& textures) const
             GLenum type = u.type == GL_SAMPLER_2D ? GL_TEXTURE_2D : GL_TEXTURE_CUBE_MAP;
             //BindUniformTexture(u.name.c_str(), it->second, texture_id, type);
             glActiveTexture(GLenum(GL_TEXTURE0 + texture_id));
-            glBindTexture(type, it->second);
+            glBindTexture(type, it->second->GLTexuture());
             //GLuint loc = _getUniformLocation(name);
             glUniform1i(u.location, texture_id);
             texture_id++;
@@ -364,7 +365,7 @@ GLint Shader::GetUniformLocation(const char* name) const {
 
 //========== Static Region ==========
 
-// Builtin shader string
+// Built-in shader string
 const std::string simpleVS = R"(
 layout (location = PositionIndex) in vec3 position;
 void main ()
@@ -668,6 +669,16 @@ void main()
     //color.rgb = normalize(uv);
     color.a = 1.0;
 }
+)";
+
+const std::string PBR_VS = R"(
+#define PI 3.1415926f
+vec3 diffuse(in vec3 diffuse) {
+    return diffuse / PI;
+}
+
+CookTorrance
+
 )";
 
 void Shader::Init() {

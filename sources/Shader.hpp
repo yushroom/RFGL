@@ -59,6 +59,7 @@ struct BuiltinShaderUniforms
 };
 
 class RenderSystem;
+class Texture;
 
 class Shader
 {
@@ -109,7 +110,7 @@ public:
     void BindUniformTexture(const char* name, const GLuint texture, const GLuint id, GLenum textureType = GL_TEXTURE_2D) const;
 
     void BindBuiltinUniforms(const BuiltinShaderUniforms& uniforms) const;
-    void BindTextures(const std::map<std::string, GLuint>& textures) const;
+    void BindTextures(const std::map<std::string, std::shared_ptr<Texture>>& textures) const;
     
     void PreRender() const;
     void PostRender() const;
