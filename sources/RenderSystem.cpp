@@ -3,6 +3,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb/stb_image_write.h>
+
 #include "Debug.hpp"
 #include "GLError.hpp"
 #include "Input.hpp"
@@ -40,7 +43,7 @@ void RenderSystem::Init()
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
     // Create a GLFWwindow object that we can use for GLFW's functions
-    m_window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
+    m_window = glfwCreateWindow(WIDTH, HEIGHT, "RenderFish", nullptr, nullptr);
     glfwMakeContextCurrent(m_window);
 
     // Set the required callback functions
@@ -97,6 +100,8 @@ void RenderSystem::Run()
         glfwGetCursorPos(m_window, &xpos, &ypos);
         Input::UpdateMousePosition(float(xpos)/m_width, float(ypos)/m_height);
         
+        Scene::Update();
+
         // Render
         // Clear the color buffer
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -120,7 +125,7 @@ void RenderSystem::Run()
             r->Run();
         }
 
-        Scene::Update();
+        Scene::Render();
         
         if (m_isWireFrameMode)
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -146,6 +151,24 @@ void RenderSystem::Clean()
 
     // Terminate GLFW, clearing any resources allocated by GLFW.
     glfwTerminate();
+}
+
+void RenderSystem::SaveScreenShot(std::string& path)
+{
+    auto pixels = new uint8_t[3*m_width*m_height*2];
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glReadPixels(0, 0, m_width, m_height, GL_RGB, GL_UNSIGNED_BYTE, pixels+ m_width*m_height * 3);
+    // horizontally flip
+    auto line_a = pixels;
+    auto line_b = pixels+m_width*m_height*3*2-m_width*3;
+    for (int l = 0; l < m_height; ++l) 
+    {
+        memcpy(line_a, line_b, m_width*3*sizeof(uint8_t));
+        line_a += m_width * 3;
+        line_b -= m_width * 3;
+    }
+    stbi_write_png(path.c_str(), m_width, m_height, 3, pixels, 0);
+    delete[] pixels;
 }
 
 void RenderSystem::KeyCallBack(GLFWwindow* window, int key, int scancode, int action, int mode)

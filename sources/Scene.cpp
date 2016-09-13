@@ -28,6 +28,13 @@ void Scene::Update() {
     for (auto& go : m_gameObjects) {
         if (!go->activeInHierarchy()) continue;
         go->Update();
+    }
+}
+
+void Scene::Render()
+{
+    for (auto& go : m_gameObjects) {
+        if (!go->activeInHierarchy()) continue;
         auto renderer = go->GetComponent<MeshRenderer>();
         if (renderer != nullptr) {
             renderer->Render();

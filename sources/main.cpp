@@ -1,5 +1,6 @@
 #include <iostream>
 #include <map>
+#include <sstream>
 
 #include "RenderSystem.hpp"
 #include "Debug.hpp"
@@ -97,6 +98,21 @@ public:
     }
 };
 
+class TakeScreenShot : public Script
+{
+public:
+    InjectClassName(TakeScreenShot);
+    virtual void Update() override {
+        if (Input::GetKeyDown(Input::KeyCode_P)) {
+            auto tm = time(nullptr);
+            ostringstream ss;
+            ss << int(tm) << ".png";
+            RenderSystem::GetInstance().SaveScreenShot(ss.str());
+            Debug::Log("Screen shot saved to %s", ss.str().c_str());
+        }
+    }
+};
+
 class ExampleApp1 : public App
 {
 public:
@@ -131,9 +147,9 @@ public:
         skyboxGO->AddComponent(meshFilter);
         skyboxGO->AddComponent(meshRenderer);
         
-        textures.clear();
-        textures["diffuseMap"] = head_diffuse;
-        textures["normalMap"] = head_normalmap;
+        //textures.clear();
+        //textures["diffuseMap"] = head_diffuse;
+        //textures["normalMap"] = head_normalmap;
 
 //        auto headGO = Scene::CreateGameObject();
 //        headGO->transform()->setScale(10, 10, 10);
@@ -145,6 +161,7 @@ public:
 //        headGO->AddComponent(meshRenderer1);
 //        headGO->AddScript(make_shared<VisualizeNormal>());
 //        //headGO->AddScript(make_shared<DeactiveSelf>());
+        textures["AmbientCubemap"] = sky_texture;
         auto go = Scene::CreateGameObject();
         //go->transform()->setScale(20, 20, 20);
         meshFilter = make_shared<MeshFilter>(sphere);
@@ -156,11 +173,12 @@ public:
         m_material->SetFloat("F0", f0);
         m_material->SetFloat("roughness", m_roughness);
         m_material->SetVector3("albedo", Vector3(0.8f, 0.6f, 0.6f));
-        //material->BindTextures(textures);
+        m_material->BindTextures(textures);
         meshRenderer = make_shared<MeshRenderer>(m_material);
         go->AddComponent(meshFilter);
         go->AddComponent(meshRenderer);
         Scene::mainCamera()->gameObject()->AddScript(make_shared<ShowFPS>());
+        Scene::mainCamera()->gameObject()->AddScript(make_shared<TakeScreenShot>());
 
         GUI::AddFloatRW("metallic", m_metallic, 0, 1, 0.01f);
         GUI::AddFloatRW("roughness", m_roughness, 0, 1, 0.01f);
@@ -181,7 +199,7 @@ public:
 private:
     float m_metallic = 0.5f;    // range(0, 1)
     float m_roughness = 0.5f;   // range(0, 1)
-    float m_specular = 0.25f;   // range(0, 1) -> ior in range(1, 1.8) https://zhuanlan.zhihu.com/p/20122884
+    float m_specular = 0.5f;    // range(0, 1) -> ior in range(1, 1.8) https://zhuanlan.zhihu.com/p/20122884
     Material::PMaterial m_material;
 };
 

@@ -43,6 +43,8 @@ public:
         return m_height;
     }
 
+    void SaveScreenShot(std::string& path);
+
 private:
     static void KeyCallBack(GLFWwindow* window, int key, int scancode, int action, int mode);
 

@@ -1,6 +1,8 @@
 #ifndef Time_hpp
 #define Time_hpp
 
+#include <time.h>
+
 class RenderSystem;
 
 class Time

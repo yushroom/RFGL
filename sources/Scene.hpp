@@ -20,6 +20,7 @@ public:
     static void Init();
     static void Start();
     static void Update();
+    static void Render();
 
     static GameObject::PGameObject Find(const std::string& name) {
         for (auto& go : m_gameObjects) {
