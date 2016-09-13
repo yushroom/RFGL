@@ -18,11 +18,19 @@
 // Unity Built-in shader variables
 // http://docs.unity3d.com/Manual/SL-UnityShaderVariables.html
 
+static std::vector<std::string> builtinUniformNames{
+"MATRIX_MVP", "MATRIX_V", "MATRIX_P", "MATRIX_VP", "MATRIX_IT_MV",
+    "_Object2World", "_WorldSpaceCameraPos"
+};
+
 const static std::string ShaderMacro = R"(#version 410 core
 #define PositionIndex 0
 #define NormalIndex 1
 #define UVIndex 2
 #define TangentIndex 3
+
+#define PI 3.141592653589793f
+#define INV_PI 0.3183098861837907f
 
 // Transformations
 uniform mat4 MATRIX_MVP;

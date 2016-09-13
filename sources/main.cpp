@@ -135,25 +135,40 @@ public:
         textures["diffuseMap"] = head_diffuse;
         textures["normalMap"] = head_normalmap;
 
-        auto headGO = Scene::CreateGameObject();
-        headGO->transform()->setScale(10, 10, 10);
-        auto meshFilter1 = make_shared<MeshFilter>(headModel);
-        auto material1 = Material::builtinMaterial("NormalMap");
-        material1->BindTextures(textures);
-        auto meshRenderer1 = make_shared<MeshRenderer>(material1);
-        headGO->AddComponent(meshFilter1);
-        headGO->AddComponent(meshRenderer1);
-        headGO->AddScript(make_shared<VisualizeNormal>());
-        //headGO->AddScript(make_shared<DeactiveSelf>());
-
+//        auto headGO = Scene::CreateGameObject();
+//        headGO->transform()->setScale(10, 10, 10);
+//        auto meshFilter1 = make_shared<MeshFilter>(headModel);
+//        auto material1 = Material::builtinMaterial("NormalMap");
+//        material1->BindTextures(textures);
+//        auto meshRenderer1 = make_shared<MeshRenderer>(material1);
+//        headGO->AddComponent(meshFilter1);
+//        headGO->AddComponent(meshRenderer1);
+//        headGO->AddScript(make_shared<VisualizeNormal>());
+//        //headGO->AddScript(make_shared<DeactiveSelf>());
+        auto go = Scene::CreateGameObject();
+        //go->transform()->setScale(20, 20, 20);
+        meshFilter = make_shared<MeshFilter>(sphere);
+        m_material = Material::builtinMaterial("PBR");
+        m_material->SetFloat("F0", 0.5f);
+        m_material->SetFloat("roughness", 0.5f);
+        m_material->SetVector3("albedo", Vector3(0.8f, 0.6f, 0.6f));
+        //material->BindTextures(textures);
+        meshRenderer = make_shared<MeshRenderer>(m_material);
+        go->AddComponent(meshFilter);
+        go->AddComponent(meshRenderer);
         Scene::mainCamera()->gameObject()->AddScript(make_shared<ShowFPS>());
     }
 
     virtual void Run() override {
+        m_material->SetFloat("F0", 0.5f);
+        m_material->SetFloat("roughness", 0.5f);
+        m_material->SetVector3("diffuse", Vector3(0.8f, 0.6f, 0.6f));
     }
 
     virtual void Clean() override {
     }
+    
+    Material::PMaterial m_material;
 };
 
 

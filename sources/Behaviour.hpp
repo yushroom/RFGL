@@ -20,7 +20,7 @@ private:
 };
 
 
-// MonoBehaviour is the base class every script derives from.
+// Script is the base class every script derives from.
 // http://docs.unity3d.com/ScriptReference/MonoBehaviour.html
 // http://docs.unity3d.com/Manual/ExecutionOrder.html
 class Script : public Behaviour

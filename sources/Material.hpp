@@ -25,6 +25,14 @@ public:
         return m_shader;
     }
     
+    void SetFloat(const std::string& name, float value) {
+        m_shader->BindUniformFloat(name.c_str(), value);
+    }
+    
+    void SetVector3(const std::string& name, const Vector3& value) {
+        m_shader->BindUniformVec3(name.c_str(), value);
+    }
+    
     void BindTextures(const std::map<std::string, Texture::PTexture>& textures) {
         m_textures = textures;
     }
@@ -37,7 +45,7 @@ public:
     
     static void Init() {
         
-        for (auto& s : std::vector<std::string>{"SkyBox", "NormalMap", "VisualizeNormal"})
+        for (auto& s : std::vector<std::string>{"SkyBox", "NormalMap", "VisualizeNormal", "PBR"})
         {
             auto material = std::make_shared<Material>();
             material->SetShader(Shader::builtinShader(s));

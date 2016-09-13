@@ -201,8 +201,8 @@ void Shader::FromString(const std::string& vs_string,
     for (int i = 0; i < count; i++) {
         glGetActiveUniform(m_program, (GLuint)i, bufSize, &length, &size, &type, name);
         //GLint location = glGetUniformLocation(m_program, name);
-        Debug::Log("Uniform #%d Type: %s Name: %s", i, GLenumToString(type).c_str(), name);
         auto loc = GetUniformLocation(name);
+        Debug::Log("Uniform #%d Type: %s Name: %s Loc: %d", i, GLenumToString(type).c_str(), name, loc);
         m_uniforms.push_back(UniformInfo{type, string(name), (GLuint)loc});
     }
 
@@ -294,9 +294,9 @@ void Shader::BindBuiltinUniforms(const BuiltinShaderUniforms& uniforms) const
                 //BindUniformMat4(u.name.c_str(), it->second);
                 glUniformMatrix4fv(u.location, 1, GL_FALSE, glm::value_ptr(it->second));
             }
-            else {
-                Debug::LogWarning("%s of type %u not found", u.name.c_str(), u.type);
-            }
+//            else {
+//                Debug::LogWarning("%s of type %u not found", u.name.c_str(), u.type);
+//            }
         }
         else if (u.type == GL_FLOAT_VEC3) {
             auto it = uniforms.vec3s.find(u.name);
@@ -304,9 +304,9 @@ void Shader::BindBuiltinUniforms(const BuiltinShaderUniforms& uniforms) const
                 //BindUniformVec3(u.name.c_str(), it->second);
                 glUniform3fv(u.location, 1, glm::value_ptr(it->second));
             }
-            else {
-                Debug::LogWarning("%s of type %u not found", u.name.c_str(), u.type);
-            }
+//            else {
+//                Debug::LogWarning("%s of type %u not found", u.name.c_str(), u.type);
+//            }
         }
     }
 }
@@ -672,12 +672,85 @@ void main()
 )";
 
 const std::string PBR_VS = R"(
-#define PI 3.1415926f
-vec3 diffuse(in vec3 diffuse) {
-    return diffuse / PI;
+layout (location = PositionIndex) in vec3 position;
+layout (location = NormalIndex) in vec3 normal;
+layout (location = UVIndex) in vec2 uv;
+
+out VS_OUT {
+    vec3 position;
+    vec3 normal;
+    vec2 uv;
+} vs_out;
+
+void main() {
+    gl_Position = MATRIX_MVP * vec4(position, 1);
+    vs_out.position = gl_Position.xyz;
+    vs_out.normal = mat3(MATRIX_IT_MV) * normal;
+    vs_out.uv = uv;
+}
+)";
+
+
+const std::string PBR_FS = R"(
+in VS_OUT {
+    vec3 position;
+    vec3 normal;
+    vec2 uv;
+} vs_out;
+
+out vec4 color;
+
+uniform vec3 albedo;
+uniform float roughness;
+uniform float F0;
+
+// l: *normalized* lightDir
+// v: *normalized* viewDir
+// n: *normalized* normal
+// return: D(h)*F(v, h)*G(l, v, h) / (4*dot(n, l)*dot(n, v))
+vec3 PRBLighting(vec3 l, vec3 v, vec3 n) {
+    vec3 h = normalize(l + v);
+    float nDoth = dot(n, h);
+    float lDoth = dot(l, h);
+    float nDotv = dot(n, v);
+    float nDotl = dot(n, l);
+    
+    // GGX D
+    float a = roughness*roughness;
+    a = a*a;
+    float k = (nDoth*nDoth*(a-1)+1);
+    float D = a/(PI*k*k);
+//    float k = (nDoth*nDoth*(r2-1)+1);
+//    k = roughness / k;
+//    float D = INV_PI * k * k;
+    
+    // F
+    k = 1 - lDoth;
+    float k2 = k*k;
+    float F = F0 + (1-F0)*k2*k2*k;
+    
+    // G
+    k = (roughness+1)*(roughness+1)/8;
+    float G = nDotl*nDotv / ((nDotl*(1-k)+k)*(nDotv*(1-k)+k));
+    
+    //return D*F*G / (4*nDotl*nDotv);
+    float specular = D*F*G;
+    float ambient = 0.01f;
+    vec3 diffuse = albedo*INV_PI;
+    
+    return ambient + (diffuse+specular) * nDotl;
 }
 
-CookTorrance
+const vec3 light_pos = vec3(10, 10, 10);
+
+void main()
+{
+    vec3 l = normalize(vs_out.position - light_pos);
+    vec3 v = normalize(_WorldSpaceCameraPos - vs_out.position);
+    vec3 n = normalize(vs_out.normal);
+    color.rgb = PRBLighting(l, v, n);
+    color.a = 1.0f;
+}
 
 )";
 
@@ -685,4 +758,5 @@ void Shader::Init() {
     m_builtinShaders["NormalMap"] = Shader::CreateFromString(normalMapVS, normalMapFS);
     m_builtinShaders["SkyBox"] = Shader::CreateFromString(skyBoxVS, skyBoxFS);
     m_builtinShaders["VisualizeNormal"] = Shader::CreateFromString(visualizeNormalVS, visualizeNormalFS, visualizeNormalGS);
+    m_builtinShaders["PBR"] = Shader::CreateFromString(PBR_VS, PBR_FS);
 }
