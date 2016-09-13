@@ -738,7 +738,7 @@ float3 TangentToWorld( float3 Vec, float3 TangentZ )
 
 float2 Hammersley( uint Index, uint NumSamples, uint2 Random )
 {
-    float E1 = frac( float(Index) / NumSamples + float( Random.x & 0xffff ) / (1<<16) );
+    float E1 = frac( float(Index) / NumSamples + float( Random.x & uint(0xffff) ) / (1<<16) );
     float E2 = float( ReverseBits32(Index) ^ Random.y ) * 2.3283064365386963e-10;
     return float2( E1, E2 );
 }
@@ -886,8 +886,8 @@ void main()
     vec3 l = normalize(light_pos - vs_out.position);
     vec3 v = normalize(_WorldSpaceCameraPos - vs_out.position);
     vec3 n = normalize(vs_out.normal);
-    //color.rgb = PRBLighting(l, v, n);
-    color.rgb = SpecularIBL(uint2(311010, 3671), vec3(0.7, 1.0, 0.7), roughness, n, v);
+    color.rgb = PRBLighting(l, v, n);
+    //color.rgb = SpecularIBL(uint2(311010, 3671), vec3(0.7, 1.0, 0.7), roughness, n, v);
     color.a = 1.0f;
 }
 )";

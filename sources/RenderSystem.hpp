@@ -43,7 +43,7 @@ public:
         return m_height;
     }
 
-    void SaveScreenShot(std::string& path);
+    void SaveScreenShot(const std::string& path);
 
 private:
     static void KeyCallBack(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -55,6 +55,8 @@ private:
     static void WindowSizeCallback(GLFWwindow* window, int width, int height);
 
     static void MouseCallback(GLFWwindow* window, double xpos, double ypos);
+    
+    static void CharacterCcallback(GLFWwindow* window, unsigned int codepoint);
 
     bool m_isWireFrameMode = false;
     bool m_useGammaCorrection = true;

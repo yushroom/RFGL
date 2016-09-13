@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BFE07C691CE23F3E004F52CD"
-               BuildableName = "PRT"
-               BlueprintName = "PRT"
-               ReferencedContainer = "container:PRT.xcodeproj">
+               BuildableName = "RFGL"
+               BlueprintName = "RFGL"
+               ReferencedContainer = "container:RFGL.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,18 +33,18 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BFE07C691CE23F3E004F52CD"
-            BuildableName = "PRT"
-            BlueprintName = "PRT"
-            ReferencedContainer = "container:PRT.xcodeproj">
+            BuildableName = "RFGL"
+            BlueprintName = "RFGL"
+            ReferencedContainer = "container:RFGL.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Debug"
-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      buildConfiguration = "Release"
+      selectedDebuggerIdentifier = ""
+      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -56,9 +56,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BFE07C691CE23F3E004F52CD"
-            BuildableName = "PRT"
-            BlueprintName = "PRT"
-            ReferencedContainer = "container:PRT.xcodeproj">
+            BuildableName = "RFGL"
+            BlueprintName = "RFGL"
+            ReferencedContainer = "container:RFGL.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -75,9 +75,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BFE07C691CE23F3E004F52CD"
-            BuildableName = "PRT"
-            BlueprintName = "PRT"
-            ReferencedContainer = "container:PRT.xcodeproj">
+            BuildableName = "RFGL"
+            BlueprintName = "RFGL"
+            ReferencedContainer = "container:RFGL.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

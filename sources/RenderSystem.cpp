@@ -14,6 +14,8 @@
 #include "Time.hpp"
 #include "MeshRenderer.hpp"
 #include "Scene.hpp"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw_gl3.h"
 
 // Window dimensions
 const uint32_t WIDTH = 800, HEIGHT = 600;
@@ -28,12 +30,18 @@ RenderSystem& RenderSystem::GetInstance()
     return instance;
 }
 
+static void GlfwErrorCallback(int error, const char* description)
+{
+    //fprintf(stderr, "Error %d: %s\n", error, description);
+    Debug::LogError("Error %d: %s\n", error, description);
+}
+
 void RenderSystem::Init()
 {
-
     Input::Init();
 
     Debug::Log("Starting GLFW context, OpenGL 4.1");
+    glfwSetErrorCallback(GlfwErrorCallback);
     glfwInit();
     // Set all the required options for GLFW
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -50,7 +58,7 @@ void RenderSystem::Init()
     glfwSetKeyCallback(m_window, RenderSystem::KeyCallBack);
     glfwSetCursorPosCallback(m_window, RenderSystem::MouseCallback);
     glfwSetScrollCallback(m_window, RenderSystem::MouseScrollCallback);
-
+    glfwSetCharCallback(m_window, RenderSystem::CharacterCcallback);
 
     // Set this to true so GLEW knows to use a modern approach to retrieving function pointers and extensions
     glewExperimental = GL_TRUE;
@@ -64,6 +72,8 @@ void RenderSystem::Init()
 
     glfwSetWindowSizeCallback(m_window, RenderSystem::WindowSizeCallback);
     glfwSetMouseButtonCallback(m_window, RenderSystem::MouseButtonCallback);
+    
+    ImGui_ImplGlfwGL3_Init(m_window, false);
 
     //GLint MaxPatchVertices = 0;
     //glGetIntegerv(GL_MAX_PATCH_VERTICES, &MaxPatchVertices);
@@ -74,8 +84,8 @@ void RenderSystem::Init()
     Material::Init();
     
     GUI::Init();
-    GUI::AddBool("WireFrame", m_isWireFrameMode);
-    GUI::AddBool("GammaCorrection", m_useGammaCorrection);
+    //GUI::AddBool("WireFrame", m_isWireFrameMode);
+    //GUI::AddBool("GammaCorrection", m_useGammaCorrection);
     
     Scene::Init();
 
@@ -99,6 +109,7 @@ void RenderSystem::Run()
         double xpos, ypos;
         glfwGetCursorPos(m_window, &xpos, &ypos);
         Input::UpdateMousePosition(float(xpos)/m_width, float(ypos)/m_height);
+        ImGui_ImplGlfwGL3_NewFrame();
         
         Scene::Update();
 
@@ -130,6 +141,9 @@ void RenderSystem::Run()
         if (m_isWireFrameMode)
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+        ImGui::Checkbox("Wire Frame", &m_isWireFrameMode);
+        ImGui::Checkbox("Gamma Correction", &m_useGammaCorrection);
+        //ImGui::Render();
         GUI::Update();
 
         // Swap the screen buffers
@@ -153,7 +167,7 @@ void RenderSystem::Clean()
     glfwTerminate();
 }
 
-void RenderSystem::SaveScreenShot(std::string& path)
+void RenderSystem::SaveScreenShot(const std::string& path)
 {
     auto pixels = new uint8_t[3*m_width*m_height*2];
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
@@ -175,20 +189,22 @@ void RenderSystem::KeyCallBack(GLFWwindow* window, int key, int scancode, int ac
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
+    
     if ((key >= GLFW_KEY_0 && key <= GLFW_KEY_9) || (key >= GLFW_KEY_A && key <= GLFW_KEY_Z)) {
         Input::UpdateKeyState((Input::KeyCode)key, (Input::KeyState)action);
     }
 
     //TwEventKeyGLFW(key, action);
-    GUI::OnKey(key, action);
+    //GUI::OnKey(key, action);
+    ImGui_ImplGlfwGL3_KeyCallback(window, key, scancode, action, mode);
 }
 
 void RenderSystem::MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    //TwEventMouseWheelGLFW(yoffset);
-    bool handled = GUI::OnMouseScroll(yoffset);
-    if (handled)
-        return;
+//    bool handled = GUI::OnMouseScroll(yoffset);
+//    if (handled)
+//        return;
+    ImGui_ImplGlfwGL3_ScrollCallback(window, xoffset, yoffset);
     //auto& t = m_mainCamera->gameObject->transform;
     auto t = Scene::mainCamera()->transform();
     t->setPosition(t->position() + 0.2f*float(yoffset)*t->forward());
@@ -199,19 +215,24 @@ void RenderSystem::MouseScrollCallback(GLFWwindow* window, double xoffset, doubl
 
 void RenderSystem::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-    //TwEventMouseButtonGLFW(button, action);
-    if (GUI::OnMouseButton(button, action))
-        return;
+//    if (GUI::OnMouseButton(button, action))
+//        return;
+    ImGui_ImplGlfwGL3_MouseButtonCallback(window, button, action, mods);
     Input::UpdateMouseButtonState(button, action == GLFW_PRESS ? Input::MouseButtonState_Down : Input::MouseButtonState_Up);
 }
 
 void RenderSystem::WindowSizeCallback(GLFWwindow* window, int width, int height)
 {
     //glViewport(0, 0, width, height);
-    GUI::OnWindowSizeChanged(width, height);
+    //GUI::OnWindowSizeChanged(width, height);
 }
 
 void RenderSystem::MouseCallback(GLFWwindow* window, double xpos, double ypos)
 {
-    GUI::OnMouse(xpos, ypos);
+    //GUI::OnMouse(xpos, ypos);
+}
+
+void RenderSystem::CharacterCcallback(GLFWwindow* window, unsigned int codepoint)
+{
+    ImGui_ImplGlfwGL3_CharCallback(window, codepoint);
 }

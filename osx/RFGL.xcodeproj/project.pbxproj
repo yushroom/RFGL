@@ -8,7 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		BF1B7A0E1CE2FCEC00AFE8C8 /* libassimp.3.2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1B7A0D1CE2FCEC00AFE8C8 /* libassimp.3.2.0.dylib */; };
-		BF52374E1CEA210A00261769 /* libAntTweakBar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF52374D1CEA210A00261769 /* libAntTweakBar.a */; };
+		BF59EB741D88593F00FB234B /* imgui_demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF59EB6A1D88593F00FB234B /* imgui_demo.cpp */; };
+		BF59EB751D88593F00FB234B /* imgui_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF59EB6B1D88593F00FB234B /* imgui_draw.cpp */; };
+		BF59EB761D88593F00FB234B /* imgui_impl_glfw_gl3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF59EB6C1D88593F00FB234B /* imgui_impl_glfw_gl3.cpp */; };
+		BF59EB771D88593F00FB234B /* imgui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF59EB6F1D88593F00FB234B /* imgui.cpp */; };
 		BFE07C791CE23FF2004F52CD /* libglfw3.3.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE07C771CE23FF2004F52CD /* libglfw3.3.1.dylib */; };
 		BFE07C7B1CE2400C004F52CD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE07C7A1CE2400C004F52CD /* OpenGL.framework */; };
 		BFE2D3D11D86E1A200F5E614 /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFE2D3CF1D86E1A200F5E614 /* Mesh.cpp */; };
@@ -50,8 +53,18 @@
 
 /* Begin PBXFileReference section */
 		BF1B7A0D1CE2FCEC00AFE8C8 /* libassimp.3.2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.3.2.0.dylib; path = ../../../../../usr/local/Cellar/assimp/3.2/lib/libassimp.3.2.0.dylib; sourceTree = "<group>"; };
-		BF52374D1CEA210A00261769 /* libAntTweakBar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAntTweakBar.a; path = /usr/local/Cellar/anttweakbar/1.16/lib/libAntTweakBar.a; sourceTree = "<absolute>"; };
-		BFE07C6A1CE23F3E004F52CD /* PRT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PRT; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF59EB691D88593F00FB234B /* imconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imconfig.h; path = ../sources/imgui/imconfig.h; sourceTree = "<group>"; };
+		BF59EB6A1D88593F00FB234B /* imgui_demo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_demo.cpp; path = ../sources/imgui/imgui_demo.cpp; sourceTree = "<group>"; };
+		BF59EB6B1D88593F00FB234B /* imgui_draw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_draw.cpp; path = ../sources/imgui/imgui_draw.cpp; sourceTree = "<group>"; };
+		BF59EB6C1D88593F00FB234B /* imgui_impl_glfw_gl3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_impl_glfw_gl3.cpp; path = ../sources/imgui/imgui_impl_glfw_gl3.cpp; sourceTree = "<group>"; };
+		BF59EB6D1D88593F00FB234B /* imgui_impl_glfw_gl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imgui_impl_glfw_gl3.h; path = ../sources/imgui/imgui_impl_glfw_gl3.h; sourceTree = "<group>"; };
+		BF59EB6E1D88593F00FB234B /* imgui_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imgui_internal.h; path = ../sources/imgui/imgui_internal.h; sourceTree = "<group>"; };
+		BF59EB6F1D88593F00FB234B /* imgui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui.cpp; path = ../sources/imgui/imgui.cpp; sourceTree = "<group>"; };
+		BF59EB701D88593F00FB234B /* imgui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imgui.h; path = ../sources/imgui/imgui.h; sourceTree = "<group>"; };
+		BF59EB711D88593F00FB234B /* stb_rect_pack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_rect_pack.h; path = ../sources/imgui/stb_rect_pack.h; sourceTree = "<group>"; };
+		BF59EB721D88593F00FB234B /* stb_textedit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_textedit.h; path = ../sources/imgui/stb_textedit.h; sourceTree = "<group>"; };
+		BF59EB731D88593F00FB234B /* stb_truetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_truetype.h; path = ../sources/imgui/stb_truetype.h; sourceTree = "<group>"; };
+		BFE07C6A1CE23F3E004F52CD /* RFGL */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RFGL; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFE07C771CE23FF2004F52CD /* libglfw3.3.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw3.3.1.dylib; path = /usr/local/Cellar/glfw3/3.1.2/lib/libglfw3.3.1.dylib; sourceTree = "<absolute>"; };
 		BFE07C7A1CE2400C004F52CD /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		BFE2D3CF1D86E1A200F5E614 /* Mesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Mesh.cpp; path = ../sources/Mesh.cpp; sourceTree = "<group>"; };
@@ -111,16 +124,34 @@
 				BFE07C7B1CE2400C004F52CD /* OpenGL.framework in Frameworks */,
 				BFE07C791CE23FF2004F52CD /* libglfw3.3.1.dylib in Frameworks */,
 				BF1B7A0E1CE2FCEC00AFE8C8 /* libassimp.3.2.0.dylib in Frameworks */,
-				BF52374E1CEA210A00261769 /* libAntTweakBar.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BF59EB681D88592E00FB234B /* imgui */ = {
+			isa = PBXGroup;
+			children = (
+				BF59EB691D88593F00FB234B /* imconfig.h */,
+				BF59EB6A1D88593F00FB234B /* imgui_demo.cpp */,
+				BF59EB6B1D88593F00FB234B /* imgui_draw.cpp */,
+				BF59EB6C1D88593F00FB234B /* imgui_impl_glfw_gl3.cpp */,
+				BF59EB6D1D88593F00FB234B /* imgui_impl_glfw_gl3.h */,
+				BF59EB6E1D88593F00FB234B /* imgui_internal.h */,
+				BF59EB6F1D88593F00FB234B /* imgui.cpp */,
+				BF59EB701D88593F00FB234B /* imgui.h */,
+				BF59EB711D88593F00FB234B /* stb_rect_pack.h */,
+				BF59EB721D88593F00FB234B /* stb_textedit.h */,
+				BF59EB731D88593F00FB234B /* stb_truetype.h */,
+			);
+			name = imgui;
+			sourceTree = "<group>";
+		};
 		BFE07C611CE23F3E004F52CD = {
 			isa = PBXGroup;
 			children = (
+				BF59EB681D88592E00FB234B /* imgui */,
 				BFFF94B71D82F89A002B4EBB /* main.cpp */,
 				BFFF94EB1D859B28002B4EBB /* Engine */,
 				BFE07C801CE242FA004F52CD /* Sources */,
@@ -132,7 +163,7 @@
 		BFE07C6B1CE23F3E004F52CD /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BFE07C6A1CE23F3E004F52CD /* PRT */,
+				BFE07C6A1CE23F3E004F52CD /* RFGL */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -142,7 +173,6 @@
 			children = (
 				BFFF94D41D82FC1C002B4EBB /* libGLEW.a */,
 				BFE07C7A1CE2400C004F52CD /* OpenGL.framework */,
-				BF52374D1CEA210A00261769 /* libAntTweakBar.a */,
 				BF1B7A0D1CE2FCEC00AFE8C8 /* libassimp.3.2.0.dylib */,
 				BFE07C771CE23FF2004F52CD /* libglfw3.3.1.dylib */,
 			);
@@ -218,9 +248,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		BFE07C691CE23F3E004F52CD /* PRT */ = {
+		BFE07C691CE23F3E004F52CD /* RFGL */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BFE07C711CE23F3E004F52CD /* Build configuration list for PBXNativeTarget "PRT" */;
+			buildConfigurationList = BFE07C711CE23F3E004F52CD /* Build configuration list for PBXNativeTarget "RFGL" */;
 			buildPhases = (
 				BFE07C661CE23F3E004F52CD /* Sources */,
 				BFE07C671CE23F3E004F52CD /* Frameworks */,
@@ -230,9 +260,9 @@
 			);
 			dependencies = (
 			);
-			name = PRT;
-			productName = PRT;
-			productReference = BFE07C6A1CE23F3E004F52CD /* PRT */;
+			name = RFGL;
+			productName = RFGL;
+			productReference = BFE07C6A1CE23F3E004F52CD /* RFGL */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -249,7 +279,7 @@
 					};
 				};
 			};
-			buildConfigurationList = BFE07C651CE23F3E004F52CD /* Build configuration list for PBXProject "PRT" */;
+			buildConfigurationList = BFE07C651CE23F3E004F52CD /* Build configuration list for PBXProject "RFGL" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -261,7 +291,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BFE07C691CE23F3E004F52CD /* PRT */,
+				BFE07C691CE23F3E004F52CD /* RFGL */,
 			);
 		};
 /* End PBXProject section */
@@ -272,6 +302,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BFFF94E61D84FAE1002B4EBB /* Renderer.cpp in Sources */,
+				BF59EB771D88593F00FB234B /* imgui.cpp in Sources */,
 				BFFF94EE1D859F4F002B4EBB /* Debug.cpp in Sources */,
 				BFFF94CC1D82F89A002B4EBB /* RenderSystem.cpp in Sources */,
 				BFFF94C81D82F89A002B4EBB /* Input.cpp in Sources */,
@@ -284,9 +315,12 @@
 				BFFF94CD1D82F89A002B4EBB /* Shader.cpp in Sources */,
 				BFE2D3D71D86E4E600F5E614 /* Behaviour.cpp in Sources */,
 				BFFF94DA1D845574002B4EBB /* Component.cpp in Sources */,
+				BF59EB761D88593F00FB234B /* imgui_impl_glfw_gl3.cpp in Sources */,
 				BFE2D3D11D86E1A200F5E614 /* Mesh.cpp in Sources */,
 				BFFF94E91D84FC20002B4EBB /* Scene.cpp in Sources */,
+				BF59EB751D88593F00FB234B /* imgui_draw.cpp in Sources */,
 				BFFF94C71D82F89A002B4EBB /* GUI.cpp in Sources */,
+				BF59EB741D88593F00FB234B /* imgui_demo.cpp in Sources */,
 				BFFF94CE1D82F89A002B4EBB /* Texture.cpp in Sources */,
 				BFFF94DD1D845CD6002B4EBB /* MeshFilter.cpp in Sources */,
 				BFFF94CA1D82F89A002B4EBB /* main.cpp in Sources */,
@@ -383,6 +417,7 @@
 		BFE07C721CE23F3E004F52CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
 					../3rdparty,
@@ -391,7 +426,6 @@
 					"$(inherited)",
 					/usr/local/Cellar/glfw3/3.1.2/lib,
 					/usr/local/Cellar/assimp/3.2/lib,
-					/usr/local/Cellar/anttweakbar/1.16/lib,
 					/usr/local/Cellar/glew/2.0.0/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -401,6 +435,7 @@
 		BFE07C731CE23F3E004F52CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
 					../3rdparty,
@@ -409,7 +444,6 @@
 					"$(inherited)",
 					/usr/local/Cellar/glfw3/3.1.2/lib,
 					/usr/local/Cellar/assimp/3.2/lib,
-					/usr/local/Cellar/anttweakbar/1.16/lib,
 					/usr/local/Cellar/glew/2.0.0/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -419,7 +453,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BFE07C651CE23F3E004F52CD /* Build configuration list for PBXProject "PRT" */ = {
+		BFE07C651CE23F3E004F52CD /* Build configuration list for PBXProject "RFGL" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BFE07C6F1CE23F3E004F52CD /* Debug */,
@@ -428,7 +462,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BFE07C711CE23F3E004F52CD /* Build configuration list for PBXNativeTarget "PRT" */ = {
+		BFE07C711CE23F3E004F52CD /* Build configuration list for PBXNativeTarget "RFGL" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BFE07C721CE23F3E004F52CD /* Debug */,

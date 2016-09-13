@@ -18,11 +18,12 @@ public:
     
     virtual void Start() override
     {
-        GUI::AddBool("rotate", m_isRotating);
+        //GUI::AddBool("rotate", m_isRotating);
     }
     
     virtual void Update() override
     {
+        ImGui::Checkbox("rotate camera", &m_isRotating);
         if (m_isRotating)
             m_gameObject->transform()->RotateAround(Vector3(0, 0, 0), Vector3(0, 1, 0), 1);
             

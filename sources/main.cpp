@@ -23,11 +23,12 @@ public:
     float m_fps = 0;
 
     virtual void Start() override {
-        GUI::AddFloatRO("FPS", m_fps);
+        //GUI::AddFloatRO("FPS", m_fps);
     }
 
     virtual void Update() override {
         m_fps = 1.f / Time::DeltaTime();
+        ImGui::Text("FPS: %lf", m_fps);
         if (Input::GetKeyDown(Input::KeyCode_A)) {
             Debug::Log("A pressed");
         }
@@ -48,10 +49,11 @@ public:
     bool m_active = true;
     
     virtual void Start() override {
-        GUI::AddBool("show", m_active);
+        //GUI::AddBool("show", m_active);
     }
 
     virtual void Update() override {
+        ImGui::Checkbox("show", &m_active);
         if (m_active && !m_gameObject->activeSelf()) {
             Debug::Log("show");
             m_gameObject->SetActive(true);
@@ -77,12 +79,13 @@ public:
     bool m_visualizeNormal = false;
 
     virtual void Start() override {
-        GUI::AddBool("VisiualizeNormal", m_visualizeNormal);
+        //GUI::AddBool("VisiualizeNormal", m_visualizeNormal);
         m_meshRenderer = m_gameObject->GetComponent<MeshRenderer>();
         m_material = Material::builtinMaterial("VisualizeNormal");
     }
     
     virtual void Update() override {
+        ImGui::Checkbox("Visiualize Normal", &m_visualizeNormal);
         auto& materials = m_meshRenderer->materials();
         if (m_visualizeNormal) {
             if (!m_added) {
@@ -177,15 +180,20 @@ public:
         meshRenderer = make_shared<MeshRenderer>(m_material);
         go->AddComponent(meshFilter);
         go->AddComponent(meshRenderer);
+        //go->AddScript(make_shared<DeactiveSelf>());
         Scene::mainCamera()->gameObject()->AddScript(make_shared<ShowFPS>());
         Scene::mainCamera()->gameObject()->AddScript(make_shared<TakeScreenShot>());
 
-        GUI::AddFloatRW("metallic", m_metallic, 0, 1, 0.01f);
-        GUI::AddFloatRW("roughness", m_roughness, 0, 1, 0.01f);
-        GUI::AddFloatRW("specular", m_specular, 0, 1, 0.01f);
+//        GUI::AddFloatRW("metallic", m_metallic, 0, 1, 0.01f);
+//        GUI::AddFloatRW("roughness", m_roughness, 0, 1, 0.01f);
+//        GUI::AddFloatRW("specular", m_specular, 0, 1, 0.01f);
     }
 
     virtual void Run() override {
+        ImGui::SliderFloat("metallic", &m_metallic, 0, 1);
+        ImGui::SliderFloat("roughness", &m_roughness, 0, 1);
+        ImGui::SliderFloat("specular", &m_specular, 0, 1);
+        
         m_material->SetFloat("roughness", m_roughness);
         float m_ior = m_specular * 0.8f + 1.0f;
         float f0 = powf((m_ior - 1)/(m_ior + 1), 2);
