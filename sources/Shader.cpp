@@ -203,7 +203,7 @@ void Shader::FromString(const std::string& vs_string,
         //GLint location = glGetUniformLocation(m_program, name);
         auto loc = GetUniformLocation(name);
         Debug::Log("Uniform #%d Type: %s Name: %s Loc: %d", i, GLenumToString(type).c_str(), name, loc);
-        m_uniforms.push_back(UniformInfo{type, string(name), (GLuint)loc});
+        m_uniforms.push_back(UniformInfo{type, string(name), (GLuint)loc, false});
     }
 
     glDetachShader(m_program, vs);
@@ -258,41 +258,41 @@ void Shader::Use() const {
 //    return glGetAttribLocation(m_program, name);
 //}
 
-void Shader::BindUniformFloat(const char* name, const float value) const {
-    GLint loc = GetUniformLocation(name);
-    glUniform1f(loc, value);
-}
+//void Shader::BindUniformFloat(const char* name, const float value) const {
+//    GLint loc = GetUniformLocation(name);
+//    glUniform1f(loc, value);
+//}
+//
+//void Shader::BindUniformVec3(const char* name, const glm::vec3& value) const {
+//    GLint loc = GetUniformLocation(name);
+//    glUniform3fv(loc, 1, glm::value_ptr(value));
+//}
+//
+//void Shader::BindUniformMat4(const char* name, const glm::mat4& value) const {
+//    GLint loc = GetUniformLocation(name);
+//    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value));
+//}
+//
+//void Shader::BindUniformMat3(const char* name, const glm::mat3& value) const {
+//    GLint loc = GetUniformLocation(name);
+//    glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(value));
+//}
+//
+//void Shader::BindUniformTexture(const char* name, const GLuint texture, const GLuint id, GLenum textureType /*= GL_TEXTURE_2D*/) const {
+//    glActiveTexture(GLenum(GL_TEXTURE0+id));
+//    glBindTexture(textureType, texture);
+//    GLuint loc = GetUniformLocation(name);
+//    glUniform1i(loc, id);
+//}
 
-void Shader::BindUniformVec3(const char* name, const glm::vec3& value) const {
-    GLint loc = GetUniformLocation(name);
-    glUniform3fv(loc, 1, glm::value_ptr(value));
-}
-
-void Shader::BindUniformMat4(const char* name, const glm::mat4& value) const {
-    GLint loc = GetUniformLocation(name);
-    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value));
-}
-
-void Shader::BindUniformMat3(const char* name, const glm::mat3& value) const {
-    GLint loc = GetUniformLocation(name);
-    glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(value));
-}
-
-void Shader::BindUniformTexture(const char* name, const GLuint texture, const GLuint id, GLenum textureType /*= GL_TEXTURE_2D*/) const {
-    glActiveTexture(GLenum(GL_TEXTURE0+id));
-    glBindTexture(textureType, texture);
-    GLuint loc = GetUniformLocation(name);
-    glUniform1i(loc, id);
-}
-
-void Shader::BindBuiltinUniforms(const BuiltinShaderUniforms& uniforms) const
+void Shader::BindUniforms(const ShaderUniforms& uniforms)
 {
     for (auto& u : m_uniforms) {
         if (u.type == GL_FLOAT_MAT4) {
             auto it = uniforms.mat4s.find(u.name);
             if (it != uniforms.mat4s.end()) {
-                //BindUniformMat4(u.name.c_str(), it->second);
                 glUniformMatrix4fv(u.location, 1, GL_FALSE, glm::value_ptr(it->second));
+                u.binded = true;
             }
 //            else {
 //                Debug::LogWarning("%s of type %u not found", u.name.c_str(), u.type);
@@ -301,17 +301,24 @@ void Shader::BindBuiltinUniforms(const BuiltinShaderUniforms& uniforms) const
         else if (u.type == GL_FLOAT_VEC3) {
             auto it = uniforms.vec3s.find(u.name);
             if (it != uniforms.vec3s.end()) {
-                //BindUniformVec3(u.name.c_str(), it->second);
                 glUniform3fv(u.location, 1, glm::value_ptr(it->second));
+                u.binded = true;
             }
 //            else {
 //                Debug::LogWarning("%s of type %u not found", u.name.c_str(), u.type);
 //            }
         }
+        else if (u.type == GL_FLOAT) {
+            auto it = uniforms.floats.find(u.name);
+            if (it != uniforms.floats.end()) {
+                glUniform1f(u.location, it->second);
+                u.binded = true;
+            }
+        }
     }
 }
 
-void Shader::BindTextures(const std::map<std::string, Texture::PTexture>& textures) const
+void Shader::BindTextures(const std::map<std::string, Texture::PTexture>& textures)
 {
     int texture_id = 0;
     for (auto& u : m_uniforms) {
@@ -325,6 +332,7 @@ void Shader::BindTextures(const std::map<std::string, Texture::PTexture>& textur
             //GLuint loc = _getUniformLocation(name);
             glUniform1i(u.location, texture_id);
             texture_id++;
+            u.binded = true;
         }
         else {
             Debug::LogWarning("%s of type %u not found", u.name.c_str(), u.type);
@@ -344,13 +352,22 @@ void Shader::PostRender() const
     glCullFace(GL_BACK);
 }
 
+void Shader::CheckStatus() const
+{
+    for (auto& u : m_uniforms) {
+        if (!u.binded) {
+            Debug::LogWarning("Uniform %s not binded!", u.name.c_str());
+        }
+    }
+}
+
 Shader::PShader Shader::builtinShader(const std::string& name)
 {
     auto it = m_builtinShaders.find(name);
     if (it != m_builtinShaders.end()) {
         return it->second;
     }
-    Debug::LogWarning("No builtin shader called %d", name.c_str());
+    Debug::LogWarning("No built-in shader called %d", name.c_str());
     return nullptr;
 }
 
@@ -551,8 +568,8 @@ out vec3 fragNormal;
 
 void main() {
     gl_Position = MATRIX_MVP * vec4(position, 1.0f);
-    mat3 normalMatrix = mat3(MATRIX_IT_MV);
-    vs_out.normal = normalize(vec3(MATRIX_P * vec4(normalMatrix*normal, 1.0)));
+    mat3 normalMatrix = mat3(MATRIX_IT_M);
+    vs_out.normal = normalize(vec3(MATRIX_VP * vec4(normalMatrix*normal, 1.0)));
 }
 )";
 
@@ -606,7 +623,7 @@ out VS_OUT {
 
 void main()
 {
-    vs_out.normal = mat3(_Object2World) * normal;
+    vs_out.normal = mat3(MATRIX_IT_M) * normal;
     vs_out.tangent = mat3(_Object2World) * tangent;
     vs_out.uv = uv;
     gl_Position = MATRIX_MVP * vec4(position, 1.0);
@@ -683,9 +700,10 @@ out VS_OUT {
 } vs_out;
 
 void main() {
-    gl_Position = MATRIX_MVP * vec4(position, 1);
-    vs_out.position = gl_Position.xyz;
-    vs_out.normal = mat3(MATRIX_IT_MV) * normal;
+    vec4 posH = vec4(position, 1);
+    gl_Position = MATRIX_MVP * posH;
+    vs_out.position = (_Object2World * posH).xyz;
+    vs_out.normal = mat3(MATRIX_IT_M) * normal;
     vs_out.uv = uv;
 }
 )";
@@ -701,8 +719,10 @@ in VS_OUT {
 out vec4 color;
 
 uniform vec3 albedo;
+uniform float metallic;
+uniform float specular;
 uniform float roughness;
-uniform float F0;
+uniform float F0; // = pow((ior-1)/(ior+1), 2);
 
 // l: *normalized* lightDir
 // v: *normalized* viewDir
@@ -710,19 +730,16 @@ uniform float F0;
 // return: D(h)*F(v, h)*G(l, v, h) / (4*dot(n, l)*dot(n, v))
 vec3 PRBLighting(vec3 l, vec3 v, vec3 n) {
     vec3 h = normalize(l + v);
-    float nDoth = dot(n, h);
-    float lDoth = dot(l, h);
-    float nDotv = dot(n, v);
-    float nDotl = dot(n, l);
+    float nDoth = clamp(dot(n, h), 0.0, 1.0);
+    float lDoth = clamp(dot(l, h), 0.0, 1.0);
+    float nDotv = clamp(dot(n, v), 0.0, 1.0);
+    float nDotl = clamp(dot(n, l), 0.0, 1.0);
     
     // GGX D
-    float a = roughness*roughness;
-    a = a*a;
-    float k = (nDoth*nDoth*(a-1)+1);
-    float D = a/(PI*k*k);
-//    float k = (nDoth*nDoth*(r2-1)+1);
-//    k = roughness / k;
-//    float D = INV_PI * k * k;
+    float alpha = roughness*roughness;
+    float alphaSqure = alpha*alpha;
+    float k = (nDoth*nDoth*(alphaSqure-1)+1);
+    float D = alphaSqure / (PI*k*k);
     
     // F
     k = 1 - lDoth;
@@ -730,22 +747,23 @@ vec3 PRBLighting(vec3 l, vec3 v, vec3 n) {
     float F = F0 + (1-F0)*k2*k2*k;
     
     // G
-    k = (roughness+1)*(roughness+1)/8;
-    float G = nDotl*nDotv / ((nDotl*(1-k)+k)*(nDotv*(1-k)+k));
+    //k = alpha / 2.0;
+    k = (roughness+1)*(roughness+1)/8;  // UE4
+    float G = 1.0 / ((nDotl*(1-k)+k)*(nDotv*(1-k)+k));
     
     //return D*F*G / (4*nDotl*nDotv);
-    float specular = D*F*G;
+    vec3 specular = vec3(D*F*G/4);
     float ambient = 0.01f;
     vec3 diffuse = albedo*INV_PI;
     
-    return ambient + (diffuse+specular) * nDotl;
+    return ambient + mix(diffuse, specular, metallic) * nDotl;
 }
 
 const vec3 light_pos = vec3(10, 10, 10);
 
 void main()
 {
-    vec3 l = normalize(vs_out.position - light_pos);
+    vec3 l = normalize(light_pos - vs_out.position);
     vec3 v = normalize(_WorldSpaceCameraPos - vs_out.position);
     vec3 n = normalize(vs_out.normal);
     color.rgb = PRBLighting(l, v, n);

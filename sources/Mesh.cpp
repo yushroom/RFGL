@@ -46,29 +46,29 @@ Mesh::Mesh(const int n_vertex, const int n_face, float* positions, float* normal
 
 Mesh::Mesh(Mesh&& m) 
 {
-	m_positionBuffer = std::move(m.m_positionBuffer);
-	m_normalBuffer = std::move(m.m_normalBuffer);
-	m_uvBuffer = std::move(m.m_uvBuffer);
-	m_tangentBuffer = std::move(m.m_tangentBuffer);
-	m_indexBuffer = std::move(m.m_indexBuffer);
-	m_VAO = m.m_VAO;
-	m_indexVBO = m.m_indexVBO;
-	m_positionVBO = m.m_positionVBO;
-	m_normalVBO = m.m_normalVBO;
-	m_uvVBO = m.m_uvVBO;
-	m_tangentVBO = m.m_tangentVBO;
-	m.m_VAO = 0;
-	m.m_indexVBO = 0;
-	m.m_positionVBO = 0;
-	m.m_normalVBO = 0;
-	m.m_uvVBO = 0;
-	m.m_tangentVBO = 0;
+    m_positionBuffer = std::move(m.m_positionBuffer);
+    m_normalBuffer = std::move(m.m_normalBuffer);
+    m_uvBuffer = std::move(m.m_uvBuffer);
+    m_tangentBuffer = std::move(m.m_tangentBuffer);
+    m_indexBuffer = std::move(m.m_indexBuffer);
+    m_VAO = m.m_VAO;
+    m_indexVBO = m.m_indexVBO;
+    m_positionVBO = m.m_positionVBO;
+    m_normalVBO = m.m_normalVBO;
+    m_uvVBO = m.m_uvVBO;
+    m_tangentVBO = m.m_tangentVBO;
+    m.m_VAO = 0;
+    m.m_indexVBO = 0;
+    m.m_positionVBO = 0;
+    m.m_normalVBO = 0;
+    m.m_uvVBO = 0;
+    m.m_tangentVBO = 0;
 }
 
 
 Mesh::Mesh(const std::string& objModelPath, int vertexUsage)
 {
-	FromObjFile(objModelPath, vertexUsage);
+    FromObjFile(objModelPath, vertexUsage);
 }
 
 Mesh::~Mesh() {
@@ -82,90 +82,90 @@ Mesh::~Mesh() {
 
 void Mesh::FromObjFile(const std::string path, int vertexUsage)
 {
-	Assimp::Importer importer;
-	importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_NORMALS);
-	unsigned int load_option =
-		aiProcess_Triangulate
-		| aiProcess_RemoveComponent
-		//| aiProcess_SortByPType
-		//| aiProcess_GenNormals
-		| aiProcess_CalcTangentSpace
-		| aiProcess_GenSmoothNormals
-		//| aiProcess_JoinIdenticalVertices
-		//| aiProcess_FixInfacingNormals
-		//| aiProcess_OptimizeGraph
-		//| aiProcess_OptimizeMeshes
-		| aiProcess_FlipUVs
-		//| aiProcess_ConvertToLeftHanded
-		;
-	bool load_tangent = (vertexUsage & VertexUsageTangent) != 0;
-	if (load_tangent)
-		load_option |= aiProcess_CalcTangentSpace;
-	const aiScene* scene = importer.ReadFile(path.c_str(), load_option);
-	if (!scene) {
-		std::cout << "Can not open file " << path << endl;
+    Assimp::Importer importer;
+    importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_NORMALS);
+    unsigned int load_option =
+        aiProcess_Triangulate
+        | aiProcess_RemoveComponent
+        //| aiProcess_SortByPType
+        //| aiProcess_GenNormals
+        | aiProcess_CalcTangentSpace
+        | aiProcess_GenSmoothNormals
+        //| aiProcess_JoinIdenticalVertices
+        //| aiProcess_FixInfacingNormals
+        //| aiProcess_OptimizeGraph
+        //| aiProcess_OptimizeMeshes
+        | aiProcess_FlipUVs
+        //| aiProcess_ConvertToLeftHanded
+        ;
+    bool load_tangent = (vertexUsage & VertexUsageTangent) != 0;
+    if (load_tangent)
+        load_option |= aiProcess_CalcTangentSpace;
+    const aiScene* scene = importer.ReadFile(path.c_str(), load_option);
+    if (!scene) {
+        std::cout << "Can not open file " << path << endl;
         Debug::LogError("Can not open file %s", path.c_str());
-		abort();
-	}
+        abort();
+    }
 
-	int n_vertices = 0;
-	int n_triangles = 0;
+    int n_vertices = 0;
+    int n_triangles = 0;
 
-	for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
-		aiMesh* mesh = scene->mMeshes[i];
-		n_vertices += mesh->mNumVertices;
-		n_triangles += mesh->mNumFaces;
-	}
+    for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
+        aiMesh* mesh = scene->mMeshes[i];
+        n_vertices += mesh->mNumVertices;
+        n_triangles += mesh->mNumFaces;
+    }
 
-	m_positionBuffer.reserve(n_vertices * 3);
-	m_normalBuffer.reserve(n_vertices * 3);
-	m_uvBuffer.reserve(n_vertices * 2);
-	m_indexBuffer.reserve(n_triangles * 3);
-	m_tangentBuffer.reserve(n_triangles * 3);
-	int idx = 0;
-	for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
-		aiMesh* mesh = scene->mMeshes[i];
-		bool has_uv = mesh->HasTextureCoords(0);
-		//if (!has_uv)
-		//	printf("mesh[%d] do not have uv!\n", i);
-		assert(!((!has_uv) && (vertexUsage & VertexUsageUV)));
-		bool load_uv = (vertexUsage & VertexUsageUV) != 0;
+    m_positionBuffer.reserve(n_vertices * 3);
+    m_normalBuffer.reserve(n_vertices * 3);
+    m_uvBuffer.reserve(n_vertices * 2);
+    m_indexBuffer.reserve(n_triangles * 3);
+    m_tangentBuffer.reserve(n_triangles * 3);
+    int idx = 0;
+    for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
+        aiMesh* mesh = scene->mMeshes[i];
+        bool has_uv = mesh->HasTextureCoords(0);
+        //if (!has_uv)
+        //	printf("mesh[%d] do not have uv!\n", i);
+        assert(!((!has_uv) && (vertexUsage & VertexUsageUV)));
+        bool load_uv = (vertexUsage & VertexUsageUV) != 0;
 
-		for (unsigned int j = 0; j < mesh->mNumVertices; ++j) {
-			auto& v = mesh->mVertices[j];
-			m_positionBuffer.push_back(v.x);
-			m_positionBuffer.push_back(v.y);
-			m_positionBuffer.push_back(v.z);
+        for (unsigned int j = 0; j < mesh->mNumVertices; ++j) {
+            auto& v = mesh->mVertices[j];
+            m_positionBuffer.push_back(v.x);
+            m_positionBuffer.push_back(v.y);
+            m_positionBuffer.push_back(v.z);
 
-			auto& n = mesh->mNormals[j];
-			m_normalBuffer.push_back(n.x);
-			m_normalBuffer.push_back(n.y);
-			m_normalBuffer.push_back(n.z);
+            auto& n = mesh->mNormals[j];
+            m_normalBuffer.push_back(n.x);
+            m_normalBuffer.push_back(n.y);
+            m_normalBuffer.push_back(n.z);
 
-			if (has_uv) {
-				auto& uv = mesh->mTextureCoords[0][j];
-				m_uvBuffer.push_back(uv.x);
-				m_uvBuffer.push_back(uv.y);
-			}
+            if (has_uv) {
+                auto& uv = mesh->mTextureCoords[0][j];
+                m_uvBuffer.push_back(uv.x);
+                m_uvBuffer.push_back(uv.y);
+            }
 
-			if (load_tangent) {
-				auto& t = mesh->mTangents[j];
-				m_tangentBuffer.push_back(t.x);
-				m_tangentBuffer.push_back(t.y);
-				m_tangentBuffer.push_back(t.z);
-			}
-		}
-		for (unsigned int j = 0; j < mesh->mNumFaces; j++) {
-			auto& face = mesh->mFaces[j];
-			assert(face.mNumIndices == 3);
-			for (int fi = 0; fi < 3; ++fi)
-				m_indexBuffer.push_back(face.mIndices[fi] + idx);
-		}
-		idx += mesh->mNumFaces;
-	}
+            if (load_tangent) {
+                auto& t = mesh->mTangents[j];
+                m_tangentBuffer.push_back(t.x);
+                m_tangentBuffer.push_back(t.y);
+                m_tangentBuffer.push_back(t.z);
+            }
+        }
+        for (unsigned int j = 0; j < mesh->mNumFaces; j++) {
+            auto& face = mesh->mFaces[j];
+            assert(face.mNumIndices == 3);
+            for (int fi = 0; fi < 3; ++fi)
+                m_indexBuffer.push_back(face.mIndices[fi] + idx);
+        }
+        idx += mesh->mNumFaces;
+    }
 
-	GenerateBuffer(vertexUsage);
-	BindBuffer(vertexUsage);
+    GenerateBuffer(vertexUsage);
+    BindBuffer(vertexUsage);
 }
 
 void Mesh::Render() {
@@ -181,35 +181,35 @@ void Mesh::Render() {
 //}
 
 void Mesh::GenerateBuffer(int vertexUsage) {
-	// VAO
-	glGenVertexArrays(1, &m_VAO);
+    // VAO
+    glGenVertexArrays(1, &m_VAO);
 
-	// index vbo
-	glGenBuffers(1, &m_indexVBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexVBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer.size() * 4, m_indexBuffer.data(), GL_STATIC_DRAW);
+    // index vbo
+    glGenBuffers(1, &m_indexVBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexVBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer.size() * 4, m_indexBuffer.data(), GL_STATIC_DRAW);
 
-	glGenBuffers(1, &m_positionVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_positionVBO);
-	glBufferData(GL_ARRAY_BUFFER, m_positionBuffer.size() * 4, m_positionBuffer.data(), GL_STATIC_DRAW);
+    glGenBuffers(1, &m_positionVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, m_positionVBO);
+    glBufferData(GL_ARRAY_BUFFER, m_positionBuffer.size() * 4, m_positionBuffer.data(), GL_STATIC_DRAW);
 
-	if (vertexUsage & VertexUsageNormal) {
-		glGenBuffers(1, &m_normalVBO);
-		glBindBuffer(GL_ARRAY_BUFFER, m_normalVBO);
-		glBufferData(GL_ARRAY_BUFFER, m_normalBuffer.size() * 4, m_normalBuffer.data(), GL_STATIC_DRAW);
-	}
+    if (vertexUsage & VertexUsageNormal) {
+        glGenBuffers(1, &m_normalVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, m_normalVBO);
+        glBufferData(GL_ARRAY_BUFFER, m_normalBuffer.size() * 4, m_normalBuffer.data(), GL_STATIC_DRAW);
+    }
 
-	if (vertexUsage & VertexUsageUV) {
-		glGenBuffers(1, &m_uvVBO);
-		glBindBuffer(GL_ARRAY_BUFFER, m_uvVBO);
-		glBufferData(GL_ARRAY_BUFFER, m_uvBuffer.size() * 4, m_uvBuffer.data(), GL_STATIC_DRAW);
-	}
+    if (vertexUsage & VertexUsageUV) {
+        glGenBuffers(1, &m_uvVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, m_uvVBO);
+        glBufferData(GL_ARRAY_BUFFER, m_uvBuffer.size() * 4, m_uvBuffer.data(), GL_STATIC_DRAW);
+    }
 
-	if (vertexUsage & VertexUsageTangent) {
-		glGenBuffers(1, &m_tangentVBO);
-		glBindBuffer(GL_ARRAY_BUFFER, m_tangentVBO);
-		glBufferData(GL_ARRAY_BUFFER, m_tangentBuffer.size() * 4, m_tangentBuffer.data(), GL_STATIC_DRAW);
-	}
+    if (vertexUsage & VertexUsageTangent) {
+        glGenBuffers(1, &m_tangentVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, m_tangentVBO);
+        glBufferData(GL_ARRAY_BUFFER, m_tangentBuffer.size() * 4, m_tangentBuffer.data(), GL_STATIC_DRAW);
+    }
 }
 
 void Mesh::BindBuffer(int vertexUsage/* = VertexUsagePN*/) {

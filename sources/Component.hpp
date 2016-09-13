@@ -11,7 +11,7 @@ class Transform;
 class Component : public Object
 {
 public:
-	virtual std::string ClassName() const = 0;
+    virtual std::string ClassName() const = 0;
 
     // The game object this component is attached to. A component is always attached to a game object.
     GameObject* gameObject() const { return m_gameObject; }
@@ -25,16 +25,16 @@ public:
     friend class GameObject;
     
 protected:
-	GameObject* m_gameObject = nullptr;
+    GameObject* m_gameObject = nullptr;
 };
 
 
 #define InjectClassName(name) \
-	static std::string StaticClassName() { \
-		return #name; \
-	} \
-	virtual std::string ClassName() const override { \
-		return StaticClassName(); \
-	}
+    static std::string StaticClassName() { \
+        return #name; \
+    } \
+    virtual std::string ClassName() const override { \
+        return StaticClassName(); \
+    }
 
 #endif // Component_hpp

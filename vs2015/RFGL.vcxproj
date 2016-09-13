@@ -148,6 +148,7 @@
     <ClInclude Include="..\sources\Transform.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\sources\App.cpp" />
     <ClCompile Include="..\sources\Behaviour.cpp" />
     <ClCompile Include="..\sources\Camera.cpp" />
     <ClCompile Include="..\sources\Component.cpp" />

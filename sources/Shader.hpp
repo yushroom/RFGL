@@ -40,8 +40,9 @@ uniform mat4 MATRIX_P;
 uniform mat4 MATRIX_VP;
 //uniform mat4 MATRIX_T_MV;
 uniform mat4 MATRIX_IT_MV;
-uniform mat4 _Object2World;
-//uniform mat4 _World2Object;
+uniform mat4 MATRIX_IT_M;   // new
+uniform mat4 _Object2World; // MATRIX_M
+//uniform mat4 _World2Object; // MATRIX_I_M
 
 // Camera and screen
 uniform vec3 _WorldSpaceCameraPos;
@@ -60,10 +61,11 @@ uniform vec3 _WorldSpaceCameraPos;
 //uniform vec4 _DeltaTime;
 )";
 
-struct BuiltinShaderUniforms
+struct ShaderUniforms
 {
     std::map<std::string, Matrix4x4> mat4s;
     std::map<std::string, Vector3> vec3s;
+    std::map<std::string, float> floats;
 };
 
 class RenderSystem;
@@ -75,7 +77,7 @@ public:
     Shader() = default;
     Shader(const Shader&) = delete;
     Shader& operator=(const Shader&) = delete;
-	Shader(Shader&&);
+    Shader(Shader&&);
 
     typedef std::shared_ptr<Shader> PShader;
 
@@ -99,7 +101,7 @@ public:
                     const std::string& gs_str,
                     const std::string& fs_str);
     void FromFile(const std::string& vs_path, const std::string ps_path);
-	//Shader(const std::string& vs_path, const std::string ps_path);
+    //Shader(const std::string& vs_path, const std::string ps_path);
     ~Shader();
     
     void Use() const;
@@ -110,23 +112,25 @@ public:
     
     //GLuint getAttribLocation(const char* name) const;
     
-    void BindUniformFloat(const char* name, const float value) const;
-    void BindUniformVec3(const char* name, const glm::vec3& value) const;
-    void BindUniformMat3(const char* name, const glm::mat3& value) const;
-    void BindUniformMat4(const char* name, const glm::mat4& value) const;
+    //void BindUniformFloat(const char* name, const float value) const;
+    //void BindUniformVec3(const char* name, const glm::vec3& value) const;
+    //void BindUniformMat3(const char* name, const glm::mat3& value) const;
+    //void BindUniformMat4(const char* name, const glm::mat4& value) const;
 
-    void BindUniformTexture(const char* name, const GLuint texture, const GLuint id, GLenum textureType = GL_TEXTURE_2D) const;
+    //void BindUniformTexture(const char* name, const GLuint texture, const GLuint id, GLenum textureType = GL_TEXTURE_2D) const;
 
-    void BindBuiltinUniforms(const BuiltinShaderUniforms& uniforms) const;
-    void BindTextures(const std::map<std::string, std::shared_ptr<Texture>>& textures) const;
+    void BindUniforms(const ShaderUniforms& uniforms);
+    void BindTextures(const std::map<std::string, std::shared_ptr<Texture>>& textures);
     
     void PreRender() const;
     void PostRender() const;
     
+    void CheckStatus() const;
+
     static PShader builtinShader(const std::string& name);
     
 private:
-	GLuint m_program = 0;
+    GLuint m_program = 0;
     
     GLint GetUniformLocation(const char* name) const;
     
@@ -136,6 +140,7 @@ private:
         //GLchar name[32];
         std::string name;  // variable name in GLSL
         GLuint location;
+        bool binded;
     };
     std::vector<UniformInfo> m_uniforms;
     

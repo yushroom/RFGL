@@ -22,7 +22,7 @@ public:
     float m_fps = 0;
 
     virtual void Start() override {
-        GUI::AddFloat("FPS", m_fps);
+        GUI::AddFloatRO("FPS", m_fps);
     }
 
     virtual void Update() override {
@@ -149,25 +149,39 @@ public:
         //go->transform()->setScale(20, 20, 20);
         meshFilter = make_shared<MeshFilter>(sphere);
         m_material = Material::builtinMaterial("PBR");
-        m_material->SetFloat("F0", 0.5f);
-        m_material->SetFloat("roughness", 0.5f);
+        //m_material->SetFloat("F0", 0.5f);
+        m_material->SetFloat("metallic", m_metallic);
+        float m_ior = m_specular * 0.8f + 1.0f;
+        float f0 = powf((m_ior - 1)/(m_ior + 1), 2);
+        m_material->SetFloat("F0", f0);
+        m_material->SetFloat("roughness", m_roughness);
         m_material->SetVector3("albedo", Vector3(0.8f, 0.6f, 0.6f));
         //material->BindTextures(textures);
         meshRenderer = make_shared<MeshRenderer>(m_material);
         go->AddComponent(meshFilter);
         go->AddComponent(meshRenderer);
         Scene::mainCamera()->gameObject()->AddScript(make_shared<ShowFPS>());
+
+        GUI::AddFloatRW("metallic", m_metallic, 0, 1, 0.01f);
+        GUI::AddFloatRW("roughness", m_roughness, 0, 1, 0.01f);
+        GUI::AddFloatRW("specular", m_specular, 0, 1, 0.01f);
     }
 
     virtual void Run() override {
-        m_material->SetFloat("F0", 0.5f);
-        m_material->SetFloat("roughness", 0.5f);
-        m_material->SetVector3("diffuse", Vector3(0.8f, 0.6f, 0.6f));
+        m_material->SetFloat("roughness", m_roughness);
+        float m_ior = m_specular * 0.8f + 1.0f;
+        float f0 = powf((m_ior - 1)/(m_ior + 1), 2);
+        m_material->SetFloat("F0", f0);
+        m_material->SetFloat("metallic", m_metallic);
     }
 
     virtual void Clean() override {
     }
     
+private:
+    float m_metallic = 0.5f;    // range(0, 1)
+    float m_roughness = 0.5f;   // range(0, 1)
+    float m_specular = 0.25f;   // range(0, 1) -> ior in range(1, 1.8) https://zhuanlan.zhihu.com/p/20122884
     Material::PMaterial m_material;
 };
 

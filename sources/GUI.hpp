@@ -11,29 +11,30 @@
 class GUI
 {
 public:
-	GUI() = delete;
+    GUI() = delete;
 
-	static void Init();
+    static void Init();
 
-	static void AddBool(const std::string& label,  bool& value);
-	static void AddFloat(const std::string& label, const float& value);
-	static void AddVector3(const std::string& label, const Vector3& value);
-	static void AddDouble(const std::string& label, const double& value);
+    static void AddBool(const std::string& label,  bool& value);
+    static void AddFloatRO(const std::string& label, const float& value);
+    static void AddFloatRW(const std::string& label, float& value, float min_value, float max_value, float step);
+    static void AddVector3(const std::string& label, const Vector3& value);
+    static void AddDouble(const std::string& label, const double& value);
 
-	static void Update();
+    static void Update();
 
-	static void Clean();
+    static void Clean();
     
     static void OnKey(int key, int action);
-	static void OnWindowSizeChanged(int width, int height);
-	static void OnMouse(double xpos, double ypos);
+    static void OnWindowSizeChanged(int width, int height);
+    static void OnMouse(double xpos, double ypos);
     static bool OnMouseButton(int button, int action);
 
-	// return true if the mouse wheel event has been handled by GUI
+    // return true if the mouse wheel event has been handled by GUI
     static bool OnMouseScroll(double yoffset);
 
 private:
-	static TwBar *m_twBar;
+    static TwBar *m_twBar;
 };
 
 #endif // GUI_hpp

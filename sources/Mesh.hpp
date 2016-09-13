@@ -16,7 +16,7 @@ enum VertexUsage {
 class Mesh
 {
 public:
-	Mesh();
+    Mesh();
     Mesh(std::vector<float> position_buffer, std::vector<uint32_t> index_buffer);
     Mesh(const int n_vertex, const int n_face, float* positions, uint32_t* indices);
     Mesh(const int n_vertex, const int n_face, float* positions, float* normals, uint32_t* indices);
@@ -25,7 +25,7 @@ public:
     Mesh(const Mesh&) = delete;
     void operator=(const Mesh&) = delete;
 
-	Mesh(Mesh&& m);
+    Mesh(Mesh&& m);
     
     ~Mesh();
     
@@ -37,7 +37,7 @@ public:
         return m;
     }
 
-	void FromObjFile(const std::string path, int vertexUsage);
+    void FromObjFile(const std::string path, int vertexUsage);
 
     void SetVertexUsage(int vertexUsage) {
         BindBuffer(vertexUsage);
@@ -64,7 +64,7 @@ private:
     GLuint m_uvVBO;
     GLuint m_tangentVBO;
     
-	void GenerateBuffer(int vertexUsage);
+    void GenerateBuffer(int vertexUsage);
     void BindBuffer(int vertexUsage);
 };
 

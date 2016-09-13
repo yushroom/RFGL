@@ -18,10 +18,10 @@ GLuint create_texture(char const* Filename)
     glCheckError();
     
     gli::texture Texture = gli::load(Filename);
-	if (Texture.empty()) {
+    if (Texture.empty()) {
         Debug::LogError("Texture %s not found", Filename);
-		abort();
-	}
+        abort();
+    }
     //assert(!Texture.empty());
     
     gli::gl GL(gli::gl::PROFILE_GL33);
@@ -213,21 +213,21 @@ GLuint CreateTexture(const std::string& path) {
 
 void Texture::FromFile(const std::string& path)
 {
-	auto pos = path.find_last_of('.');
-	assert(pos != std::string::npos);
-	auto ext = path.substr(pos + 1);
-	if (ext == "dds") {
-		m_texture = create_texture(path.c_str());
-	}
-	else if (ext == "bmp" || ext == "png" || ext == "jpg") {
-		m_texture = CreateTexture(path);
-	}
-	else {
-		printf("texture type[%s] not supported\n", ext.c_str());
-		abort();
-	}
+    auto pos = path.find_last_of('.');
+    assert(pos != std::string::npos);
+    auto ext = path.substr(pos + 1);
+    if (ext == "dds") {
+        m_texture = create_texture(path.c_str());
+    }
+    else if (ext == "bmp" || ext == "png" || ext == "jpg") {
+        m_texture = CreateTexture(path);
+    }
+    else {
+        printf("texture type[%s] not supported\n", ext.c_str());
+        abort();
+    }
 }
 
 Texture::Texture(const std::string& path) {
-	FromFile(path);
+    FromFile(path);
 }
