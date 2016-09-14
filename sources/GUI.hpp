@@ -24,7 +24,9 @@ public:
 
     // return true if the mouse wheel event has been handled by GUI
     //static bool OnMouseScroll(double yoffset);
-
+    
+    // Make a single press button. The user clicks them and something happens immediately.
+    //static void bool Button(Re)
 };
 
 #endif // GUI_hpp

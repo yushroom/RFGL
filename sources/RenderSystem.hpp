@@ -56,7 +56,7 @@ private:
 
     static void MouseCallback(GLFWwindow* window, double xpos, double ypos);
     
-    static void CharacterCcallback(GLFWwindow* window, unsigned int codepoint);
+    static void CharacterCallback(GLFWwindow* window, unsigned int codepoint);
 
     bool m_isWireFrameMode = false;
     bool m_useGammaCorrection = true;

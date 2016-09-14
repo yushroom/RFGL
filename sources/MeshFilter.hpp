@@ -26,6 +26,10 @@ public:
         m_mesh = mesh;
     }
     
+    virtual void OnEditorGUI() override {
+        ImGui::Text("%s", m_mesh->name().c_str());
+    }
+    
 private:
     std::shared_ptr<Mesh> m_mesh = nullptr;
 };

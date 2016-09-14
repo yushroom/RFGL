@@ -3,8 +3,6 @@
 
 #include "RFGL.hpp"
 #include <string>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 #include "Debug.hpp"
 
@@ -78,6 +76,15 @@ struct ShaderUniforms
     std::map<std::string, float> floats;
 };
 
+struct UniformInfo {
+    //GLint size; // size of the variable
+    GLenum type; // type of the variable (float, vec3 or mat4, etc)
+    //GLchar name[32];
+    std::string name;  // variable name in GLSL
+    GLuint location;
+    bool binded;
+};
+
 class RenderSystem;
 class Texture;
 
@@ -136,6 +143,14 @@ public:
     void PostRender() const;
     
     void CheckStatus() const;
+    
+    auto uniforms() const {
+        return m_uniforms;
+    }
+    
+    std::vector<UniformInfo>& uniforms() {
+        return m_uniforms;
+    }
 
     static PShader builtinShader(const std::string& name);
     
@@ -144,14 +159,7 @@ private:
     
     GLint GetUniformLocation(const char* name) const;
     
-    struct UniformInfo {
-        //GLint size; // size of the variable
-        GLenum type; // type of the variable (float, vec3 or mat4, etc)
-        //GLchar name[32];
-        std::string name;  // variable name in GLSL
-        GLuint location;
-        bool binded;
-    };
+
     std::vector<UniformInfo> m_uniforms;
     
     enum Cullface {

@@ -12,10 +12,11 @@
 		BF59EB751D88593F00FB234B /* imgui_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF59EB6B1D88593F00FB234B /* imgui_draw.cpp */; };
 		BF59EB761D88593F00FB234B /* imgui_impl_glfw_gl3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF59EB6C1D88593F00FB234B /* imgui_impl_glfw_gl3.cpp */; };
 		BF59EB771D88593F00FB234B /* imgui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF59EB6F1D88593F00FB234B /* imgui.cpp */; };
+		BF59EB7A1D89041D00FB234B /* Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF59EB781D89041D00FB234B /* Common.cpp */; };
 		BFE07C791CE23FF2004F52CD /* libglfw3.3.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE07C771CE23FF2004F52CD /* libglfw3.3.1.dylib */; };
 		BFE07C7B1CE2400C004F52CD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE07C7A1CE2400C004F52CD /* OpenGL.framework */; };
 		BFE2D3D11D86E1A200F5E614 /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFE2D3CF1D86E1A200F5E614 /* Mesh.cpp */; };
-		BFE2D3D41D86E1D400F5E614 /* Object .cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFE2D3D21D86E1D400F5E614 /* Object .cpp */; };
+		BFE2D3D41D86E1D400F5E614 /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFE2D3D21D86E1D400F5E614 /* Object.cpp */; };
 		BFE2D3D71D86E4E600F5E614 /* Behaviour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFE2D3D51D86E4E600F5E614 /* Behaviour.cpp */; };
 		BFE2D3D91D86E5B500F5E614 /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFE2D3D81D86E5B500F5E614 /* App.cpp */; };
 		BFFF94C31D82F89A002B4EBB /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94A71D82F89A002B4EBB /* Camera.cpp */; };
@@ -64,12 +65,14 @@
 		BF59EB711D88593F00FB234B /* stb_rect_pack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_rect_pack.h; path = ../sources/imgui/stb_rect_pack.h; sourceTree = "<group>"; };
 		BF59EB721D88593F00FB234B /* stb_textedit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_textedit.h; path = ../sources/imgui/stb_textedit.h; sourceTree = "<group>"; };
 		BF59EB731D88593F00FB234B /* stb_truetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_truetype.h; path = ../sources/imgui/stb_truetype.h; sourceTree = "<group>"; };
+		BF59EB781D89041D00FB234B /* Common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Common.cpp; path = ../sources/Common.cpp; sourceTree = "<group>"; };
+		BF59EB791D89041D00FB234B /* Common.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Common.hpp; path = ../sources/Common.hpp; sourceTree = "<group>"; };
 		BFE07C6A1CE23F3E004F52CD /* RFGL */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RFGL; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFE07C771CE23FF2004F52CD /* libglfw3.3.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw3.3.1.dylib; path = /usr/local/Cellar/glfw3/3.1.2/lib/libglfw3.3.1.dylib; sourceTree = "<absolute>"; };
 		BFE07C7A1CE2400C004F52CD /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		BFE2D3CF1D86E1A200F5E614 /* Mesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Mesh.cpp; path = ../sources/Mesh.cpp; sourceTree = "<group>"; };
 		BFE2D3D01D86E1A200F5E614 /* Mesh.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Mesh.hpp; path = ../sources/Mesh.hpp; sourceTree = "<group>"; };
-		BFE2D3D21D86E1D400F5E614 /* Object .cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "Object .cpp"; path = "../sources/Object .cpp"; sourceTree = "<group>"; };
+		BFE2D3D21D86E1D400F5E614 /* Object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Object.cpp; path = ../sources/Object.cpp; sourceTree = "<group>"; };
 		BFE2D3D31D86E1D400F5E614 /* Object.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Object.hpp; path = ../sources/Object.hpp; sourceTree = "<group>"; };
 		BFE2D3D51D86E4E600F5E614 /* Behaviour.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Behaviour.cpp; path = ../sources/Behaviour.cpp; sourceTree = "<group>"; };
 		BFE2D3D61D86E4E600F5E614 /* Behaviour.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Behaviour.hpp; path = ../sources/Behaviour.hpp; sourceTree = "<group>"; };
@@ -184,6 +187,8 @@
 			children = (
 				BFE2D3D81D86E5B500F5E614 /* App.cpp */,
 				BFFF94A51D82F89A002B4EBB /* App.hpp */,
+				BF59EB781D89041D00FB234B /* Common.cpp */,
+				BF59EB791D89041D00FB234B /* Common.hpp */,
 				BFFF94AD1D82F89A002B4EBB /* GLError.cpp */,
 				BFFF94AE1D82F89A002B4EBB /* GLError.hpp */,
 				BFFF94B01D82F89A002B4EBB /* GUI.cpp */,
@@ -235,7 +240,7 @@
 				BFFF94E21D84FAC6002B4EBB /* Material.hpp */,
 				BFE2D3CF1D86E1A200F5E614 /* Mesh.cpp */,
 				BFE2D3D01D86E1A200F5E614 /* Mesh.hpp */,
-				BFE2D3D21D86E1D400F5E614 /* Object .cpp */,
+				BFE2D3D21D86E1D400F5E614 /* Object.cpp */,
 				BFE2D3D31D86E1D400F5E614 /* Object.hpp */,
 				BFFF94BD1D82F89A002B4EBB /* Shader.cpp */,
 				BFFF94BE1D82F89A002B4EBB /* Shader.hpp */,
@@ -312,6 +317,7 @@
 				BFFF94E01D84FAB3002B4EBB /* MeshRenderer.cpp in Sources */,
 				BFFF94C31D82F89A002B4EBB /* Camera.cpp in Sources */,
 				BFFF94CF1D82F89A002B4EBB /* Transform.cpp in Sources */,
+				BF59EB7A1D89041D00FB234B /* Common.cpp in Sources */,
 				BFFF94CD1D82F89A002B4EBB /* Shader.cpp in Sources */,
 				BFE2D3D71D86E4E600F5E614 /* Behaviour.cpp in Sources */,
 				BFFF94DA1D845574002B4EBB /* Component.cpp in Sources */,
@@ -326,7 +332,7 @@
 				BFFF94CA1D82F89A002B4EBB /* main.cpp in Sources */,
 				BFFF94E31D84FAC6002B4EBB /* Material.cpp in Sources */,
 				BFFF94C51D82F89A002B4EBB /* GLError.cpp in Sources */,
-				BFE2D3D41D86E1D400F5E614 /* Object .cpp in Sources */,
+				BFE2D3D41D86E1D400F5E614 /* Object.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

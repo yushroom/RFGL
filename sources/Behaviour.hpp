@@ -40,7 +40,7 @@ public:
     
     virtual void LateUpdate() {};
     
-    virtual void OnGUI() {};
+    //virtual void OnGUI() {};
 };
 
 

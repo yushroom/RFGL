@@ -1,22 +1,28 @@
 #ifndef Material_hpp
 #define Material_hpp
 
+#include "Object.hpp"
 #include "Shader.hpp"
 #include "Texture.hpp"
 
-class Material
+class Material : public Object
 {
 public:
     Material() {
         
     }
     
-    Material(Shader::PShader shader) : m_shader(shader) {
-        
+    Material(Shader::PShader shader) {
+        SetShader(shader);
     }
     
     void SetShader(std::shared_ptr<Shader> shader) {
         m_shader = shader;
+        for (auto& u : m_shader->uniforms()) {
+            if (u.type == GL_FLOAT) {
+                m_uniforms.floats[u.name] = 0.5f;
+            }
+        }
     }
     
     typedef std::shared_ptr<Material> PMaterial;
@@ -42,6 +48,10 @@ public:
     }
 
     auto uniforms() const {
+        return m_uniforms;
+    }
+    
+    ShaderUniforms& uniforms() {
         return m_uniforms;
     }
     

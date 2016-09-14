@@ -1,6 +1,7 @@
 #ifndef Model_hpp
 #define Model_hpp
 
+#include "Object.hpp"
 #include "RFGL.hpp"
 
 enum VertexUsage {
@@ -13,7 +14,7 @@ enum VertexUsage {
     VertexUsagePNUT     = VertexUsagePNU | VertexUsageTangent
 };
 
-class Mesh
+class Mesh : public Object
 {
 public:
     Mesh();

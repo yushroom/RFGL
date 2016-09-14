@@ -37,13 +37,12 @@ public:
 
 
     void Start() {
-        //GUI::addFloat("tx", m_position.x);
-        //GUI::addFloat("ty", m_position.y);
-        //GUI::addFloat("tz", m_position.z);
-        //GUI::addFloat("rx", m_eulerAngles.x);
-        //GUI::addFloat("ry", m_eulerAngles.x);
-        //GUI::addFloat("rz", m_eulerAngles.x);
-        //GUI::addVector3("forward", m_forward);
+    }
+    
+    virtual void OnEditorGUI() override {
+        ImGui::InputFloat3("Position", glm::value_ptr(m_localPosition));
+        ImGui::InputFloat3("Scale", glm::value_ptr(m_localScale));
+        ImGui::InputFloat3("Rotation", glm::value_ptr(m_localEulerAngles));
     }
 
     Vector3 position() const {

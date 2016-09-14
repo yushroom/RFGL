@@ -30,6 +30,16 @@ public:
         return m_materials;
     }
     
+    virtual void OnEditorGUI() override {
+        for (auto& m : m_materials) {
+            auto& uniforms = m->shader()->uniforms();
+            for (auto& u : uniforms) {
+                if (u.type == GL_FLOAT) {
+                    ImGui::SliderFloat(u.name.c_str(), &m->uniforms().floats[u.name], 0, 1);
+                }
+            }
+        }
+    }
     
 protected:
     virtual void Render() const = 0;

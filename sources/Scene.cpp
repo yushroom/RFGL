@@ -6,6 +6,8 @@ std::vector<std::shared_ptr<GameObject>> Scene::m_gameObjects;
 
 std::shared_ptr<Camera> Scene::m_mainCamera = nullptr;
 
+std::shared_ptr<GameObject> Scene::m_activeGameObject = nullptr;
+
 void Scene::Init() {
     int width = RenderSystem::GetInstance().width();
     int height = RenderSystem::GetInstance().height();
@@ -16,6 +18,8 @@ void Scene::Init() {
     camera_go->transform()->setPosition(0, 0, 5);
     camera_go->transform()->LookAt(Vector3(0, 0, 0));
     m_gameObjects.push_back(camera_go);
+    
+    m_activeGameObject = camera_go;
 }
 
 void Scene::Start() {
@@ -42,3 +46,13 @@ void Scene::Render()
     }
 }
 
+void Scene::OnEditorGUI()
+{
+//    for (auto& go : m_gameObjects) {
+//        if (!go->activeInHierarchy()) continue;
+//        go->OnEditorGUI();
+//    }
+    if (m_activeGameObject != nullptr) {
+        m_activeGameObject->OnEditorGUI();
+    }
+}

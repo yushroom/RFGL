@@ -114,6 +114,18 @@ protected:
         }
     }
 
+    void OnEditorGUI() {
+        ImGui::CollapsingHeader("Transform");
+        m_transform.OnEditorGUI();
+        for (auto& c : m_components) {
+            ImGui::CollapsingHeader(c->ClassName().c_str());
+            c->OnEditorGUI();
+        }
+        for (auto& s : m_scripts) {
+            ImGui::CollapsingHeader(s->ClassName().c_str());
+            s->OnEditorGUI();
+        }
+    }
     
     const Transform* transform() const {
         return &m_transform;

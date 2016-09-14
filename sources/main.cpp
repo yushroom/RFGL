@@ -25,10 +25,13 @@ public:
     virtual void Start() override {
         //GUI::AddFloatRO("FPS", m_fps);
     }
-
-    virtual void Update() override {
+    
+    virtual void OnEditorGUI() override {
         m_fps = 1.f / Time::DeltaTime();
         ImGui::Text("FPS: %lf", m_fps);
+    }
+
+    virtual void Update() override {
         if (Input::GetKeyDown(Input::KeyCode_A)) {
             Debug::Log("A pressed");
         }
@@ -51,9 +54,12 @@ public:
     virtual void Start() override {
         //GUI::AddBool("show", m_active);
     }
+    
+    virtual void OnEditorGUI() override {
+        ImGui::Checkbox("show", &m_active);
+    }
 
     virtual void Update() override {
-        ImGui::Checkbox("show", &m_active);
         if (m_active && !m_gameObject->activeSelf()) {
             Debug::Log("show");
             m_gameObject->SetActive(true);
@@ -84,8 +90,11 @@ public:
         m_material = Material::builtinMaterial("VisualizeNormal");
     }
     
-    virtual void Update() override {
+    virtual void OnEditorGUI() override {
         ImGui::Checkbox("Visiualize Normal", &m_visualizeNormal);
+    }
+    
+    virtual void Update() override {
         auto& materials = m_meshRenderer->materials();
         if (m_visualizeNormal) {
             if (!m_added) {
@@ -168,47 +177,24 @@ public:
         auto go = Scene::CreateGameObject();
         //go->transform()->setScale(20, 20, 20);
         meshFilter = make_shared<MeshFilter>(sphere);
-        m_material = Material::builtinMaterial("PBR");
-        //m_material->SetFloat("F0", 0.5f);
-        m_material->SetFloat("metallic", m_metallic);
-        float m_ior = m_specular * 0.8f + 1.0f;
-        float f0 = powf((m_ior - 1)/(m_ior + 1), 2);
-        m_material->SetFloat("F0", f0);
-        m_material->SetFloat("roughness", m_roughness);
-        m_material->SetVector3("albedo", Vector3(0.8f, 0.6f, 0.6f));
-        m_material->BindTextures(textures);
-        meshRenderer = make_shared<MeshRenderer>(m_material);
+        material = Material::builtinMaterial("PBR");
+        material->SetVector3("albedo", Vector3(0.8f, 0.6f, 0.6f));
+        material->BindTextures(textures);
+        meshRenderer = make_shared<MeshRenderer>(material);
         go->AddComponent(meshFilter);
         go->AddComponent(meshRenderer);
         //go->AddScript(make_shared<DeactiveSelf>());
         Scene::mainCamera()->gameObject()->AddScript(make_shared<ShowFPS>());
         Scene::mainCamera()->gameObject()->AddScript(make_shared<TakeScreenShot>());
-
-//        GUI::AddFloatRW("metallic", m_metallic, 0, 1, 0.01f);
-//        GUI::AddFloatRW("roughness", m_roughness, 0, 1, 0.01f);
-//        GUI::AddFloatRW("specular", m_specular, 0, 1, 0.01f);
+        
+        Scene::SelectGameObject(go);
     }
 
     virtual void Run() override {
-        ImGui::SliderFloat("metallic", &m_metallic, 0, 1);
-        ImGui::SliderFloat("roughness", &m_roughness, 0, 1);
-        ImGui::SliderFloat("specular", &m_specular, 0, 1);
-        
-        m_material->SetFloat("roughness", m_roughness);
-        float m_ior = m_specular * 0.8f + 1.0f;
-        float f0 = powf((m_ior - 1)/(m_ior + 1), 2);
-        m_material->SetFloat("F0", f0);
-        m_material->SetFloat("metallic", m_metallic);
     }
 
     virtual void Clean() override {
     }
-    
-private:
-    float m_metallic = 0.5f;    // range(0, 1)
-    float m_roughness = 0.5f;   // range(0, 1)
-    float m_specular = 0.5f;    // range(0, 1) -> ior in range(1, 1.8) https://zhuanlan.zhihu.com/p/20122884
-    Material::PMaterial m_material;
 };
 
 

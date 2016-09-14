@@ -6,6 +6,7 @@
 
 #include "GLError.hpp"
 #include "Texture.hpp"
+#include "Common.hpp"
 
 using namespace std;
 
@@ -43,30 +44,6 @@ string GLenumToString(GLenum e) {
             return "UNKNOWN";
             break;
     }
-}
-
-std::vector<std::string> split(const std::string& str, const std::string& separator){
-    auto l = separator.length();
-    auto pos = str.find_first_of(separator);
-    decltype(pos) last_pos = 0;
-    std::vector<std::string> ret;
-    while (pos != string::npos) {
-        ret.push_back(str.substr(last_pos, pos-last_pos));
-        pos += l;
-        last_pos = pos;
-        pos = str.find_first_of(separator, pos);
-    }
-    ret.push_back(str.substr(last_pos, pos));
-    return ret;
-}
-
-void trim(std::string& str) {
-    str.erase(0, str.find_first_not_of(' '));
-    str.erase(str.find_last_not_of(' ')+1);
-}
-
-bool startsWith(const std::string& str, const std::string& str2) {
-    return str.substr(0, str2.size()) == str2;
 }
 
 void Shader::FromString(const std::string& vs_string,
@@ -722,7 +699,8 @@ uniform vec3 albedo;
 uniform float metallic;
 //uniform float specular;
 uniform float roughness;
-uniform float F0; // = pow((ior-1)/(ior+1), 2);
+//uniform float F0; // = pow((ior-1)/(ior+1), 2);
+uniform float specular;
 
 uniform samplerCube AmbientCubemap;
 
@@ -848,7 +826,11 @@ float3 SpecularIBL( uint2 Random, float3 SpecularColor, float Roughness, float3 
 // v: *normalized* viewDir
 // n: *normalized* normal
 // return: D(h)*F(v, h)*G(l, v, h) / (4*dot(n, l)*dot(n, v))
-vec3 PRBLighting(vec3 l, vec3 v, vec3 n) {
+vec3 PRBLighting(vec3 l, vec3 v, vec3 n)
+{
+    float ior = specular * 0.8f + 1.0f;
+    float F0 = Square((ior - 1)/(ior + 1));
+    
     vec3 h = normalize(l + v);
     float nDoth = clamp(dot(n, h), 0.0, 1.0);
     float lDoth = clamp(dot(l, h), 0.0, 1.0);

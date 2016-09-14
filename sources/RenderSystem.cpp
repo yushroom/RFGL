@@ -58,7 +58,7 @@ void RenderSystem::Init()
     glfwSetKeyCallback(m_window, RenderSystem::KeyCallBack);
     glfwSetCursorPosCallback(m_window, RenderSystem::MouseCallback);
     glfwSetScrollCallback(m_window, RenderSystem::MouseScrollCallback);
-    glfwSetCharCallback(m_window, RenderSystem::CharacterCcallback);
+    glfwSetCharCallback(m_window, RenderSystem::CharacterCallback);
 
     // Set this to true so GLEW knows to use a modern approach to retrieving function pointers and extensions
     glewExperimental = GL_TRUE;
@@ -141,9 +141,11 @@ void RenderSystem::Run()
         if (m_isWireFrameMode)
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+        ImGui::CollapsingHeader("Global Render Settings");
         ImGui::Checkbox("Wire Frame", &m_isWireFrameMode);
         ImGui::Checkbox("Gamma Correction", &m_useGammaCorrection);
         //ImGui::Render();
+        Scene::OnEditorGUI();
         GUI::Update();
 
         // Swap the screen buffers
@@ -232,7 +234,7 @@ void RenderSystem::MouseCallback(GLFWwindow* window, double xpos, double ypos)
     //GUI::OnMouse(xpos, ypos);
 }
 
-void RenderSystem::CharacterCcallback(GLFWwindow* window, unsigned int codepoint)
+void RenderSystem::CharacterCallback(GLFWwindow* window, unsigned int codepoint)
 {
     ImGui_ImplGlfwGL3_CharCallback(window, codepoint);
 }

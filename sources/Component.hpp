@@ -3,6 +3,7 @@
 
 #include "RFGL.hpp"
 #include "Object.hpp"
+#include "GUI.hpp"
 
 class GameObject;
 class Transform;
@@ -12,6 +13,9 @@ class Component : public Object
 {
 public:
     virtual std::string ClassName() const = 0;
+    
+    
+    virtual void OnEditorGUI() {};
 
     // The game object this component is attached to. A component is always attached to a game object.
     GameObject* gameObject() const { return m_gameObject; }

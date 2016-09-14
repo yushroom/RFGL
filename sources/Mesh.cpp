@@ -1,6 +1,5 @@
-//
 #include "Mesh.hpp"
-#include "Debug.hpp"
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -11,6 +10,8 @@
 #include <assimp/postprocess.h>
 
 #include "Shader.hpp"
+#include "Debug.hpp"
+#include "Common.hpp"
 
 using namespace std;
 
@@ -107,6 +108,8 @@ void Mesh::FromObjFile(const std::string path, int vertexUsage)
         Debug::LogError("Can not open file %s", path.c_str());
         abort();
     }
+    
+    m_name = split(path, "/").back();
 
     int n_vertices = 0;
     int n_triangles = 0;
