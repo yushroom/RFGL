@@ -15,7 +15,7 @@ void Scene::Init() {
     auto camera_go = std::make_shared<GameObject>();
     camera_go->AddScript(std::make_shared<CameraController>());
     camera_go->AddComponent(m_mainCamera);
-    camera_go->transform()->setPosition(0, 0, 5);
+    camera_go->transform()->setLocalPosition(0, 0, 5);
     camera_go->transform()->LookAt(Vector3(0, 0, 0));
     m_gameObjects.push_back(camera_go);
     

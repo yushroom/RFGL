@@ -94,7 +94,8 @@ void Shader::FromString(const std::string& vs_string,
             std::vector<char> infoLog(infoLogLength + 1);
             std::cout << add_line_number(shader_str) << endl;
             glGetShaderInfoLog(shader, infoLogLength, NULL, infoLog.data());
-            std::cout << string(&infoLog[0]) << endl;
+            //std::cout << string(&infoLog[0]) << endl;
+            Debug::LogError("%s", infoLog);
             abort();
         }
     };
@@ -113,10 +114,10 @@ void Shader::FromString(const std::string& vs_string,
                 }
                 auto res = settings.find(s[0]);
                 if (res != settings.end()) {
-                    Debug::Log("Override shader setting: %s", line.c_str());
+                    //Debug::Log("Override shader setting: %s", line.c_str());
                     settings[s[0]] = s[1];
                 } else {
-                    Debug::LogWarning("Unkown shader setting: %s", line.c_str());
+                    Debug::LogWarning("Unknown shader setting: %s", line.c_str());
                 }
             }
         }
@@ -160,7 +161,7 @@ void Shader::FromString(const std::string& vs_string,
     glGetProgramiv(m_program, GL_LINK_STATUS, &success);
     if (!success) {
         glGetProgramInfoLog(m_program, 1024, NULL, infoLog);
-        std::cout << infoLog << endl;
+        Debug::LogError("%s", infoLog);
         abort();
     }
     
@@ -172,14 +173,14 @@ void Shader::FromString(const std::string& vs_string,
     GLsizei length; // name length
     
     glGetProgramiv(m_program, GL_ACTIVE_UNIFORMS, &count);
-    Debug::Log("Program %u, Active Uniforms: %d", m_program, count);
+    //Debug::Log("Program %u, Active Uniforms: %d", m_program, count);
     m_uniforms.clear();
     
     for (int i = 0; i < count; i++) {
         glGetActiveUniform(m_program, (GLuint)i, bufSize, &length, &size, &type, name);
         //GLint location = glGetUniformLocation(m_program, name);
         auto loc = GetUniformLocation(name);
-        Debug::Log("Uniform #%d Type: %s Name: %s Loc: %d", i, GLenumToString(type).c_str(), name, loc);
+        //Debug::Log("Uniform #%d Type: %s Name: %s Loc: %d", i, GLenumToString(type).c_str(), name, loc);
         m_uniforms.push_back(UniformInfo{type, string(name), (GLuint)loc, false});
     }
 
@@ -216,8 +217,6 @@ void Shader::FromFile(const std::string& vs_path, const std::string ps_path)
     ps_sstream << ps_stream.rdbuf();
     string vs_string = vs_sstream.str();
     string fs_string = ps_sstream.str();
-//	std::cout << vs_string << endl;
-//	std::cout << fs_string << endl;
     FromString(vs_string, fs_string);
 }
 
@@ -351,7 +350,7 @@ Shader::PShader Shader::builtinShader(const std::string& name)
 GLint Shader::GetUniformLocation(const char* name) const {
     GLint loc = glGetUniformLocation(m_program, name);
     if (loc == -1) {
-        printf("uniform[%s] not found\n", name);
+        Debug::LogWarning("uniform[%s] not found\n", name);
     }
     return loc;
 }

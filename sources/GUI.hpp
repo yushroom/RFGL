@@ -27,6 +27,12 @@ public:
     
     // Make a single press button. The user clicks them and something happens immediately.
     //static void bool Button(Re)
+
+    //typedef void(*SetterCallback)(void);
+
+    //static void Vector3(const char* label, Vector3& v, SetterCallback) {
+    //    ImGui::InputFloat3(label, glm::value_ptr(v));
+    //}
 };
 
 #endif // GUI_hpp

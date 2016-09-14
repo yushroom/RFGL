@@ -104,7 +104,6 @@ void Mesh::FromObjFile(const std::string path, int vertexUsage)
         load_option |= aiProcess_CalcTangentSpace;
     const aiScene* scene = importer.ReadFile(path.c_str(), load_option);
     if (!scene) {
-        std::cout << "Can not open file " << path << endl;
         Debug::LogError("Can not open file %s", path.c_str());
         abort();
     }

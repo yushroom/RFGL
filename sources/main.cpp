@@ -151,7 +151,7 @@ public:
         textures["skyTex"] = sky_texture;
         
         auto skyboxGO = Scene::CreateGameObject();
-        skyboxGO->transform()->setScale(20, 20, 20);
+        skyboxGO->transform()->setLocalScale(20, 20, 20);
         auto meshFilter = make_shared<MeshFilter>(sphere);
         auto material = Material::builtinMaterial("SkyBox");
         material->BindTextures(textures);
@@ -187,7 +187,7 @@ public:
         Scene::mainCamera()->gameObject()->AddScript(make_shared<ShowFPS>());
         Scene::mainCamera()->gameObject()->AddScript(make_shared<TakeScreenShot>());
         
-        Scene::SelectGameObject(go);
+        //Scene::SelectGameObject(go);
     }
 
     virtual void Run() override {

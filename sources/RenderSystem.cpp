@@ -1,8 +1,5 @@
 #include "RenderSystem.hpp"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb/stb_image_write.h>
 
@@ -32,7 +29,6 @@ RenderSystem& RenderSystem::GetInstance()
 
 static void GlfwErrorCallback(int error, const char* description)
 {
-    //fprintf(stderr, "Error %d: %s\n", error, description);
     Debug::LogError("Error %d: %s\n", error, description);
 }
 
@@ -118,6 +114,10 @@ void RenderSystem::Run()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         
+#ifdef GLM_FORCE_LEFT_HANDED
+        glFrontFace(GL_CW);
+#endif
+
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
@@ -209,7 +209,7 @@ void RenderSystem::MouseScrollCallback(GLFWwindow* window, double xoffset, doubl
     ImGui_ImplGlfwGL3_ScrollCallback(window, xoffset, yoffset);
     //auto& t = m_mainCamera->gameObject->transform;
     auto t = Scene::mainCamera()->transform();
-    t->setPosition(t->position() + 0.2f*float(yoffset)*t->forward());
+    t->setLocalPosition(t->position() + 0.2f*float(yoffset)*t->forward());
 }
 
 //GLfloat lastX = 400, lastY = 300;

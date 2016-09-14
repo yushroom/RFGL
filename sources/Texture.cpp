@@ -223,7 +223,7 @@ void Texture::FromFile(const std::string& path)
         m_texture = CreateTexture(path);
     }
     else {
-        printf("texture type[%s] not supported\n", ext.c_str());
+        Debug::LogError("texture type[%s] not supported\n", ext.c_str());
         abort();
     }
 }

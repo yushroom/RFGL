@@ -106,7 +106,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>glfw3.lib;glew32s.lib;opengl32.lib;assimp-vc130-mt.lib;AntTweakBar.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;glew32s.lib;opengl32.lib;assimp-vc130-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -126,11 +126,19 @@
     <ClInclude Include="..\sources\App.hpp" />
     <ClInclude Include="..\sources\Behaviour.hpp" />
     <ClInclude Include="..\sources\Camera.hpp" />
+    <ClInclude Include="..\sources\Common.hpp" />
     <ClInclude Include="..\sources\Component.hpp" />
     <ClInclude Include="..\sources\Debug.hpp" />
     <ClInclude Include="..\sources\GameObject.hpp" />
     <ClInclude Include="..\sources\GLError.hpp" />
     <ClInclude Include="..\sources\GUI.hpp" />
+    <ClInclude Include="..\sources\imgui\imconfig.h" />
+    <ClInclude Include="..\sources\imgui\imgui.h" />
+    <ClInclude Include="..\sources\imgui\imgui_impl_glfw_gl3.h" />
+    <ClInclude Include="..\sources\imgui\imgui_internal.h" />
+    <ClInclude Include="..\sources\imgui\stb_rect_pack.h" />
+    <ClInclude Include="..\sources\imgui\stb_textedit.h" />
+    <ClInclude Include="..\sources\imgui\stb_truetype.h" />
     <ClInclude Include="..\sources\Input.hpp" />
     <ClInclude Include="..\sources\IRunable.hpp" />
     <ClInclude Include="..\sources\Material.hpp" />
@@ -151,18 +159,23 @@
     <ClCompile Include="..\sources\App.cpp" />
     <ClCompile Include="..\sources\Behaviour.cpp" />
     <ClCompile Include="..\sources\Camera.cpp" />
+    <ClCompile Include="..\sources\Common.cpp" />
     <ClCompile Include="..\sources\Component.cpp" />
     <ClCompile Include="..\sources\Debug.cpp" />
     <ClCompile Include="..\sources\GameObject.cpp" />
     <ClCompile Include="..\sources\GLError.cpp" />
     <ClCompile Include="..\sources\GUI.cpp" />
+    <ClCompile Include="..\sources\imgui\imgui.cpp" />
+    <ClCompile Include="..\sources\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\sources\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\sources\imgui\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="..\sources\Input.cpp" />
     <ClCompile Include="..\sources\main.cpp" />
     <ClCompile Include="..\sources\Material.cpp" />
     <ClCompile Include="..\sources\MeshFilter.cpp" />
     <ClCompile Include="..\sources\MeshRenderer.cpp" />
     <ClCompile Include="..\sources\Mesh.cpp" />
-    <ClCompile Include="..\sources\Object .cpp" />
+    <ClCompile Include="..\sources\Object.cpp" />
     <ClCompile Include="..\sources\Renderer.cpp" />
     <ClCompile Include="..\sources\RenderSystem.cpp" />
     <ClCompile Include="..\sources\Scene.cpp" />
