@@ -67,6 +67,7 @@
 		BF59EB731D88593F00FB234B /* stb_truetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stb_truetype.h; path = ../sources/imgui/stb_truetype.h; sourceTree = "<group>"; };
 		BF59EB781D89041D00FB234B /* Common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Common.cpp; path = ../sources/Common.cpp; sourceTree = "<group>"; };
 		BF59EB791D89041D00FB234B /* Common.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Common.hpp; path = ../sources/Common.hpp; sourceTree = "<group>"; };
+		BF59EB7B1D89683A00FB234B /* CameraController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = CameraController.hpp; path = ../sources/CameraController.hpp; sourceTree = "<group>"; };
 		BFE07C6A1CE23F3E004F52CD /* RFGL */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RFGL; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFE07C771CE23FF2004F52CD /* libglfw3.3.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw3.3.1.dylib; path = /usr/local/Cellar/glfw3/3.1.2/lib/libglfw3.3.1.dylib; sourceTree = "<absolute>"; };
 		BFE07C7A1CE2400C004F52CD /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -154,8 +155,8 @@
 		BFE07C611CE23F3E004F52CD = {
 			isa = PBXGroup;
 			children = (
-				BF59EB681D88592E00FB234B /* imgui */,
 				BFFF94B71D82F89A002B4EBB /* main.cpp */,
+				BF59EB681D88592E00FB234B /* imgui */,
 				BFFF94EB1D859B28002B4EBB /* Engine */,
 				BFE07C801CE242FA004F52CD /* Sources */,
 				BFE07C7C1CE2416E004F52CD /* Framwork */,
@@ -229,6 +230,7 @@
 		BFFF94EB1D859B28002B4EBB /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				BF59EB7B1D89683A00FB234B /* CameraController.hpp */,
 				BFFF94EA1D85006C002B4EBB /* Components */,
 				BFFF94EC1D859F4F002B4EBB /* Debug.cpp */,
 				BFFF94ED1D859F4F002B4EBB /* Debug.hpp */,

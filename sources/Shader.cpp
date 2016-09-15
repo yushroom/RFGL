@@ -95,7 +95,7 @@ void Shader::FromString(const std::string& vs_string,
             std::cout << add_line_number(shader_str) << endl;
             glGetShaderInfoLog(shader, infoLogLength, NULL, infoLog.data());
             //std::cout << string(&infoLog[0]) << endl;
-            Debug::LogError("%s", infoLog);
+            Debug::LogError("%s", infoLog.data());
             abort();
         }
     };

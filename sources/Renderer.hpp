@@ -3,6 +3,7 @@
 
 #include "Component.hpp"
 #include "Material.hpp"
+#include "imgui/imgui.h"
 
 class Renderer : public Component
 {
@@ -32,12 +33,7 @@ public:
     
     virtual void OnEditorGUI() override {
         for (auto& m : m_materials) {
-            auto& uniforms = m->shader()->uniforms();
-            for (auto& u : uniforms) {
-                if (u.type == GL_FLOAT) {
-                    ImGui::SliderFloat(u.name.c_str(), &m->uniforms().floats[u.name], 0, 1);
-                }
-            }
+            m->OnEditorGUI();
         }
     }
     

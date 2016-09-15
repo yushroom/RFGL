@@ -21,6 +21,8 @@ public:
         for (auto& u : m_shader->uniforms()) {
             if (u.type == GL_FLOAT) {
                 m_uniforms.floats[u.name] = 0.5f;
+            } else if (u.type == GL_FLOAT_VEC3) {
+                m_uniforms.vec3s[u.name] = Vector3(1, 1, 1);
             }
         }
     }
@@ -47,18 +49,20 @@ public:
         m_textures = textures;
     }
 
-    auto uniforms() const {
-        return m_uniforms;
-    }
+//    auto uniforms() const {
+//        return m_uniforms;
+//    }
     
-    ShaderUniforms& uniforms() {
-        return m_uniforms;
-    }
+//    ShaderUniforms& uniforms() {
+//        return m_uniforms;
+//    }
     
     void Update() {
         m_shader->BindUniforms(m_uniforms);
         m_shader->BindTextures(m_textures);
     }
+    
+    void OnEditorGUI();
     
     //========== Static Region ==========
     

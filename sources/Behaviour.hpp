@@ -36,7 +36,7 @@ public:
     
     virtual void FixedUpdate() {};
     
-    virtual void Update() = 0;
+    virtual void Update() {};
     
     virtual void LateUpdate() {};
     

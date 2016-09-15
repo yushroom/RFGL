@@ -6,7 +6,8 @@
 #include <memory>
 
 #include "IRunable.hpp"
-#include "Camera.hpp"
+
+class GameObject;
 
 class RenderSystem
 {

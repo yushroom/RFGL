@@ -30,6 +30,7 @@ public:
     
 protected:
     GameObject* m_gameObject = nullptr;
+    //std::shared_ptr<GameObject> m_gameObject = nullptr;
 };
 
 

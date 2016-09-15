@@ -1,12 +1,7 @@
 #ifndef App_hpp
 #define App_hpp
 
-#include "RenderSystem.hpp"
-#include "Shader.hpp"
-#include "Mesh.hpp"
-#include "Texture.hpp"
-#include "GLError.hpp"
-#include "Camera.hpp"
+#include "IRunable.hpp"
 
 class App : public IRunable
 {

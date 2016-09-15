@@ -27,7 +27,8 @@ public:
     }
     
     virtual void OnEditorGUI() override {
-        ImGui::Text("%s", m_mesh->name().c_str());
+        ImGui::LabelText("Mesh", "%s", m_mesh->name().c_str());
+        //ImGui::Text("Mesh: %s", m_mesh->name().c_str());
     }
     
 private:

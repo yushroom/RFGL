@@ -114,13 +114,20 @@ class TakeScreenShot : public Script
 {
 public:
     InjectClassName(TakeScreenShot);
-    virtual void Update() override {
-        if (Input::GetKeyDown(Input::KeyCode_P)) {
+    
+//    virtual void Update() override {
+//        if (Input::GetKeyDown(Input::KeyCode_P)) {
+//        }
+//    }
+    
+    virtual void OnEditorGUI() override {
+        if (ImGui::Button("Screen shot")) {
             auto tm = time(nullptr);
             ostringstream ss;
             ss << int(tm) << ".png";
             RenderSystem::GetInstance().SaveScreenShot(ss.str());
             Debug::Log("Screen shot saved to %s", ss.str().c_str());
+
         }
     }
 };
@@ -150,7 +157,7 @@ public:
         map<string, Texture::PTexture> textures;
         textures["skyTex"] = sky_texture;
         
-        auto skyboxGO = Scene::CreateGameObject();
+        auto skyboxGO = Scene::CreateGameObject("SkyBox");
         skyboxGO->transform()->setLocalScale(20, 20, 20);
         auto meshFilter = make_shared<MeshFilter>(sphere);
         auto material = Material::builtinMaterial("SkyBox");
@@ -174,7 +181,7 @@ public:
 //        headGO->AddScript(make_shared<VisualizeNormal>());
 //        //headGO->AddScript(make_shared<DeactiveSelf>());
         textures["AmbientCubemap"] = sky_texture;
-        auto go = Scene::CreateGameObject();
+        auto go = Scene::CreateGameObject("Sphere");
         //go->transform()->setScale(20, 20, 20);
         meshFilter = make_shared<MeshFilter>(sphere);
         material = Material::builtinMaterial("PBR");
@@ -187,7 +194,17 @@ public:
         Scene::mainCamera()->gameObject()->AddScript(make_shared<ShowFPS>());
         Scene::mainCamera()->gameObject()->AddScript(make_shared<TakeScreenShot>());
         
-        //Scene::SelectGameObject(go);
+        auto child0 = Scene::CreateGameObject("child0");
+        child0->transform()->setParent(go->transform());
+        auto child1 = Scene::CreateGameObject("child1");
+        child1->transform()->setParent(go->transform());
+        auto child2 = Scene::CreateGameObject("child2");
+        child2->transform()->setParent(go->transform());
+        
+        auto child3 = Scene::CreateGameObject("child3");
+        child3->transform()->setParent(child0->transform());
+        
+        //Scene::SelectGameObject(go.get());
     }
 
     virtual void Run() override {

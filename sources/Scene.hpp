@@ -4,6 +4,8 @@
 #include "GameObject.hpp"
 #include "Camera.hpp"
 
+class RenderSystem;
+
 class Scene
 {
 public:
@@ -11,8 +13,8 @@ public:
         return m_mainCamera;
     }
     
-    static std::shared_ptr<GameObject> CreateGameObject() {
-        auto go = std::make_shared<GameObject>();
+    static std::shared_ptr<GameObject> CreateGameObject(const std::string& name) {
+        auto go = std::make_shared<GameObject>(name);
         m_gameObjects.push_back(go);
         return go;
     }
@@ -23,7 +25,7 @@ public:
     static void Render();
     static void OnEditorGUI();
 
-    static void SelectGameObject(std::shared_ptr<GameObject> gameObject) {
+    static void SelectGameObject(GameObject* gameObject) {
         m_activeGameObject = gameObject;
     }
     
@@ -37,11 +39,14 @@ public:
     }
     
 private:
+    friend class RenderSystem;
+    friend class GUI;
     static std::shared_ptr<Camera> m_mainCamera;
     static std::vector<std::shared_ptr<GameObject>> m_gameObjects;
     
     // the selected GameObject in the editor
-    static std::shared_ptr<GameObject> m_activeGameObject;
+    //static std::shared_ptr<GameObject> m_activeGameObject;
+    static GameObject* m_activeGameObject;
 };
 
 #endif /* Scene_hpp */

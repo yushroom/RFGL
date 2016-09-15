@@ -141,11 +141,15 @@ void RenderSystem::Run()
         if (m_isWireFrameMode)
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-        ImGui::CollapsingHeader("Global Render Settings");
-        ImGui::Checkbox("Wire Frame", &m_isWireFrameMode);
-        ImGui::Checkbox("Gamma Correction", &m_useGammaCorrection);
+        ImGui::Begin("Inspector");
+        if (ImGui::CollapsingHeader("Global Render Settings")) {
+            ImGui::Checkbox("Wire Frame", &m_isWireFrameMode);
+            ImGui::Checkbox("Gamma Correction", &m_useGammaCorrection);
+        }
         //ImGui::Render();
         Scene::OnEditorGUI();
+        ImGui::End(); // Inspector
+        
         GUI::Update();
 
         // Swap the screen buffers

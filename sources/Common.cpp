@@ -15,9 +15,27 @@ std::vector<std::string> split(const std::string& str, const std::string& separa
     return ret;
 }
 
-void trim(std::string& str) {
-    str.erase(0, str.find_first_not_of(' '));
-    str.erase(str.find_last_not_of(' ')+1);
+std::string camelCaseToReadable(const std::string& str)
+{
+    std::string ret;
+    ret.reserve(str.size()*2); // at most: ceil(str.size()/2)*3
+    ret.push_back(str[0]);
+    for (int i = 1; i < str.size(); ++i) {
+        char c = str[i];
+        if (isupper(c) && !isupper(str[i-1]))
+            ret.push_back(' ');
+        ret.push_back(c);
+    }
+    ret.push_back(0);
+    return ret;
+}
+
+std::string trim(const std::string& str) {
+    //str.erase(0, str.find_first_not_of(' '));
+    //str.erase(str.find_last_not_of(' ')+1);
+    auto begin = str.find_first_not_of(" \t\r\n");
+    auto end = str.find_last_not_of(" \t\t\n");
+    return str.substr(begin, end);
 }
 
 bool startsWith(const std::string& str, const std::string& str2) {

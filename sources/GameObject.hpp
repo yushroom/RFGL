@@ -4,6 +4,7 @@
 #include "Transform.hpp"
 #include "Behaviour.hpp"
 #include "Object.hpp"
+#include "Common.hpp"
 
 class Scene;
 
@@ -12,11 +13,13 @@ class Scene;
 class GameObject : public Object
 {
 public:
-    GameObject() {
+//private:
+    GameObject(const std::string& name) : m_tag("Untagged") {
         m_transform.m_gameObject = this;
+        m_name = name;
     }
     
-
+public:
     ~GameObject() = default;
 
     typedef std::shared_ptr<GameObject> PGameObject;
@@ -25,15 +28,15 @@ public:
 
     // Is the GameObject active in the scene ?
     bool activeInHierarchy() const {
-        if (m_actionSelf && m_transform.parent() != nullptr) {
+        if (m_activeSelf && m_transform.parent() != nullptr) {
             return m_transform.parent()->gameObject()->activeInHierarchy();
         }
-        return m_actionSelf;
+        return m_activeSelf;
     }
 
     // The local active state of this GameObject. (Read Only)
     bool activeSelf() const {
-        return m_actionSelf;
+        return m_activeSelf;
     }
 
     // The layer the game object is in. A layer is in the range [0...31].
@@ -85,7 +88,7 @@ public:
 
     // Activates/Deactivates the GameObject (activeSelf).
     void SetActive(bool value) {
-        m_actionSelf = value;
+        m_activeSelf = value;
     }
 
     //========== Static Functions ==========//
@@ -97,7 +100,7 @@ public:
 protected:
     friend class Scene;
     void Start() {
-        m_transform.Start();
+        //m_transform.Start();
 //        for (auto& c : m_components) {
 //            c->init();
 //        }
@@ -115,15 +118,34 @@ protected:
     }
 
     void OnEditorGUI() {
-        ImGui::CollapsingHeader("Transform");
-        m_transform.OnEditorGUI();
+        ImGui::PushID("Inspector.selected.active");
+        ImGui::Checkbox("", &m_activeSelf);
+        ImGui::PopID();
+        char name[32] = {0};
+        memcpy(name, m_name.c_str(), m_name.size());
+        name[m_name.size()] = 0;
+        ImGui::SameLine();
+        ImGui::PushID("Inspector.selected.name");
+        if (ImGui::InputText("", name, 31)) {
+            m_name = name;
+        }
+        ImGui::PopID();
+        
+        ImGui::LabelText("Tag", "%s", m_tag.c_str());
+        //ImGui::SameLine();
+        ImGui::LabelText("Layer", "Layer %d", m_layer);
+        
+        if (ImGui::CollapsingHeader("Transform")) {
+            m_transform.OnEditorGUI();
+        }
+        
         for (auto& c : m_components) {
-            ImGui::CollapsingHeader(c->ClassName().c_str());
-            c->OnEditorGUI();
+            if (ImGui::CollapsingHeader(camelCaseToReadable(c->ClassName()).c_str()))
+                c->OnEditorGUI();
         }
         for (auto& s : m_scripts) {
-            ImGui::CollapsingHeader(s->ClassName().c_str());
-            s->OnEditorGUI();
+            if (ImGui::CollapsingHeader(camelCaseToReadable(s->ClassName()).c_str()))
+                s->OnEditorGUI();
         }
     }
     
@@ -135,7 +157,7 @@ private:
     std::vector<std::shared_ptr<Component>> m_components;
     std::vector<std::shared_ptr<Script>> m_scripts;
     
-    bool m_actionSelf = true;
+    bool m_activeSelf = true;
     int m_layer = 0;
 
     std::string m_tag;

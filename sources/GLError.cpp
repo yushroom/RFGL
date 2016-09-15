@@ -2,15 +2,6 @@
 #include <iostream>
 #include <string>
 
-//#if defined(WIN32) || defined(_WIN64)
-//#  include <GL/glew.h>
-//#elif __APPLE__
-//#include <OpenGLES/ES3/gl.h>
-//#include <OpenGLES/ES3/glext.h>
-//#else
-//#  include <GL3/gl3.h>
-//#endif
-
 #include "RFGL.hpp"
 #include "Debug.hpp"
 

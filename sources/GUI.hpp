@@ -2,9 +2,9 @@
 #define GUI_hpp
 
 #include <string>
-#include "RFGL.hpp"
-#include "IRunable.hpp"
-#include "imgui/imgui.h"
+//#include "imgui/imgui.h"
+
+class GameObject;
 
 class GUI
 {
@@ -33,6 +33,10 @@ public:
     //static void Vector3(const char* label, Vector3& v, SetterCallback) {
     //    ImGui::InputFloat3(label, glm::value_ptr(v));
     //}
+    
+private:
+    static int m_idCount;
+    static void HierarchyItem(GameObject* gameObject);
 };
 
 #endif // GUI_hpp
