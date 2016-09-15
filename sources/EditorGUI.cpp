@@ -1,4 +1,4 @@
-#include "GUI.hpp"
+#include "EditorGUI.hpp"
 
 //#include <sstream>
 
@@ -8,14 +8,14 @@
 #include "GameObject.hpp"
 #include "Scene.hpp"
 
-int GUI::m_idCount = 0;
+int EditorGUI::m_idCount = 0;
 
-void GUI::Init()
+void EditorGUI::Init()
 {
 
 }
 
-void GUI::Update()
+void EditorGUI::Update()
 {
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
@@ -42,7 +42,7 @@ void GUI::Update()
     ImGui::Render();
 }
 
-void GUI::Clean()
+void EditorGUI::Clean()
 {
     ImGui_ImplGlfwGL3_Shutdown();
 }
@@ -69,7 +69,7 @@ void GUI::Clean()
 //    return false;
 //}
 
-void GUI::HierarchyItem(GameObject* gameObject) {
+void EditorGUI::HierarchyItem(GameObject* gameObject) {
     ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ((gameObject == Scene::m_activeGameObject)? ImGuiTreeNodeFlags_Selected : 0);
     
     bool is_leaf = (gameObject->transform()->childCount() == 0);

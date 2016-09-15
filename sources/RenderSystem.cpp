@@ -6,7 +6,7 @@
 #include "Debug.hpp"
 #include "GLError.hpp"
 #include "Input.hpp"
-#include "GUI.hpp"
+#include "EditorGUI.hpp"
 #include "Camera.hpp"
 #include "Time.hpp"
 #include "MeshRenderer.hpp"
@@ -79,7 +79,7 @@ void RenderSystem::Init()
     Shader::Init();
     Material::Init();
     
-    GUI::Init();
+    EditorGUI::Init();
     //GUI::AddBool("WireFrame", m_isWireFrameMode);
     //GUI::AddBool("GammaCorrection", m_useGammaCorrection);
     
@@ -148,9 +148,10 @@ void RenderSystem::Run()
         }
         //ImGui::Render();
         Scene::OnEditorGUI();
+        ImGui::Button("Add Component");
         ImGui::End(); // Inspector
         
-        GUI::Update();
+        EditorGUI::Update();
 
         // Swap the screen buffers
         glfwSwapBuffers(m_window);
@@ -167,7 +168,7 @@ void RenderSystem::Clean()
         r->Clean();
     }
 
-    GUI::Clean();
+    EditorGUI::Clean();
 
     // Terminate GLFW, clearing any resources allocated by GLFW.
     glfwTerminate();

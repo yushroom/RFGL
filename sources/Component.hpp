@@ -3,7 +3,7 @@
 
 #include "RFGL.hpp"
 #include "Object.hpp"
-#include "GUI.hpp"
+#include "EditorGUI.hpp"
 
 class GameObject;
 class Transform;

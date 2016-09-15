@@ -5,7 +5,7 @@
 
 #include "RFGL.hpp"
 #include "Component.hpp"
-#include "GUI.hpp"
+#include "EditorGUI.hpp"
 #include "imgui/imgui.h"
 
 // Creates a rotation which rotates angle degrees around axis.
@@ -297,7 +297,7 @@ public:
     Transform* GetChild(const int index);
     
 private:
-    friend class GUI;
+    friend class EditorGUI;
     //mutable Vector3 m_position;
     //mutable Vector3 m_scale;
     //mutable Quaternion m_rotation;

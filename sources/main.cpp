@@ -7,7 +7,7 @@
 
 #include "App.hpp"
 #include "Input.hpp"
-#include "GUI.hpp"
+#include "EditorGUI.hpp"
 #include "Camera.hpp"
 #include "Time.hpp"
 #include "MeshFilter.hpp"

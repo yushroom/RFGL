@@ -5,6 +5,7 @@
 #include "Camera.hpp"
 
 class RenderSystem;
+class EditorGUI;
 
 class Scene
 {
@@ -40,7 +41,7 @@ public:
     
 private:
     friend class RenderSystem;
-    friend class GUI;
+    friend class EditorGUI;
     static std::shared_ptr<Camera> m_mainCamera;
     static std::vector<std::shared_ptr<GameObject>> m_gameObjects;
     

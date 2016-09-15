@@ -32,9 +32,11 @@ public:
     }
     
     virtual void OnEditorGUI() override {
+        //ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, ImGui::GetFontSize());
         for (auto& m : m_materials) {
             m->OnEditorGUI();
         }
+        //ImGui::PopStyleVar();
     }
     
 protected:

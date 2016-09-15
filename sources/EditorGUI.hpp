@@ -1,15 +1,15 @@
-#ifndef GUI_hpp
-#define GUI_hpp
+#ifndef EditorGUI_hpp
+#define EditorGUI_hpp
 
 #include <string>
 //#include "imgui/imgui.h"
 
 class GameObject;
 
-class GUI
+class EditorGUI
 {
 public:
-    GUI() = delete;
+    EditorGUI() = delete;
 
     static void Init();
 
@@ -39,4 +39,4 @@ private:
     static void HierarchyItem(GameObject* gameObject);
 };
 
-#endif // GUI_hpp
+#endif // EditorGUI_hpp

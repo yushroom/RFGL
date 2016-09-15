@@ -13,6 +13,7 @@
 		BF59EB761D88593F00FB234B /* imgui_impl_glfw_gl3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF59EB6C1D88593F00FB234B /* imgui_impl_glfw_gl3.cpp */; };
 		BF59EB771D88593F00FB234B /* imgui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF59EB6F1D88593F00FB234B /* imgui.cpp */; };
 		BF59EB7A1D89041D00FB234B /* Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF59EB781D89041D00FB234B /* Common.cpp */; };
+		BF59EB7E1D8ADC0100FB234B /* EditorGUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF59EB7C1D8ADC0100FB234B /* EditorGUI.cpp */; };
 		BFE07C791CE23FF2004F52CD /* libglfw3.3.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE07C771CE23FF2004F52CD /* libglfw3.3.1.dylib */; };
 		BFE07C7B1CE2400C004F52CD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE07C7A1CE2400C004F52CD /* OpenGL.framework */; };
 		BFE2D3D11D86E1A200F5E614 /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFE2D3CF1D86E1A200F5E614 /* Mesh.cpp */; };
@@ -22,7 +23,6 @@
 		BFFF94C31D82F89A002B4EBB /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94A71D82F89A002B4EBB /* Camera.cpp */; };
 		BFFF94C41D82F89A002B4EBB /* GameObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94AA1D82F89A002B4EBB /* GameObject.cpp */; };
 		BFFF94C51D82F89A002B4EBB /* GLError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94AD1D82F89A002B4EBB /* GLError.cpp */; };
-		BFFF94C71D82F89A002B4EBB /* GUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94B01D82F89A002B4EBB /* GUI.cpp */; };
 		BFFF94C81D82F89A002B4EBB /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94B21D82F89A002B4EBB /* Input.cpp */; };
 		BFFF94CA1D82F89A002B4EBB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94B71D82F89A002B4EBB /* main.cpp */; };
 		BFFF94CC1D82F89A002B4EBB /* RenderSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFFF94BA1D82F89A002B4EBB /* RenderSystem.cpp */; };
@@ -68,6 +68,8 @@
 		BF59EB781D89041D00FB234B /* Common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Common.cpp; path = ../sources/Common.cpp; sourceTree = "<group>"; };
 		BF59EB791D89041D00FB234B /* Common.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Common.hpp; path = ../sources/Common.hpp; sourceTree = "<group>"; };
 		BF59EB7B1D89683A00FB234B /* CameraController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = CameraController.hpp; path = ../sources/CameraController.hpp; sourceTree = "<group>"; };
+		BF59EB7C1D8ADC0100FB234B /* EditorGUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EditorGUI.cpp; path = ../sources/EditorGUI.cpp; sourceTree = "<group>"; };
+		BF59EB7D1D8ADC0100FB234B /* EditorGUI.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EditorGUI.hpp; path = ../sources/EditorGUI.hpp; sourceTree = "<group>"; };
 		BFE07C6A1CE23F3E004F52CD /* RFGL */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RFGL; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFE07C771CE23FF2004F52CD /* libglfw3.3.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw3.3.1.dylib; path = /usr/local/Cellar/glfw3/3.1.2/lib/libglfw3.3.1.dylib; sourceTree = "<absolute>"; };
 		BFE07C7A1CE2400C004F52CD /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -86,8 +88,6 @@
 		BFFF94AB1D82F89A002B4EBB /* GameObject.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GameObject.hpp; path = ../sources/GameObject.hpp; sourceTree = "<group>"; };
 		BFFF94AD1D82F89A002B4EBB /* GLError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLError.cpp; path = ../sources/GLError.cpp; sourceTree = "<group>"; };
 		BFFF94AE1D82F89A002B4EBB /* GLError.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GLError.hpp; path = ../sources/GLError.hpp; sourceTree = "<group>"; };
-		BFFF94B01D82F89A002B4EBB /* GUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GUI.cpp; path = ../sources/GUI.cpp; sourceTree = "<group>"; };
-		BFFF94B11D82F89A002B4EBB /* GUI.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GUI.hpp; path = ../sources/GUI.hpp; sourceTree = "<group>"; };
 		BFFF94B21D82F89A002B4EBB /* Input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Input.cpp; path = ../sources/Input.cpp; sourceTree = "<group>"; };
 		BFFF94B31D82F89A002B4EBB /* Input.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Input.hpp; path = ../sources/Input.hpp; sourceTree = "<group>"; };
 		BFFF94B41D82F89A002B4EBB /* IRunable.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IRunable.hpp; path = ../sources/IRunable.hpp; sourceTree = "<group>"; };
@@ -190,10 +190,10 @@
 				BFFF94A51D82F89A002B4EBB /* App.hpp */,
 				BF59EB781D89041D00FB234B /* Common.cpp */,
 				BF59EB791D89041D00FB234B /* Common.hpp */,
+				BF59EB7C1D8ADC0100FB234B /* EditorGUI.cpp */,
+				BF59EB7D1D8ADC0100FB234B /* EditorGUI.hpp */,
 				BFFF94AD1D82F89A002B4EBB /* GLError.cpp */,
 				BFFF94AE1D82F89A002B4EBB /* GLError.hpp */,
-				BFFF94B01D82F89A002B4EBB /* GUI.cpp */,
-				BFFF94B11D82F89A002B4EBB /* GUI.hpp */,
 				BFFF94B41D82F89A002B4EBB /* IRunable.hpp */,
 				BFFF94BA1D82F89A002B4EBB /* RenderSystem.cpp */,
 				BFFF94BB1D82F89A002B4EBB /* RenderSystem.hpp */,
@@ -313,6 +313,7 @@
 				BFFF94EE1D859F4F002B4EBB /* Debug.cpp in Sources */,
 				BFFF94CC1D82F89A002B4EBB /* RenderSystem.cpp in Sources */,
 				BFFF94C81D82F89A002B4EBB /* Input.cpp in Sources */,
+				BF59EB7E1D8ADC0100FB234B /* EditorGUI.cpp in Sources */,
 				BFFF94D81D8325AC002B4EBB /* Time.cpp in Sources */,
 				BFE2D3D91D86E5B500F5E614 /* App.cpp in Sources */,
 				BFFF94C41D82F89A002B4EBB /* GameObject.cpp in Sources */,
@@ -327,7 +328,6 @@
 				BFE2D3D11D86E1A200F5E614 /* Mesh.cpp in Sources */,
 				BFFF94E91D84FC20002B4EBB /* Scene.cpp in Sources */,
 				BF59EB751D88593F00FB234B /* imgui_draw.cpp in Sources */,
-				BFFF94C71D82F89A002B4EBB /* GUI.cpp in Sources */,
 				BF59EB741D88593F00FB234B /* imgui_demo.cpp in Sources */,
 				BFFF94CE1D82F89A002B4EBB /* Texture.cpp in Sources */,
 				BFFF94DD1D845CD6002B4EBB /* MeshFilter.cpp in Sources */,
