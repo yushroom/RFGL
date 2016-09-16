@@ -20,6 +20,7 @@ public:
     
     //protected:
     virtual void Render() const override {
+        //Debug::Log("Rendere %s", m_gameObject->name().c_str());
         auto meshFilter = m_gameObject->GetComponent<MeshFilter>();
         if (meshFilter == nullptr) {
             Debug::LogWarning("This GameObject has no MeshFilter");

@@ -114,6 +114,9 @@ void RenderSystem::Run()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         
+        auto v = Scene::mainCamera()->m_viewport;
+        glViewport(v.x*m_width, v.y*m_height, v.z*m_width, v.z*m_height);
+        
 #ifdef GLM_FORCE_LEFT_HANDED
         glFrontFace(GL_CW);
 #endif
@@ -148,6 +151,7 @@ void RenderSystem::Run()
         }
         //ImGui::Render();
         Scene::OnEditorGUI();
+        
         ImGui::Button("Add Component");
         ImGui::End(); // Inspector
         

@@ -22,7 +22,7 @@ public:
             if (u.type == GL_FLOAT) {
                 m_uniforms.floats[u.name] = 0.5f;
             } else if (u.type == GL_FLOAT_VEC3) {
-                m_uniforms.vec3s[u.name] = Vector3(1, 1, 1);
+                //m_uniforms.vec3s[u.name] = Vector3(1, 1, 1);
             }
         }
     }
@@ -34,7 +34,7 @@ public:
     }
     
     // Set a named float value.
-    void SetFloat(const std::string& name, float value) {
+    void SetFloat(const std::string& name, const float value) {
         //m_shader->BindUniformFloat(name.c_str(), value);
         m_uniforms.floats[name] = value;
     }
@@ -43,6 +43,11 @@ public:
     void SetVector3(const std::string& name, const Vector3& value) {
         //m_shader->BindUniformVec3(name.c_str(), value);
         m_uniforms.vec3s[name] = value;
+    }
+    
+    // Set a named matrix for the shader.
+    void SetMatrix(const std::string& name, const Matrix4x4& value) {
+        m_uniforms.mat4s[name] = value;
     }
     
     void BindTextures(const std::map<std::string, Texture::PTexture>& textures) {
@@ -67,7 +72,7 @@ public:
     //========== Static Region ==========
     
     static void Init() {
-        for (auto& s : std::vector<std::string>{"SkyBox", "NormalMap", "VisualizeNormal", "PBR"})
+        for (auto& s : std::vector<std::string>{"SkyBox", "NormalMap", "VisualizeNormal", "PBR", "VertexLit"})
         {
             auto material = std::make_shared<Material>();
             material->SetShader(Shader::builtinShader(s));

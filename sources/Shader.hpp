@@ -109,6 +109,18 @@ public:
         s->FromString(vs_str, fs_str, gs_str);
         return s;
     }
+    
+    static PShader CreateFromFile(const std::string& vs_path, const std::string& fs_path) {
+        auto s = std::make_shared<Shader>();
+        s->FromFile(vs_path, fs_path);
+        return s;
+    }
+    
+    static PShader CreateFromFile(const std::string& vs_path, const std::string& fs_path, const std::string& gs_path) {
+        auto s = std::make_shared<Shader>();
+        s->FromFile(vs_path, fs_path, gs_path);
+        return s;
+    }
 
     void FromString(const std::string& vs_str, const std::string& fs_str);
     void FromString(const std::string& vs_str, const std::string& fs_str, const std::string& gs_str);
@@ -117,7 +129,8 @@ public:
                     const std::string& tes_str,
                     const std::string& gs_str,
                     const std::string& fs_str);
-    void FromFile(const std::string& vs_path, const std::string ps_path);
+    void FromFile(const std::string& vs_path, const std::string& fs_path);
+    void FromFile(const std::string& vs_path, const std::string& fs_path, const std::string& gs_path);
     //Shader(const std::string& vs_path, const std::string ps_path);
     ~Shader();
     

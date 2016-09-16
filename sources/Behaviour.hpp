@@ -26,7 +26,7 @@ private:
 class Script : public Behaviour
 {
 public:
-    InjectClassName(Script);
+    //InjectClassName(Script);
     //virtual onEnable();
 
     // Awake is called when the script instance is being loaded.

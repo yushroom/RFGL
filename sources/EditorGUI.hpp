@@ -37,6 +37,7 @@ public:
 private:
     static int m_idCount;
     static void HierarchyItem(GameObject* gameObject);
+    static void DrawAxisIndicator();
 };
 
 #endif // EditorGUI_hpp

@@ -81,17 +81,16 @@ Mesh::~Mesh() {
     glDeleteBuffers(1, &m_indexVBO);
 }
 
-void Mesh::FromObjFile(const std::string path, int vertexUsage)
+void Mesh::FromObjFile(const std::string path, int vertexUsage, MeshLoadFlags flags)
 {
     Assimp::Importer importer;
-    importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_NORMALS);
     unsigned int load_option =
         aiProcess_Triangulate
         | aiProcess_RemoveComponent
         //| aiProcess_SortByPType
         //| aiProcess_GenNormals
         | aiProcess_CalcTangentSpace
-        | aiProcess_GenSmoothNormals
+        //| aiProcess_GenSmoothNormals
         //| aiProcess_JoinIdenticalVertices
         //| aiProcess_FixInfacingNormals
         //| aiProcess_OptimizeGraph
@@ -99,6 +98,12 @@ void Mesh::FromObjFile(const std::string path, int vertexUsage)
         | aiProcess_FlipUVs
         //| aiProcess_ConvertToLeftHanded
         ;
+    if (flags & MeshLoadFlag_RegenerateNormal) {
+        importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_NORMALS);
+        load_option |= aiProcess_GenSmoothNormals;
+    } else {
+        load_option |= aiProcess_GenNormals;
+    }
     bool load_tangent = (vertexUsage & VertexUsageTangent) != 0;
     if (load_tangent)
         load_option |= aiProcess_CalcTangentSpace;

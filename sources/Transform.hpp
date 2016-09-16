@@ -62,6 +62,7 @@ public:
     Vector3 position() const {
 //        if (m_isDirty)
 //            Update();
+        Update();
         return m_localToWorldMatrix * Vector4(0, 0, 0, 1);
     }
 
@@ -140,23 +141,27 @@ public:
         m_localRotation = glm::quat(glm::radians(eulerAngles));
         //m_isDirty = true;
     }
-
-    void setPosition(const Vector3& position) {
-        //if (m_isDirty)
-        //    Update();
-        m_localToWorldMatrix = glm::scale(glm::translate(glm::mat4(1.0f), m_localPosition) * glm::mat4_cast(m_localRotation), m_localScale);
-        m_worldToLocalMatrix = glm::inverse(m_localToWorldMatrix);
-        if (m_parent == nullptr) {
-            m_localPosition = m_worldToLocalMatrix * Vector4(position, 1);
-        } else {
-            m_localPosition = m_worldToLocalMatrix * m_parent->worldToLocalMatrix() * Vector4(position, 1) ;
-        }
-        //m_isDirty = true;
+    
+    void setLocalEulerAngles(const float x, const float y, const float z) {
+        setLocalEulerAngles(Vector3(x, y , z));
     }
 
-    void setPosition(const float x, const float y, const float z) {
-        setPosition(Vector3(x, y, z));
-    }
+//    void setPosition(const Vector3& position) {
+//        //if (m_isDirty)
+//        //    Update();
+//        m_localToWorldMatrix = glm::scale(glm::translate(glm::mat4(1.0f), m_localPosition) * glm::mat4_cast(m_localRotation), m_localScale);
+//        m_worldToLocalMatrix = glm::inverse(m_localToWorldMatrix);
+//        if (m_parent == nullptr) {
+//            m_localPosition = m_worldToLocalMatrix * Vector4(position, 1);
+//        } else {
+//            m_localPosition = m_worldToLocalMatrix * m_parent->worldToLocalMatrix() * Vector4(position, 1) ;
+//        }
+//        //m_isDirty = true;
+//    }
+//
+//    void setPosition(const float x, const float y, const float z) {
+//        setPosition(Vector3(x, y, z));
+//    }
 
     //void setEulerAngles(const Vector3& eulerAngles) {
     //    m_localRotation = glm::quat(eulerAngles);
@@ -189,17 +194,10 @@ public:
 //        if (!m_isDirty)
 //            return;
         m_localEulerAngles = glm::degrees(glm::eulerAngles(m_localRotation));
-        //m_localRotation = glm::quat(glm::radians(m_localEulerAngles));
         m_localToWorldMatrix = glm::scale(glm::translate(glm::mat4(1.0f), m_localPosition) * glm::mat4_cast(m_localRotation), m_localScale);
         if (m_parent != nullptr)
             m_localToWorldMatrix = m_parent->localToWorldMatrix() * m_localToWorldMatrix;
         m_worldToLocalMatrix = glm::inverse(m_localToWorldMatrix);
-
-        //m_position = m_localToWorldMatrix * Vector4(0, 0, 0, 1);
-        //m_forward = m_localRotation * Vector3(0, 0, -1);
-        //m_right = m_localRotation * Vector3(1, 0, 0);
-//        m_isDirty = false;
-        //m_matrix = glm::translate(glm::mat4(1.0f), m_position) * glm::mat4_cast(m_rotation) * glm::scale(glm::mat4(1.0f), m_scale);
     }
 
     // Rotates the transform so the forward vector points at /target/'s current position.
@@ -208,12 +206,11 @@ public:
         m_worldToLocalMatrix = glm::lookAt(m_localPosition, target, worldUp);
         m_localToWorldMatrix = glm::inverse(m_worldToLocalMatrix);
         m_localRotation = glm::quat_cast(m_localToWorldMatrix);
-        //m_localEulerAngles = glm::degrees(glm::eulerAngles(m_localRotation));
         //m_isDirty = true;
     }
 
     // Transforms direction from local space to world space.
-    Vector3 TransformDirection(const Vector3& direction)
+    Vector3 TransformDirection(const Vector3& direction) const
     {
         return m_localToWorldMatrix * Vector4(direction, 0);
     }
@@ -242,9 +239,7 @@ public:
         else {
             m_localRotation = lhs * m_localRotation;
         }
-        //m_localEulerAngles = glm::degrees(glm::eulerAngles(m_localRotation));
 //        m_isDirty = true;
-        //m_rotation = glm::inverse(m_rotation) * rhs * m_rotation * m_rotation;
     }
     
     // Applies a rotation of zAngle degrees around the z axis, xAngle degrees around the x axis, and yAngle degrees around the y axis (in that order)
@@ -256,7 +251,6 @@ public:
     void RotateAround(const Vector3& point, const Vector3& axis, float angle) {
         auto rotation = angleAxis(angle, axis);
         m_localPosition = point + rotation * (m_localPosition - point);
-        //m_localEulerAngles = glm::degrees(glm::eulerAngles(m_localRotation));
         LookAt(point);
     }
 
@@ -278,11 +272,6 @@ public:
         if (parent == nullptr) {
             return;
         }
-//        for (auto c : m_parent->m_children) {
-//            if (c == this) {
-//                return;
-//            }
-//        }
         m_parent->m_children.push_back(this);
         //m_isDirty = true;
     }

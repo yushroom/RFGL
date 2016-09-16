@@ -14,6 +14,12 @@ enum VertexUsage {
     VertexUsagePNUT     = VertexUsagePNU | VertexUsageTangent
 };
 
+enum MeslLoadFlag {
+    MeshLoadFlag_RegenerateNormal = 1<<0,
+};
+
+typedef int MeshLoadFlags;
+
 class Mesh : public Object
 {
 public:
@@ -30,15 +36,15 @@ public:
     
     ~Mesh();
     
-    typedef std::shared_ptr<Mesh> PModel;
+    typedef std::shared_ptr<Mesh> PMesh;
 
-    static PModel CreateFromObjFile(const std::string path, int vertexUsage) {
+    static PMesh CreateFromObjFile(const std::string path, int vertexUsage = VertexUsagePNUT, MeshLoadFlags flags = 0) {
         auto m = std::make_shared<Mesh>();
-        m->FromObjFile(path, vertexUsage);
+        m->FromObjFile(path, vertexUsage, flags);
         return m;
     }
 
-    void FromObjFile(const std::string path, int vertexUsage);
+    void FromObjFile(const std::string path, int vertexUsage = VertexUsagePNUT, MeshLoadFlags flags = 0);
 
     void SetVertexUsage(int vertexUsage) {
         BindBuffer(vertexUsage);

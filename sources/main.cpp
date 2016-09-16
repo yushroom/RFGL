@@ -69,7 +69,6 @@ public:
             m_gameObject->SetActive(false);
         }
     }
-
 };
 
 class VisualizeNormal : public Script
@@ -191,6 +190,8 @@ public:
         go->AddComponent(meshFilter);
         go->AddComponent(meshRenderer);
         //go->AddScript(make_shared<DeactiveSelf>());
+        //go->SetActive(false);
+        
         Scene::mainCamera()->gameObject()->AddScript(make_shared<ShowFPS>());
         Scene::mainCamera()->gameObject()->AddScript(make_shared<TakeScreenShot>());
         
@@ -198,13 +199,10 @@ public:
         child0->transform()->setParent(go->transform());
         auto child1 = Scene::CreateGameObject("child1");
         child1->transform()->setParent(go->transform());
-        auto child2 = Scene::CreateGameObject("child2");
-        child2->transform()->setParent(go->transform());
+        
         
         auto child3 = Scene::CreateGameObject("child3");
         child3->transform()->setParent(child0->transform());
-        
-        //Scene::SelectGameObject(go.get());
     }
 
     virtual void Run() override {

@@ -152,6 +152,14 @@
 			name = imgui;
 			sourceTree = "<group>";
 		};
+		BF59EB7F1D8B82AC00FB234B /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				BF59EB7B1D89683A00FB234B /* CameraController.hpp */,
+			);
+			name = Scripts;
+			sourceTree = "<group>";
+		};
 		BFE07C611CE23F3E004F52CD = {
 			isa = PBXGroup;
 			children = (
@@ -230,8 +238,8 @@
 		BFFF94EB1D859B28002B4EBB /* Engine */ = {
 			isa = PBXGroup;
 			children = (
-				BF59EB7B1D89683A00FB234B /* CameraController.hpp */,
 				BFFF94EA1D85006C002B4EBB /* Components */,
+				BF59EB7F1D8B82AC00FB234B /* Scripts */,
 				BFFF94EC1D859F4F002B4EBB /* Debug.cpp */,
 				BFFF94ED1D859F4F002B4EBB /* Debug.hpp */,
 				BFFF94AA1D82F89A002B4EBB /* GameObject.cpp */,
