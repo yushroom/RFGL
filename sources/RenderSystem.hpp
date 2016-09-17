@@ -43,6 +43,14 @@ public:
     int height() {
         return m_height;
     }
+    
+    void setWireFrameMode(bool value) {
+        m_isWireFrameMode = value;
+    }
+    
+    void setGammaCorrection(bool value) {
+        m_useGammaCorrection = value;
+    }
 
     void SaveScreenShot(const std::string& path);
 

@@ -15,11 +15,7 @@
 
 using namespace std;
 
-
-Mesh::Mesh()	
-{
-
-}
+std::vector<Mesh::PMesh> Mesh::m_meshes;
 
 Mesh::Mesh(const int n_vertex, const int n_face, float* positions, uint32_t* indices)
     :   m_positionBuffer(positions, positions+n_vertex*3),

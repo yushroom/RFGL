@@ -12,6 +12,7 @@
 #include "Time.hpp"
 #include "MeshFilter.hpp"
 #include "MeshRenderer.hpp"
+#include "RenderSettings.hpp"
 
 using namespace std;
 
@@ -145,7 +146,7 @@ public:
         const std::string models_dir = root_dir + "models/";
         const std::string textures_dir = root_dir + "textures/";
 
-        auto headModel = Mesh::CreateFromObjFile(models_dir + "/head/head_combined.obj", VertexUsagePNUT);
+        auto headModel = Mesh::CreateFromObjFile(models_dir + "/head/head_combined.obj", VertexUsagePNUT, MeshLoadFlag_RegenerateNormal);
         
         auto sphere = Mesh::CreateFromObjFile(models_dir+"/Sphere.obj", VertexUsagePNUT);
 
@@ -191,9 +192,11 @@ public:
         go->AddComponent(meshRenderer);
         //go->AddScript(make_shared<DeactiveSelf>());
         //go->SetActive(false);
+        Scene::SelectGameObject(go.get());
         
         Scene::mainCamera()->gameObject()->AddScript(make_shared<ShowFPS>());
         Scene::mainCamera()->gameObject()->AddScript(make_shared<TakeScreenShot>());
+        Scene::mainCamera()->gameObject()->AddScript(make_shared<RenderSettings>());
         
         auto child0 = Scene::CreateGameObject("child0");
         child0->transform()->setParent(go->transform());

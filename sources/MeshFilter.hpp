@@ -6,6 +6,7 @@
 #include "Shader.hpp"
 #include "Mesh.hpp"
 #include "RenderSystem.hpp"
+#include "EditorGUI.hpp"
 
 class MeshFilter : public Component
 {
@@ -27,6 +28,13 @@ public:
     }
     
     virtual void OnEditorGUI() override {
+        if (ImGui::Button("Change")) {
+            ImGui::OpenPopup("Select ...");
+        }
+        EditorGUI::SelectMeshDialogBox([this](Mesh::PMesh mesh)->void {
+            this->SetMesh(mesh);
+        });
+        ImGui::SameLine();
         ImGui::LabelText("Mesh", "%s", m_mesh->name().c_str());
         //ImGui::Text("Mesh: %s", m_mesh->name().c_str());
     }

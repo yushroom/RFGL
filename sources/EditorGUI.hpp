@@ -2,9 +2,21 @@
 #define EditorGUI_hpp
 
 #include <string>
+#include <functional>
 //#include "imgui/imgui.h"
 
+enum AssetType {
+    AssetType_Model,
+    AssetType_Material,
+    AssetType_Texture,
+    AssetType_AudioClip,
+    AssetType_Font,
+    AssetType_Script,
+    AssetType_Shader,
+};
+
 class GameObject;
+class Mesh;
 
 class EditorGUI
 {
@@ -34,10 +46,14 @@ public:
     //    ImGui::InputFloat3(label, glm::value_ptr(v));
     //}
     
+    static void SelectMeshDialogBox(std::function<void(std::shared_ptr<Mesh>)> callback);
+    
 private:
     static int m_idCount;
     static void HierarchyItem(GameObject* gameObject);
     static void DrawAxisIndicator();
+    
+    static bool m_showAssectSelectionDialogBox;
 };
 
 #endif // EditorGUI_hpp

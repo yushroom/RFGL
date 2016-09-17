@@ -10,6 +10,7 @@
 #include "MeshRenderer.hpp"
 
 int EditorGUI::m_idCount = 0;
+bool EditorGUI::m_showAssectSelectionDialogBox = false;
 
 Material::PMaterial axisIndicatorMaterial;
 Mesh::PMesh cubeMesh;
@@ -31,6 +32,18 @@ void EditorGUI::Init()
 
 void EditorGUI::Update()
 {
+    ImGui::Begin("Inspector");
+    
+    //ImGui::Render();
+    Scene::OnEditorGUI();
+    
+    ImGui::Button("Add Component");
+    ImGui::End(); // Inspector
+    
+    glClear(GL_DEPTH_BUFFER_BIT);
+    DrawAxisIndicator();
+    
+    // Main menu bar
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
             ImGui::MenuItem("New Scene", "Ctrl+N");
@@ -42,8 +55,11 @@ void EditorGUI::Update()
         ImGui::EndMainMenuBar();
     }
     
+    // Hierarchy view
     ImGui::Begin("Hierarchy");
-    ImGui::Button("Create");
+    if (ImGui::Button("Create")) {
+        auto go = Scene::CreateGameObject("GameObject");
+    }
     m_idCount = 0;
     ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, ImGui::GetFontSize()); // Increase spacing to differentiate leaves from expanded contents.
     for (auto go : Scene::m_gameObjects) {
@@ -53,9 +69,28 @@ void EditorGUI::Update()
     }
     ImGui::PopStyleVar();
     ImGui::End();
-    ImGui::Render();
     
-    DrawAxisIndicator();
+    
+    // Project view
+    ImGui::Begin("Project");
+    ImGui::End();
+    
+//    if (m_showAssectSelectionDialogBox) {
+//        ImGui::OpenPopup("Select ...");
+//        ImGuiWindowFlags window_flags = 0;
+//        window_flags |= ImGuiWindowFlags_NoCollapse;
+//        if (ImGui::BeginPopupModal("Select ...", &m_showAssectSelectionDialogBox, window_flags)) {
+//            for (auto m : Mesh::m_meshes) {
+//                if (ImGui::Button(m->name().c_str())) {
+//                    Debug::Log("%s", m->name().c_str());
+//                }
+//            }
+//            ImGui::Separator();
+//            ImGui::EndPopup();
+//        }
+//    }
+    
+    ImGui::Render();
 }
 
 void EditorGUI::Clean()
@@ -85,6 +120,26 @@ void EditorGUI::Clean()
 //    return false;
 //}
 
+
+void EditorGUI::SelectMeshDialogBox(std::function<void(std::shared_ptr<Mesh>)> callback)
+{
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoCollapse;
+    bool is_open = true;
+    if (ImGui::BeginPopupModal("Select ...", &is_open, window_flags)) {
+        for (auto m : Mesh::m_meshes) {
+            if (ImGui::Button(m->name().c_str())) {
+                Debug::Log("%s", m->name().c_str());
+                //SetMesh(m);
+                callback(m);
+                ImGui::CloseCurrentPopup();
+            }
+        }
+        ImGui::Separator();
+        ImGui::EndPopup();
+    }
+}
+
+
 void EditorGUI::HierarchyItem(GameObject* gameObject) {
     ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ((gameObject == Scene::m_activeGameObject)? ImGuiTreeNodeFlags_Selected : 0);
     
@@ -113,6 +168,7 @@ void EditorGUI::HierarchyItem(GameObject* gameObject) {
         ImGui::PopStyleColor();
     }
 }
+
 
 void EditorGUI::DrawAxisIndicator()
 {

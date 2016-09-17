@@ -23,7 +23,7 @@ typedef int MeshLoadFlags;
 class Mesh : public Object
 {
 public:
-    Mesh();
+    Mesh() = default;
     Mesh(std::vector<float> position_buffer, std::vector<uint32_t> index_buffer);
     Mesh(const int n_vertex, const int n_face, float* positions, uint32_t* indices);
     Mesh(const int n_vertex, const int n_face, float* positions, float* normals, uint32_t* indices);
@@ -41,6 +41,7 @@ public:
     static PMesh CreateFromObjFile(const std::string path, int vertexUsage = VertexUsagePNUT, MeshLoadFlags flags = 0) {
         auto m = std::make_shared<Mesh>();
         m->FromObjFile(path, vertexUsage, flags);
+        m_meshes.push_back(m);
         return m;
     }
 
@@ -57,8 +58,10 @@ public:
     //static Model& getBox();
     //static Model& getSphere();
     //static Model& getIcosahedron();
+
     
 private:
+    friend class EditorGUI;
     std::vector<float>      m_positionBuffer;
     std::vector<float>      m_normalBuffer;
     std::vector<float>      m_uvBuffer;
@@ -70,6 +73,8 @@ private:
     GLuint m_normalVBO;
     GLuint m_uvVBO;
     GLuint m_tangentVBO;
+    
+    static std::vector<PMesh> m_meshes;
     
     void GenerateBuffer(int vertexUsage);
     void BindBuffer(int vertexUsage);

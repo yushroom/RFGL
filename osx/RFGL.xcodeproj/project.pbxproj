@@ -70,6 +70,7 @@
 		BF59EB7B1D89683A00FB234B /* CameraController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = CameraController.hpp; path = ../sources/CameraController.hpp; sourceTree = "<group>"; };
 		BF59EB7C1D8ADC0100FB234B /* EditorGUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EditorGUI.cpp; path = ../sources/EditorGUI.cpp; sourceTree = "<group>"; };
 		BF59EB7D1D8ADC0100FB234B /* EditorGUI.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EditorGUI.hpp; path = ../sources/EditorGUI.hpp; sourceTree = "<group>"; };
+		BF59EB821D8C53D000FB234B /* RenderSettings.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = RenderSettings.hpp; path = ../sources/RenderSettings.hpp; sourceTree = "<group>"; };
 		BFE07C6A1CE23F3E004F52CD /* RFGL */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RFGL; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFE07C771CE23FF2004F52CD /* libglfw3.3.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw3.3.1.dylib; path = /usr/local/Cellar/glfw3/3.1.2/lib/libglfw3.3.1.dylib; sourceTree = "<absolute>"; };
 		BFE07C7A1CE2400C004F52CD /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -156,15 +157,34 @@
 			isa = PBXGroup;
 			children = (
 				BF59EB7B1D89683A00FB234B /* CameraController.hpp */,
+				BF59EB821D8C53D000FB234B /* RenderSettings.hpp */,
 			);
 			name = Scripts;
+			sourceTree = "<group>";
+		};
+		BF59EB801D8C471800FB234B /* Editor */ = {
+			isa = PBXGroup;
+			children = (
+				BF59EB7C1D8ADC0100FB234B /* EditorGUI.cpp */,
+				BF59EB7D1D8ADC0100FB234B /* EditorGUI.hpp */,
+			);
+			name = Editor;
+			sourceTree = "<group>";
+		};
+		BF59EB811D8C472700FB234B /* 3rdParty */ = {
+			isa = PBXGroup;
+			children = (
+				BF59EB681D88592E00FB234B /* imgui */,
+			);
+			name = 3rdParty;
 			sourceTree = "<group>";
 		};
 		BFE07C611CE23F3E004F52CD = {
 			isa = PBXGroup;
 			children = (
 				BFFF94B71D82F89A002B4EBB /* main.cpp */,
-				BF59EB681D88592E00FB234B /* imgui */,
+				BF59EB811D8C472700FB234B /* 3rdParty */,
+				BF59EB801D8C471800FB234B /* Editor */,
 				BFFF94EB1D859B28002B4EBB /* Engine */,
 				BFE07C801CE242FA004F52CD /* Sources */,
 				BFE07C7C1CE2416E004F52CD /* Framwork */,
@@ -198,8 +218,6 @@
 				BFFF94A51D82F89A002B4EBB /* App.hpp */,
 				BF59EB781D89041D00FB234B /* Common.cpp */,
 				BF59EB791D89041D00FB234B /* Common.hpp */,
-				BF59EB7C1D8ADC0100FB234B /* EditorGUI.cpp */,
-				BF59EB7D1D8ADC0100FB234B /* EditorGUI.hpp */,
 				BFFF94AD1D82F89A002B4EBB /* GLError.cpp */,
 				BFFF94AE1D82F89A002B4EBB /* GLError.hpp */,
 				BFFF94B41D82F89A002B4EBB /* IRunable.hpp */,

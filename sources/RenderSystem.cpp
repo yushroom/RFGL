@@ -80,8 +80,6 @@ void RenderSystem::Init()
     Material::Init();
     
     EditorGUI::Init();
-    //GUI::AddBool("WireFrame", m_isWireFrameMode);
-    //GUI::AddBool("GammaCorrection", m_useGammaCorrection);
     
     Scene::Init();
 
@@ -110,7 +108,6 @@ void RenderSystem::Run()
         Scene::Update();
 
         // Render
-        // Clear the color buffer
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         
@@ -144,17 +141,6 @@ void RenderSystem::Run()
         if (m_isWireFrameMode)
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-        ImGui::Begin("Inspector");
-        if (ImGui::CollapsingHeader("Global Render Settings")) {
-            ImGui::Checkbox("Wire Frame", &m_isWireFrameMode);
-            ImGui::Checkbox("Gamma Correction", &m_useGammaCorrection);
-        }
-        //ImGui::Render();
-        Scene::OnEditorGUI();
-        
-        ImGui::Button("Add Component");
-        ImGui::End(); // Inspector
-        
         EditorGUI::Update();
 
         // Swap the screen buffers

@@ -3,6 +3,7 @@
 
 #include "RFGL.hpp"
 #include <string>
+#include <set>
 
 #include "Debug.hpp"
 
@@ -16,8 +17,8 @@
 // Unity Built-in shader variables
 // http://docs.unity3d.com/Manual/SL-UnityShaderVariables.html
 
-static std::vector<std::string> builtinUniformNames{
-"MATRIX_MVP", "MATRIX_V", "MATRIX_P", "MATRIX_VP", "MATRIX_IT_MV",
+static std::set<std::string> builtinUniformNames{
+"MATRIX_MVP", "MATRIX_V", "MATRIX_P", "MATRIX_VP", "MATRIX_IT_MV", "MATRIX_IT_M"
     "_Object2World", "_WorldSpaceCameraPos"
 };
 
